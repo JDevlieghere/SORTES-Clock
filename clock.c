@@ -9,9 +9,10 @@ struct human_time {
 	int minutes;
 	int seconds; 
 }time;
-
 long seconds_since_midnight;
+
 void update_human_time(void);
+void set_time(int hours, int minutes, int seconds);
 
 int main(void){
 	seconds_since_midnight = 3661;
@@ -22,6 +23,11 @@ int main(void){
 
 }
 
+/** 
+ * Update human readable time based on the 
+ * current amount of seconds that have elapsed
+ * since midnight.
+ */
 void update_human_time(void){
 	int hours, minutes, remaining_seconds;
 	remaining_seconds = seconds_since_midnight;
@@ -35,4 +41,13 @@ void update_human_time(void){
 	time.hours = hours;
 	time.minutes = minutes;
 	time.seconds = remaining_seconds;
+}
+
+/**
+ * Set seconds since midnigh based on the given 
+ * human readable time format.
+ */
+void set_time(int hours, int minutes, int seconds){
+	seconds_since_midnight = seconds + minutes * SEC_IN_MIN + hours * SEC_IN_HOUR;
+	update_human_time();
 }
