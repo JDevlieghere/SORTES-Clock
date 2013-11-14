@@ -24,12 +24,12 @@ APP_HEADERS=Include/GenericTypeDefs.h \
    Include/Compiler.h \
    Include/HardwareProfile.h 
 
-hellolcd : objects/hellolcd.o $(objects)
-	$(LD) $(LDFLAGS) objects/hellolcd.o $(objects)
+clock : objects/clock.o $(objects)
+	$(LD) $(LDFLAGS) objects/clock.o $(objects)
 
-objects/hellolcd.o : src/hellolcd.c $(SDCC_HEADERS) $(SDCC_PIC16_HEADERS) \
+objects/clock.o : src/clock.c $(SDCC_HEADERS) $(SDCC_PIC16_HEADERS) \
    $(APP_HEADERS) $(TCPIP_HEADERS)
-	$(CC) $(CFLAGS) src/hellolcd.c
+	$(CC) $(CFLAGS) src/clock.c
 
 
 objects/LCDBlocking.o : lib/LCDBlocking.c $(SDCC_HEADERS)  \
