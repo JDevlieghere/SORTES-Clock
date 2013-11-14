@@ -17,12 +17,12 @@ SDCC_HEADERS=/usr/local/share/sdcc/include/string.h \
 
 SDCC_PIC16_HEADERS=/usr/local/share/sdcc/include/pic16/pic18f97j60.h
 
-TCPIP_HEADERS=   include/TCPIP_Stack/ETH97J60.h \
-   include/TCPIP_Stack/LCDBlocking.h 
+TCPIP_HEADERS=   Include/TCPIP_Stack/ETH97J60.h \
+   Include/TCPIP_Stack/LCDBlocking.h 
 
-APP_HEADERS=include/GenericTypeDefs.h \
-   include/Compiler.h \
-   include/HardwareProfile.h 
+APP_HEADERS=Include/GenericTypeDefs.h \
+   Include/Compiler.h \
+   Include/HardwareProfile.h 
 
 hellolcd : objects/hellolcd.o $(objects)
 	$(LD) $(LDFLAGS) objects/hellolcd.o $(objects)

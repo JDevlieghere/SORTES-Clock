@@ -1,7 +1,7 @@
 ;--------------------------------------------------------
 ; File Created by SDCC : free open source ANSI-C Compiler
 ; Version 2.9.4 #5595 (Nov 14 2013) (UNIX)
-; This file was generated Thu Nov 14 16:30:20 2013
+; This file was generated Thu Nov 14 16:55:27 2013
 ;--------------------------------------------------------
 ; PIC16 port for the Microchip 16-bit core micros
 ;--------------------------------------------------------
@@ -480,9 +480,9 @@ r0x09	res	1
 ; ; Starting pCode block
 S_hellolcd__main	code
 _main:
-;	.line	13; hellolcd.c	LCDInit();
+;	.line	13; src/hellolcd.c	LCDInit();
 	CALL	_LCDInit
-;	.line	14; hellolcd.c	DisplayString(0, "Hello LCD");
+;	.line	14; src/hellolcd.c	DisplayString(0, "Nice script, Dieter");
 	MOVLW	UPPER(__str_0)
 	MOVWF	POSTDEC1
 	MOVLW	HIGH(__str_0)
@@ -494,7 +494,7 @@ _main:
 	CALL	_DisplayString
 	MOVLW	0x04
 	ADDWF	FSR1L, F
-;	.line	15; hellolcd.c	return 0;
+;	.line	15; src/hellolcd.c	return 0;
 	CLRF	PRODL
 	CLRF	WREG
 	RETURN	
@@ -502,7 +502,7 @@ _main:
 ; ; Starting pCode block
 S_hellolcd__DisplayString	code
 _DisplayString:
-;	.line	18; hellolcd.c	void DisplayString(BYTE pos, char* text)
+;	.line	18; src/hellolcd.c	void DisplayString(BYTE pos, char* text)
 	MOVFF	FSR2L, POSTDEC1
 	MOVFF	FSR1L, FSR2L
 	MOVFF	r0x00, POSTDEC1
@@ -523,7 +523,7 @@ _DisplayString:
 	MOVFF	PLUSW2, r0x02
 	MOVLW	0x05
 	MOVFF	PLUSW2, r0x03
-;	.line	20; hellolcd.c	BYTE        l = strlen(text);/*number of actual chars in the string*/
+;	.line	20; src/hellolcd.c	BYTE        l = strlen(text);/*number of actual chars in the string*/
 	MOVF	r0x03, W
 	MOVWF	POSTDEC1
 	MOVF	r0x02, W
@@ -535,11 +535,11 @@ _DisplayString:
 	MOVFF	PRODL, r0x05
 	MOVLW	0x03
 	ADDWF	FSR1L, F
-;	.line	21; hellolcd.c	BYTE      max = 32-pos;    /*available space on the lcd*/
+;	.line	21; src/hellolcd.c	BYTE      max = 32-pos;    /*available space on the lcd*/
 	MOVF	r0x00, W
 	SUBLW	0x20
 	MOVWF	r0x05
-;	.line	22; hellolcd.c	char       *d = (char*)&LCDText[pos];
+;	.line	22; src/hellolcd.c	char       *d = (char*)&LCDText[pos];
 	CLRF	r0x06
 	MOVLW	LOW(_LCDText)
 	ADDWF	r0x00, F
@@ -551,19 +551,19 @@ _DisplayString:
 	MOVWF	r0x00
 	MOVLW	0x80
 	MOVWF	r0x07
-;	.line	24; hellolcd.c	size_t      n = (l<max)?l:max;
+;	.line	24; src/hellolcd.c	size_t      n = (l<max)?l:max;
 	MOVF	r0x05, W
 	SUBWF	r0x04, W
 	BNC	_00118_DS_
 	MOVFF	r0x05, r0x04
 _00118_DS_:
 	CLRF	r0x05
-;	.line	26; hellolcd.c	if (n != 0)
+;	.line	26; src/hellolcd.c	if (n != 0)
 	MOVF	r0x04, W
 	IORWF	r0x05, W
 	BZ	_00114_DS_
 _00110_DS_:
-;	.line	27; hellolcd.c	while (n-- != 0)*d++ = *s++;
+;	.line	27; src/hellolcd.c	while (n-- != 0)*d++ = *s++;
 	MOVFF	r0x04, r0x08
 	MOVFF	r0x05, r0x09
 	MOVLW	0xff
@@ -595,7 +595,7 @@ _00110_DS_:
 	INCF	r0x07, F
 	BRA	_00110_DS_
 _00114_DS_:
-;	.line	28; hellolcd.c	LCDUpdate();
+;	.line	28; src/hellolcd.c	LCDUpdate();
 	CALL	_LCDUpdate
 	MOVFF	PREINC1, r0x09
 	MOVFF	PREINC1, r0x08
@@ -612,12 +612,13 @@ _00114_DS_:
 
 ; ; Starting pCode block
 __str_0:
-	DB	0x48, 0x65, 0x6c, 0x6c, 0x6f, 0x20, 0x4c, 0x43, 0x44, 0x00
+	DB	0x4e, 0x69, 0x63, 0x65, 0x20, 0x73, 0x63, 0x72, 0x69, 0x70, 0x74, 0x2c
+	DB	0x20, 0x44, 0x69, 0x65, 0x74, 0x65, 0x72, 0x00
 
 
 ; Statistics:
-; code size:	  308 (0x0134) bytes ( 0.23%)
-;           	  154 (0x009a) words
+; code size:	  310 (0x0136) bytes ( 0.24%)
+;           	  155 (0x009b) words
 ; udata size:	    0 (0x0000) bytes ( 0.00%)
 ; access size:	   10 (0x000a) bytes
 

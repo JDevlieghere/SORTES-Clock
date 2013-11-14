@@ -1,7 +1,7 @@
 ;--------------------------------------------------------
 ; File Created by SDCC : free open source ANSI-C Compiler
 ; Version 2.9.4 #5595 (Nov 14 2013) (UNIX)
-; This file was generated Thu Nov 14 16:17:21 2013
+; This file was generated Thu Nov 14 16:55:27 2013
 ;--------------------------------------------------------
 ; PIC16 port for the Microchip 16-bit core micros
 ;--------------------------------------------------------
@@ -483,7 +483,7 @@ _LCDText	res	33
 ; ; Starting pCode block
 S_LCDBlocking__LCDErase	code
 _LCDErase:
-;	.line	392; TCPIP_Stack/LCDBlocking.c	void LCDErase(void)
+;	.line	392; lib/LCDBlocking.c	void LCDErase(void)
 	MOVFF	FSR2L, POSTDEC1
 	MOVFF	FSR1L, FSR2L
 	MOVFF	r0x00, POSTDEC1
@@ -494,7 +494,7 @@ _LCDErase:
 	MOVFF	r0x05, POSTDEC1
 	MOVFF	r0x06, POSTDEC1
 	MOVFF	r0x07, POSTDEC1
-;	.line	395; TCPIP_Stack/LCDBlocking.c	LCDWrite(0, 0x01);
+;	.line	395; lib/LCDBlocking.c	LCDWrite(0, 0x01);
 	MOVLW	0x01
 	MOVWF	POSTDEC1
 	MOVLW	0x00
@@ -502,7 +502,7 @@ _LCDErase:
 	CALL	_LCDWrite
 	MOVLW	0x02
 	ADDWF	FSR1L, F
-;	.line	396; TCPIP_Stack/LCDBlocking.c	DelayMs(2);
+;	.line	396; lib/LCDBlocking.c	DelayMs(2);
 	MOVLW	0x48
 	MOVWF	r0x00
 	MOVLW	0x0d
@@ -527,7 +527,7 @@ _00305_DS_:
 	IORWF	r0x06, W
 	IORWF	r0x07, W
 	BNZ	_00305_DS_
-;	.line	399; TCPIP_Stack/LCDBlocking.c	memset(LCDText, ' ', 32);
+;	.line	399; lib/LCDBlocking.c	memset(LCDText, ' ', 32);
 	MOVLW	0x00
 	MOVWF	POSTDEC1
 	MOVLW	0x20
@@ -555,7 +555,7 @@ _00305_DS_:
 ; ; Starting pCode block
 S_LCDBlocking__LCDUpdate	code
 _LCDUpdate:
-;	.line	332; TCPIP_Stack/LCDBlocking.c	void LCDUpdate(void)
+;	.line	332; lib/LCDBlocking.c	void LCDUpdate(void)
 	MOVFF	FSR2L, POSTDEC1
 	MOVFF	FSR1L, FSR2L
 	MOVFF	r0x00, POSTDEC1
@@ -567,7 +567,7 @@ _LCDUpdate:
 	MOVFF	r0x06, POSTDEC1
 	MOVFF	r0x07, POSTDEC1
 	MOVFF	r0x08, POSTDEC1
-;	.line	337; TCPIP_Stack/LCDBlocking.c	LCDWrite(0, 0x02);
+;	.line	337; lib/LCDBlocking.c	LCDWrite(0, 0x02);
 	MOVLW	0x02
 	MOVWF	POSTDEC1
 	MOVLW	0x00
@@ -575,7 +575,7 @@ _LCDUpdate:
 	CALL	_LCDWrite
 	MOVLW	0x02
 	ADDWF	FSR1L, F
-;	.line	338; TCPIP_Stack/LCDBlocking.c	DelayMs(2);
+;	.line	338; lib/LCDBlocking.c	DelayMs(2);
 	MOVLW	0x48
 	MOVWF	r0x00
 	MOVLW	0x0d
@@ -600,7 +600,7 @@ _00225_DS_:
 	IORWF	r0x06, W
 	IORWF	r0x07, W
 	BNZ	_00225_DS_
-;	.line	341; TCPIP_Stack/LCDBlocking.c	for(i = 0; i < 16u; i++)
+;	.line	341; lib/LCDBlocking.c	for(i = 0; i < 16u; i++)
 	CLRF	r0x00
 _00257_DS_:
 	MOVFF	r0x00, r0x01
@@ -613,7 +613,7 @@ _00257_DS_:
 _00297_DS_:
 	BTFSC	STATUS, 0
 	BRA	_00260_DS_
-;	.line	345; TCPIP_Stack/LCDBlocking.c	if(LCDText[i] == 0u)
+;	.line	345; lib/LCDBlocking.c	if(LCDText[i] == 0u)
 	MOVLW	LOW(_LCDText)
 	ADDWF	r0x00, W
 	MOVWF	r0x01
@@ -625,7 +625,7 @@ _00297_DS_:
 	MOVFF	INDF0, r0x01
 	MOVF	r0x01, W
 	BNZ	_00232_DS_
-;	.line	347; TCPIP_Stack/LCDBlocking.c	for(j=i; j < 16u; j++)
+;	.line	347; lib/LCDBlocking.c	for(j=i; j < 16u; j++)
 	MOVFF	r0x00, r0x01
 _00253_DS_:
 	MOVFF	r0x01, r0x02
@@ -637,7 +637,7 @@ _00253_DS_:
 	SUBWF	r0x02, W
 _00298_DS_:
 	BC	_00232_DS_
-;	.line	349; TCPIP_Stack/LCDBlocking.c	LCDText[j] = ' ';
+;	.line	349; lib/LCDBlocking.c	LCDText[j] = ' ';
 	MOVLW	LOW(_LCDText)
 	ADDWF	r0x01, W
 	MOVWF	r0x02
@@ -648,11 +648,11 @@ _00298_DS_:
 	MOVFF	r0x03, FSR0H
 	MOVLW	0x20
 	MOVWF	INDF0
-;	.line	347; TCPIP_Stack/LCDBlocking.c	for(j=i; j < 16u; j++)
+;	.line	347; lib/LCDBlocking.c	for(j=i; j < 16u; j++)
 	INCF	r0x01, F
 	BRA	_00253_DS_
 _00232_DS_:
-;	.line	352; TCPIP_Stack/LCDBlocking.c	LCDWrite(1, LCDText[i]);
+;	.line	352; lib/LCDBlocking.c	LCDWrite(1, LCDText[i]);
 	MOVLW	LOW(_LCDText)
 	ADDWF	r0x00, W
 	MOVWF	r0x01
@@ -669,7 +669,7 @@ _00232_DS_:
 	CALL	_LCDWrite
 	MOVLW	0x02
 	ADDWF	FSR1L, F
-;	.line	353; TCPIP_Stack/LCDBlocking.c	Delay10us(5);
+;	.line	353; lib/LCDBlocking.c	Delay10us(5);
 	MOVLW	0x55
 	MOVWF	r0x01
 	CLRF	r0x02
@@ -693,11 +693,11 @@ _00233_DS_:
 	IORWF	r0x07, W
 	IORWF	r0x08, W
 	BNZ	_00233_DS_
-;	.line	341; TCPIP_Stack/LCDBlocking.c	for(i = 0; i < 16u; i++)
+;	.line	341; lib/LCDBlocking.c	for(i = 0; i < 16u; i++)
 	INCF	r0x00, F
 	BRA	_00257_DS_
 _00260_DS_:
-;	.line	357; TCPIP_Stack/LCDBlocking.c	LCDWrite(0, 0xC0);
+;	.line	357; lib/LCDBlocking.c	LCDWrite(0, 0xC0);
 	MOVLW	0xc0
 	MOVWF	POSTDEC1
 	MOVLW	0x00
@@ -705,7 +705,7 @@ _00260_DS_:
 	CALL	_LCDWrite
 	MOVLW	0x02
 	ADDWF	FSR1L, F
-;	.line	358; TCPIP_Stack/LCDBlocking.c	Delay10us(5);
+;	.line	358; lib/LCDBlocking.c	Delay10us(5);
 	MOVLW	0x55
 	MOVWF	r0x00
 	CLRF	r0x01
@@ -729,7 +729,7 @@ _00239_DS_:
 	IORWF	r0x06, W
 	IORWF	r0x07, W
 	BNZ	_00239_DS_
-;	.line	361; TCPIP_Stack/LCDBlocking.c	for(i = 16; i < 32u; i++)
+;	.line	361; lib/LCDBlocking.c	for(i = 16; i < 32u; i++)
 	MOVLW	0x10
 	MOVWF	r0x00
 _00265_DS_:
@@ -743,7 +743,7 @@ _00265_DS_:
 _00299_DS_:
 	BTFSC	STATUS, 0
 	BRA	_00269_DS_
-;	.line	365; TCPIP_Stack/LCDBlocking.c	if(LCDText[i] == 0u)
+;	.line	365; lib/LCDBlocking.c	if(LCDText[i] == 0u)
 	MOVLW	LOW(_LCDText)
 	ADDWF	r0x00, W
 	MOVWF	r0x01
@@ -755,7 +755,7 @@ _00299_DS_:
 	MOVFF	INDF0, r0x01
 	MOVF	r0x01, W
 	BNZ	_00246_DS_
-;	.line	367; TCPIP_Stack/LCDBlocking.c	for(j=i; j < 32u; j++)
+;	.line	367; lib/LCDBlocking.c	for(j=i; j < 32u; j++)
 	MOVFF	r0x00, r0x01
 _00261_DS_:
 	MOVFF	r0x01, r0x02
@@ -767,7 +767,7 @@ _00261_DS_:
 	SUBWF	r0x02, W
 _00300_DS_:
 	BC	_00246_DS_
-;	.line	369; TCPIP_Stack/LCDBlocking.c	LCDText[j] = ' ';
+;	.line	369; lib/LCDBlocking.c	LCDText[j] = ' ';
 	MOVLW	LOW(_LCDText)
 	ADDWF	r0x01, W
 	MOVWF	r0x02
@@ -778,11 +778,11 @@ _00300_DS_:
 	MOVFF	r0x03, FSR0H
 	MOVLW	0x20
 	MOVWF	INDF0
-;	.line	367; TCPIP_Stack/LCDBlocking.c	for(j=i; j < 32u; j++)
+;	.line	367; lib/LCDBlocking.c	for(j=i; j < 32u; j++)
 	INCF	r0x01, F
 	BRA	_00261_DS_
 _00246_DS_:
-;	.line	372; TCPIP_Stack/LCDBlocking.c	LCDWrite(1, LCDText[i]);
+;	.line	372; lib/LCDBlocking.c	LCDWrite(1, LCDText[i]);
 	MOVLW	LOW(_LCDText)
 	ADDWF	r0x00, W
 	MOVWF	r0x01
@@ -799,7 +799,7 @@ _00246_DS_:
 	CALL	_LCDWrite
 	MOVLW	0x02
 	ADDWF	FSR1L, F
-;	.line	373; TCPIP_Stack/LCDBlocking.c	Delay10us(5);
+;	.line	373; lib/LCDBlocking.c	Delay10us(5);
 	MOVLW	0x55
 	MOVWF	r0x01
 	CLRF	r0x02
@@ -823,7 +823,7 @@ _00247_DS_:
 	IORWF	r0x07, W
 	IORWF	r0x08, W
 	BNZ	_00247_DS_
-;	.line	361; TCPIP_Stack/LCDBlocking.c	for(i = 16; i < 32u; i++)
+;	.line	361; lib/LCDBlocking.c	for(i = 16; i < 32u; i++)
 	INCF	r0x00, F
 	BRA	_00265_DS_
 _00269_DS_:
@@ -842,7 +842,7 @@ _00269_DS_:
 ; ; Starting pCode block
 S_LCDBlocking__LCDInit	code
 _LCDInit:
-;	.line	207; TCPIP_Stack/LCDBlocking.c	void LCDInit(void)
+;	.line	207; lib/LCDBlocking.c	void LCDInit(void)
 	MOVFF	FSR2L, POSTDEC1
 	MOVFF	FSR1L, FSR2L
 	MOVFF	r0x00, POSTDEC1
@@ -854,7 +854,7 @@ _LCDInit:
 	MOVFF	r0x06, POSTDEC1
 	MOVFF	r0x07, POSTDEC1
 	MOVFF	r0x08, POSTDEC1
-;	.line	211; TCPIP_Stack/LCDBlocking.c	memset(LCDText, ' ', sizeof(LCDText)-1);
+;	.line	211; lib/LCDBlocking.c	memset(LCDText, ' ', sizeof(LCDText)-1);
 	MOVLW	0x00
 	MOVWF	POSTDEC1
 	MOVLW	0x20
@@ -869,21 +869,21 @@ _LCDInit:
 	MOVLW	0x05
 	ADDWF	FSR1L, F
 	BANKSEL	(_LCDText + 32)
-;	.line	212; TCPIP_Stack/LCDBlocking.c	LCDText[sizeof(LCDText)-1] = 0;
+;	.line	212; lib/LCDBlocking.c	LCDText[sizeof(LCDText)-1] = 0;
 	CLRF	(_LCDText + 32), B
-;	.line	215; TCPIP_Stack/LCDBlocking.c	LCD_E_IO = 0;
+;	.line	215; lib/LCDBlocking.c	LCD_E_IO = 0;
 	BCF	_LATHbits, 0
-;	.line	216; TCPIP_Stack/LCDBlocking.c	LCD_RD_WR_IO = 0;
+;	.line	216; lib/LCDBlocking.c	LCD_RD_WR_IO = 0;
 	BCF	_LATHbits, 1
-;	.line	220; TCPIP_Stack/LCDBlocking.c	LCD_DATA_TRIS = 0x00;
+;	.line	220; lib/LCDBlocking.c	LCD_DATA_TRIS = 0x00;
 	CLRF	_TRISE
-;	.line	233; TCPIP_Stack/LCDBlocking.c	LCD_RD_WR_TRIS = 0;
+;	.line	233; lib/LCDBlocking.c	LCD_RD_WR_TRIS = 0;
 	BCF	_TRISHbits, 1
-;	.line	234; TCPIP_Stack/LCDBlocking.c	LCD_RS_TRIS = 0;
+;	.line	234; lib/LCDBlocking.c	LCD_RS_TRIS = 0;
 	BCF	_TRISHbits, 2
-;	.line	235; TCPIP_Stack/LCDBlocking.c	LCD_E_TRIS = 0;
+;	.line	235; lib/LCDBlocking.c	LCD_E_TRIS = 0;
 	BCF	_TRISHbits, 0
-;	.line	239; TCPIP_Stack/LCDBlocking.c	DelayMs(40);
+;	.line	239; lib/LCDBlocking.c	DelayMs(40);
 	MOVLW	0xa0
 	MOVWF	r0x00
 	MOVLW	0x09
@@ -909,14 +909,14 @@ _00143_DS_:
 	IORWF	r0x06, W
 	IORWF	r0x07, W
 	BNZ	_00143_DS_
-;	.line	247; TCPIP_Stack/LCDBlocking.c	LCD_RS_IO = 0;
+;	.line	247; lib/LCDBlocking.c	LCD_RS_IO = 0;
 	BCF	_LATHbits, 2
-;	.line	249; TCPIP_Stack/LCDBlocking.c	LCD_DATA_IO = 0x03;
+;	.line	249; lib/LCDBlocking.c	LCD_DATA_IO = 0x03;
 	MOVLW	0x03
 	MOVWF	_LATE
 	nop 
 	nop 
-;	.line	264; TCPIP_Stack/LCDBlocking.c	for(i = 0; i < 3u; i++)
+;	.line	264; lib/LCDBlocking.c	for(i = 0; i < 3u; i++)
 	CLRF	r0x00
 _00191_DS_:
 	MOVFF	r0x00, r0x01
@@ -928,9 +928,9 @@ _00191_DS_:
 	SUBWF	r0x01, W
 _00220_DS_:
 	BC	_00194_DS_
-;	.line	266; TCPIP_Stack/LCDBlocking.c	LCD_E_IO = 1;
+;	.line	266; lib/LCDBlocking.c	LCD_E_IO = 1;
 	BSF	_LATHbits, 0
-;	.line	267; TCPIP_Stack/LCDBlocking.c	Delay10us(1);	       	// Wait E Pulse width time (min 230ns)
+;	.line	267; lib/LCDBlocking.c	Delay10us(1);	       	// Wait E Pulse width time (min 230ns)
 	MOVLW	0x11
 	MOVWF	r0x01
 	CLRF	r0x02
@@ -954,9 +954,9 @@ _00155_DS_:
 	IORWF	r0x07, W
 	IORWF	r0x08, W
 	BNZ	_00155_DS_
-;	.line	268; TCPIP_Stack/LCDBlocking.c	LCD_E_IO = 0;
+;	.line	268; lib/LCDBlocking.c	LCD_E_IO = 0;
 	BCF	_LATHbits, 0
-;	.line	269; TCPIP_Stack/LCDBlocking.c	DelayMs(2);
+;	.line	269; lib/LCDBlocking.c	DelayMs(2);
 	MOVLW	0x48
 	MOVWF	r0x01
 	MOVLW	0x0d
@@ -981,11 +981,11 @@ _00161_DS_:
 	IORWF	r0x07, W
 	IORWF	r0x08, W
 	BNZ	_00161_DS_
-;	.line	264; TCPIP_Stack/LCDBlocking.c	for(i = 0; i < 3u; i++)
+;	.line	264; lib/LCDBlocking.c	for(i = 0; i < 3u; i++)
 	INCF	r0x00, F
 	BRA	_00191_DS_
 _00194_DS_:
-;	.line	295; TCPIP_Stack/LCDBlocking.c	LCDWrite(0, 0x38);
+;	.line	295; lib/LCDBlocking.c	LCDWrite(0, 0x38);
 	MOVLW	0x38
 	MOVWF	POSTDEC1
 	MOVLW	0x00
@@ -993,7 +993,7 @@ _00194_DS_:
 	CALL	_LCDWrite
 	MOVLW	0x02
 	ADDWF	FSR1L, F
-;	.line	297; TCPIP_Stack/LCDBlocking.c	Delay10us(5);
+;	.line	297; lib/LCDBlocking.c	Delay10us(5);
 	MOVLW	0x55
 	MOVWF	r0x00
 	CLRF	r0x01
@@ -1017,7 +1017,7 @@ _00167_DS_:
 	IORWF	r0x06, W
 	IORWF	r0x07, W
 	BNZ	_00167_DS_
-;	.line	300; TCPIP_Stack/LCDBlocking.c	LCDWrite(0, 0x06);	// Increment after each write, do not shift
+;	.line	300; lib/LCDBlocking.c	LCDWrite(0, 0x06);	// Increment after each write, do not shift
 	MOVLW	0x06
 	MOVWF	POSTDEC1
 	MOVLW	0x00
@@ -1025,7 +1025,7 @@ _00167_DS_:
 	CALL	_LCDWrite
 	MOVLW	0x02
 	ADDWF	FSR1L, F
-;	.line	301; TCPIP_Stack/LCDBlocking.c	Delay10us(5);
+;	.line	301; lib/LCDBlocking.c	Delay10us(5);
 	MOVLW	0x55
 	MOVWF	r0x00
 	CLRF	r0x01
@@ -1049,7 +1049,7 @@ _00173_DS_:
 	IORWF	r0x06, W
 	IORWF	r0x07, W
 	BNZ	_00173_DS_
-;	.line	304; TCPIP_Stack/LCDBlocking.c	LCDWrite(0, 0x0C);	// Turn display on, no cusor, no cursor blink
+;	.line	304; lib/LCDBlocking.c	LCDWrite(0, 0x0C);	// Turn display on, no cusor, no cursor blink
 	MOVLW	0x0c
 	MOVWF	POSTDEC1
 	MOVLW	0x00
@@ -1057,7 +1057,7 @@ _00173_DS_:
 	CALL	_LCDWrite
 	MOVLW	0x02
 	ADDWF	FSR1L, F
-;	.line	305; TCPIP_Stack/LCDBlocking.c	Delay10us(5);
+;	.line	305; lib/LCDBlocking.c	Delay10us(5);
 	MOVLW	0x55
 	MOVWF	r0x00
 	CLRF	r0x01
@@ -1081,7 +1081,7 @@ _00179_DS_:
 	IORWF	r0x06, W
 	IORWF	r0x07, W
 	BNZ	_00179_DS_
-;	.line	308; TCPIP_Stack/LCDBlocking.c	LCDWrite(0, 0x01);	
+;	.line	308; lib/LCDBlocking.c	LCDWrite(0, 0x01);	
 	MOVLW	0x01
 	MOVWF	POSTDEC1
 	MOVLW	0x00
@@ -1089,7 +1089,7 @@ _00179_DS_:
 	CALL	_LCDWrite
 	MOVLW	0x02
 	ADDWF	FSR1L, F
-;	.line	309; TCPIP_Stack/LCDBlocking.c	DelayMs(2);
+;	.line	309; lib/LCDBlocking.c	DelayMs(2);
 	MOVLW	0x48
 	MOVWF	r0x00
 	MOVLW	0x0d
@@ -1129,7 +1129,7 @@ _00185_DS_:
 ; ; Starting pCode block
 S_LCDBlocking__LCDWrite	code
 _LCDWrite:
-;	.line	94; TCPIP_Stack/LCDBlocking.c	static void LCDWrite(BYTE RS, BYTE Data)
+;	.line	94; lib/LCDBlocking.c	static void LCDWrite(BYTE RS, BYTE Data)
 	MOVFF	FSR2L, POSTDEC1
 	MOVFF	FSR1L, FSR2L
 	MOVFF	r0x00, POSTDEC1
@@ -1138,15 +1138,15 @@ _LCDWrite:
 	MOVFF	PLUSW2, r0x00
 	MOVLW	0x03
 	MOVFF	PLUSW2, r0x01
-;	.line	97; TCPIP_Stack/LCDBlocking.c	LCD_DATA_TRIS = 0x00;
+;	.line	97; lib/LCDBlocking.c	LCD_DATA_TRIS = 0x00;
 	CLRF	_TRISE
-;	.line	110; TCPIP_Stack/LCDBlocking.c	LCD_RS_TRIS = 0;
+;	.line	110; lib/LCDBlocking.c	LCD_RS_TRIS = 0;
 	BCF	_TRISHbits, 2
-;	.line	111; TCPIP_Stack/LCDBlocking.c	LCD_RD_WR_TRIS = 0;
+;	.line	111; lib/LCDBlocking.c	LCD_RD_WR_TRIS = 0;
 	BCF	_TRISHbits, 1
-;	.line	112; TCPIP_Stack/LCDBlocking.c	LCD_RD_WR_IO = 0;
+;	.line	112; lib/LCDBlocking.c	LCD_RD_WR_IO = 0;
 	BCF	_LATHbits, 1
-;	.line	113; TCPIP_Stack/LCDBlocking.c	LCD_RS_IO = RS;
+;	.line	113; lib/LCDBlocking.c	LCD_RS_IO = RS;
 	MOVF	r0x00, W
 	ANDLW	0x01
 	RLNCF	WREG, W
@@ -1156,11 +1156,11 @@ _LCDWrite:
 	ANDLW	0xfb
 	IORWF	PRODH, W
 	MOVWF	_LATHbits
-;	.line	140; TCPIP_Stack/LCDBlocking.c	LCD_DATA_IO = Data;
+;	.line	140; lib/LCDBlocking.c	LCD_DATA_IO = Data;
 	MOVFF	r0x01, _LATE
 	nop 
 	nop 
-;	.line	155; TCPIP_Stack/LCDBlocking.c	LCD_E_IO = 1;
+;	.line	155; lib/LCDBlocking.c	LCD_E_IO = 1;
 	BSF	_LATHbits, 0
 	nop 
 	nop 
@@ -1171,7 +1171,7 @@ _LCDWrite:
 	nop 
 	nop 
 	nop 
-;	.line	165; TCPIP_Stack/LCDBlocking.c	LCD_E_IO = 0;
+;	.line	165; lib/LCDBlocking.c	LCD_E_IO = 0;
 	BCF	_LATHbits, 0
 	MOVFF	PREINC1, r0x01
 	MOVFF	PREINC1, r0x00

@@ -3,15 +3,15 @@
 #define THIS_INCLUDES_THE_MAIN_FUNCTION
 #include <string.h>
 #include <stdlib.h>
-#include "include/HardwareProfile.h"
-#include "include/LCDBlocking.h"
+#include "../Include/HardwareProfile.h"
+#include "../Include/LCDBlocking.h"
 
 void DisplayString(BYTE pos, char* text);
 
 int main(void)
 {
 	LCDInit();
-	DisplayString(0, "Hello LCD");
+	DisplayString(0, "Nice script, Dieter");
 	return 0;
 }
 
