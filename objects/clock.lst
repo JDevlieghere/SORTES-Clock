@@ -1,0 +1,435 @@
+gpasm-0.13.7 beta               objects/clock.asm11-14-2013  17:00:04         PAGE  1
+
+
+LOC  OBJECT CODE     LINE SOURCE TEXT
+  VALUE
+ 
+               00001 ;--------------------------------------------------------
+               00002 ; File Created by SDCC : free open source ANSI-C Compiler
+               00003 ; Version 2.9.4 #5595 (Nov 14 2013) (UNIX)
+               00004 ; This file was generated Thu Nov 14 17:00:04 2013
+               00005 ;--------------------------------------------------------
+               00006 ; PIC16 port for the Microchip 16-bit core micros
+               00007 ;--------------------------------------------------------
+               00008         list    p=18f97j60
+               00009 
+               00010         radix dec
+               00011 
+               00012 ;--------------------------------------------------------
+               00013 ; public variables in this module
+               00014 ;--------------------------------------------------------
+               00015         global _update_human_time
+               00016         global _set_time
+               00017         global _time
+               00018         global _seconds_since_midnight
+               00019         global _main
+               00020 
+               00021 ;--------------------------------------------------------
+               00022 ; extern variables in this module
+               00023 ;--------------------------------------------------------
+               00024         extern _stdin
+               00025         extern _stdout
+               00026         extern _printf
+               00027         extern __divsint
+               00028         extern __mulint
+               00029 ;--------------------------------------------------------
+               00030 ;       Equates to used internal registers
+               00031 ;--------------------------------------------------------
+  00000FE8     00032 WREG    equ     0xfe8
+  00000FE1     00033 FSR1L   equ     0xfe1
+  00000FD9     00034 FSR2L   equ     0xfd9
+  00000FE5     00035 POSTDEC1        equ     0xfe5
+  00000FE4     00036 PREINC1 equ     0xfe4
+  00000FDB     00037 PLUSW2  equ     0xfdb
+  00000FF3     00038 PRODL   equ     0xff3
+               00039 
+               00040 
+               00041 ; Internal registers
+               00042 .registers      udata_ovr       0x0000
+               00043 r0x00   res     1
+               00044 r0x01   res     1
+               00045 r0x02   res     1
+               00046 r0x03   res     1
+               00047 r0x04   res     1
+               00048 r0x05   res     1
+               00049 r0x06   res     1
+               00050 r0x07   res     1
+               00051 
+               00052 udata_clock_0   udata
+               00053 _seconds_since_midnight res     4
+               00054 
+gpasm-0.13.7 beta               objects/clock.asm11-14-2013  17:00:04         PAGE  2
+
+
+LOC  OBJECT CODE     LINE SOURCE TEXT
+  VALUE
+ 
+               00055 udata_clock_1   udata
+               00056 _time   res     6
+               00057 
+               00058 ;--------------------------------------------------------
+               00059 ; interrupt vector 
+               00060 ;--------------------------------------------------------
+               00061 
+               00062 ;--------------------------------------------------------
+               00063 ; global & static initialisations
+               00064 ;--------------------------------------------------------
+               00065 ; I code from now on!
+               00066 ; ; Starting pCode block
+               00067 S_clock__main   code
+0000 00068 _main:
+               00069 ;       .line   22; src/clock.c seconds_since_midnight = 3661;
+0000 0E4D      00070         MOVLW   0x4d
+0002 0000      00071         BANKSEL _seconds_since_midnight
+0004 6F00      00072         MOVWF   _seconds_since_midnight, B
+0006 0E0E      00073         MOVLW   0x0e
+0008 0000      00074         BANKSEL (_seconds_since_midnight + 1)
+000A 6F00      00075         MOVWF   (_seconds_since_midnight + 1), B
+000C 0000      00076         BANKSEL (_seconds_since_midnight + 2)
+000E 6B00      00077         CLRF    (_seconds_since_midnight + 2), B
+0010 0000      00078         BANKSEL (_seconds_since_midnight + 3)
+0012 6B00      00079         CLRF    (_seconds_since_midnight + 3), B
+               00080 ;       .line   23; src/clock.c update_human_time();
+0014 EC00 F000 00081         CALL    _update_human_time
+0018 0000      00082         BANKSEL (_time + 1)
+               00083 ;       .line   24; src/clock.c printf("HOURS: %d\n", time.hours);
+001A 5100      00084         MOVF    (_time + 1), W, B
+001C 6EE5      00085         MOVWF   POSTDEC1
+001E 0000      00086         BANKSEL _time
+0020 5100      00087         MOVF    _time, W, B
+0022 6EE5      00088         MOVWF   POSTDEC1
+0024 0E00      00089         MOVLW   UPPER(__str_0)
+0026 6EE5      00090         MOVWF   POSTDEC1
+0028 0E00      00091         MOVLW   HIGH(__str_0)
+002A 6EE5      00092         MOVWF   POSTDEC1
+002C 0E00      00093         MOVLW   LOW(__str_0)
+002E 6EE5      00094         MOVWF   POSTDEC1
+0030 EC00 F000 00095         CALL    _printf
+0034 0E05      00096         MOVLW   0x05
+0036 26E1      00097         ADDWF   FSR1L, F
+0038 0000      00098         BANKSEL (_time + 3)
+               00099 ;       .line   25; src/clock.c printf("MINS: %d\n", time.minutes);
+003A 5100      00100         MOVF    (_time + 3), W, B
+003C 6EE5      00101         MOVWF   POSTDEC1
+003E 0000      00102         BANKSEL (_time + 2)
+0040 5100      00103         MOVF    (_time + 2), W, B
+0042 6EE5      00104         MOVWF   POSTDEC1
+0044 0E00      00105         MOVLW   UPPER(__str_1)
+0046 6EE5      00106         MOVWF   POSTDEC1
+0048 0E00      00107         MOVLW   HIGH(__str_1)
+004A 6EE5      00108         MOVWF   POSTDEC1
+gpasm-0.13.7 beta               objects/clock.asm11-14-2013  17:00:04         PAGE  3
+
+
+LOC  OBJECT CODE     LINE SOURCE TEXT
+  VALUE
+ 
+004C 0E00      00109         MOVLW   LOW(__str_1)
+004E 6EE5      00110         MOVWF   POSTDEC1
+0050 EC00 F000 00111         CALL    _printf
+0054 0E05      00112         MOVLW   0x05
+0056 26E1      00113         ADDWF   FSR1L, F
+0058 0000      00114         BANKSEL (_time + 5)
+               00115 ;       .line   26; src/clock.c printf("seconds: %d\n", time.seconds);
+005A 5100      00116         MOVF    (_time + 5), W, B
+005C 6EE5      00117         MOVWF   POSTDEC1
+005E 0000      00118         BANKSEL (_time + 4)
+0060 5100      00119         MOVF    (_time + 4), W, B
+0062 6EE5      00120         MOVWF   POSTDEC1
+0064 0E00      00121         MOVLW   UPPER(__str_2)
+0066 6EE5      00122         MOVWF   POSTDEC1
+0068 0E00      00123         MOVLW   HIGH(__str_2)
+006A 6EE5      00124         MOVWF   POSTDEC1
+006C 0E00      00125         MOVLW   LOW(__str_2)
+006E 6EE5      00126         MOVWF   POSTDEC1
+0070 EC00 F000 00127         CALL    _printf
+0074 0E05      00128         MOVLW   0x05
+0076 26E1      00129         ADDWF   FSR1L, F
+0078 0012      00130         RETURN  
+               00131 
+               00132 ; ; Starting pCode block
+               00133 S_clock__set_time       code
+0000 00134 _set_time:
+               00135 ;       .line   57; src/clock.c void set_time(int hours, int minutes, int seconds){
+0000 CFD9 FFE5 00136         MOVFF   FSR2L, POSTDEC1
+0004 CFE1 FFD9 00137         MOVFF   FSR1L, FSR2L
+0008 C000 FFE5 00138         MOVFF   r0x00, POSTDEC1
+000C C000 FFE5 00139         MOVFF   r0x01, POSTDEC1
+0010 C000 FFE5 00140         MOVFF   r0x02, POSTDEC1
+0014 C000 FFE5 00141         MOVFF   r0x03, POSTDEC1
+0018 C000 FFE5 00142         MOVFF   r0x04, POSTDEC1
+001C C000 FFE5 00143         MOVFF   r0x05, POSTDEC1
+0020 0E02      00144         MOVLW   0x02
+0022 CFDB F000 00145         MOVFF   PLUSW2, r0x00
+0026 0E03      00146         MOVLW   0x03
+0028 CFDB F000 00147         MOVFF   PLUSW2, r0x01
+002C 0E04      00148         MOVLW   0x04
+002E CFDB F000 00149         MOVFF   PLUSW2, r0x02
+0032 0E05      00150         MOVLW   0x05
+0034 CFDB F000 00151         MOVFF   PLUSW2, r0x03
+0038 0E06      00152         MOVLW   0x06
+003A CFDB F000 00153         MOVFF   PLUSW2, r0x04
+003E 0E07      00154         MOVLW   0x07
+0040 CFDB F000 00155         MOVFF   PLUSW2, r0x05
+               00156 ;       .line   58; src/clock.c seconds_since_midnight = seconds + minutes * SEC_IN_MIN + hours * SEC_IN_HOUR;
+0044 5000      00157         MOVF    r0x03, W
+0046 6EE5      00158         MOVWF   POSTDEC1
+0048 5000      00159         MOVF    r0x02, W
+004A 6EE5      00160         MOVWF   POSTDEC1
+004C 0E00      00161         MOVLW   0x00
+004E 6EE5      00162         MOVWF   POSTDEC1
+gpasm-0.13.7 beta               objects/clock.asm11-14-2013  17:00:04         PAGE  4
+
+
+LOC  OBJECT CODE     LINE SOURCE TEXT
+  VALUE
+ 
+0050 0E3C      00163         MOVLW   0x3c
+0052 6EE5      00164         MOVWF   POSTDEC1
+0054 EC00 F000 00165         CALL    __mulint
+0058 6E00      00166         MOVWF   r0x02
+005A CFF3 F000 00167         MOVFF   PRODL, r0x03
+005E 0E04      00168         MOVLW   0x04
+0060 26E1      00169         ADDWF   FSR1L, F
+0062 5000      00170         MOVF    r0x02, W
+0064 2600      00171         ADDWF   r0x04, F
+0066 5000      00172         MOVF    r0x03, W
+0068 2200      00173         ADDWFC  r0x05, F
+006A 5000      00174         MOVF    r0x01, W
+006C 6EE5      00175         MOVWF   POSTDEC1
+006E 5000      00176         MOVF    r0x00, W
+0070 6EE5      00177         MOVWF   POSTDEC1
+0072 0E0E      00178         MOVLW   0x0e
+0074 6EE5      00179         MOVWF   POSTDEC1
+0076 0E10      00180         MOVLW   0x10
+0078 6EE5      00181         MOVWF   POSTDEC1
+007A EC00 F000 00182         CALL    __mulint
+007E 6E00      00183         MOVWF   r0x00
+0080 CFF3 F000 00184         MOVFF   PRODL, r0x01
+0084 0E04      00185         MOVLW   0x04
+0086 26E1      00186         ADDWF   FSR1L, F
+0088 5000      00187         MOVF    r0x00, W
+008A 2600      00188         ADDWF   r0x04, F
+008C 5000      00189         MOVF    r0x01, W
+008E 2200      00190         ADDWFC  r0x05, F
+0090 C000 F000 00191         MOVFF   r0x04, _seconds_since_midnight
+0094 C000 F000 00192         MOVFF   r0x05, (_seconds_since_midnight + 1)
+0098 6AE8      00193         CLRF    WREG
+009A BE00      00194         BTFSC   r0x05, 7
+009C 0EFF      00195         MOVLW   0xff
+009E 0000      00196         BANKSEL (_seconds_since_midnight + 2)
+00A0 6F00      00197         MOVWF   (_seconds_since_midnight + 2), B
+00A2 0000      00198         BANKSEL (_seconds_since_midnight + 3)
+00A4 6F00      00199         MOVWF   (_seconds_since_midnight + 3), B
+               00200 ;       .line   59; src/clock.c update_human_time();
+00A6 EC00 F000 00201         CALL    _update_human_time
+00AA CFE4 F000 00202         MOVFF   PREINC1, r0x05
+00AE CFE4 F000 00203         MOVFF   PREINC1, r0x04
+00B2 CFE4 F000 00204         MOVFF   PREINC1, r0x03
+00B6 CFE4 F000 00205         MOVFF   PREINC1, r0x02
+00BA CFE4 F000 00206         MOVFF   PREINC1, r0x01
+00BE CFE4 F000 00207         MOVFF   PREINC1, r0x00
+00C2 CFE4 FFD9 00208         MOVFF   PREINC1, FSR2L
+00C6 0012      00209         RETURN  
+               00210 
+               00211 ; ; Starting pCode block
+               00212 S_clock__update_human_time      code
+0000 00213 _update_human_time:
+               00214 ;       .line   35; src/clock.c void update_human_time(void){
+0000 CFD9 FFE5 00215         MOVFF   FSR2L, POSTDEC1
+0004 CFE1 FFD9 00216         MOVFF   FSR1L, FSR2L
+gpasm-0.13.7 beta               objects/clock.asm11-14-2013  17:00:04         PAGE  5
+
+
+LOC  OBJECT CODE     LINE SOURCE TEXT
+  VALUE
+ 
+0008 C000 FFE5 00217         MOVFF   r0x00, POSTDEC1
+000C C000 FFE5 00218         MOVFF   r0x01, POSTDEC1
+0010 C000 FFE5 00219         MOVFF   r0x02, POSTDEC1
+0014 C000 FFE5 00220         MOVFF   r0x03, POSTDEC1
+0018 C000 FFE5 00221         MOVFF   r0x04, POSTDEC1
+001C C000 FFE5 00222         MOVFF   r0x05, POSTDEC1
+0020 C000 FFE5 00223         MOVFF   r0x06, POSTDEC1
+0024 C000 FFE5 00224         MOVFF   r0x07, POSTDEC1
+0028 0000      00225         BANKSEL _seconds_since_midnight
+               00226 ;       .line   37; src/clock.c remaining_seconds = seconds_since_midnight;
+002A 5100      00227         MOVF    _seconds_since_midnight, W, B
+002C 6E00      00228         MOVWF   r0x00
+002E 0000      00229         BANKSEL (_seconds_since_midnight + 1)
+0030 5100      00230         MOVF    (_seconds_since_midnight + 1), W, B
+0032 6E00      00231         MOVWF   r0x01
+               00232 ;       .line   39; src/clock.c hours = remaining_seconds / SEC_IN_HOUR;
+0034 0E0E      00233         MOVLW   0x0e
+0036 6EE5      00234         MOVWF   POSTDEC1
+0038 0E10      00235         MOVLW   0x10
+003A 6EE5      00236         MOVWF   POSTDEC1
+003C 5000      00237         MOVF    r0x01, W
+003E 6EE5      00238         MOVWF   POSTDEC1
+0040 5000      00239         MOVF    r0x00, W
+0042 6EE5      00240         MOVWF   POSTDEC1
+0044 EC00 F000 00241         CALL    __divsint
+0048 6E00      00242         MOVWF   r0x02
+004A CFF3 F000 00243         MOVFF   PRODL, r0x03
+004E 0E04      00244         MOVLW   0x04
+0050 26E1      00245         ADDWF   FSR1L, F
+               00246 ;       .line   40; src/clock.c remaining_seconds -= (hours * SEC_IN_HOUR);
+0052 5000      00247         MOVF    r0x03, W
+0054 6EE5      00248         MOVWF   POSTDEC1
+0056 5000      00249         MOVF    r0x02, W
+0058 6EE5      00250         MOVWF   POSTDEC1
+005A 0E0E      00251         MOVLW   0x0e
+005C 6EE5      00252         MOVWF   POSTDEC1
+005E 0E10      00253         MOVLW   0x10
+0060 6EE5      00254         MOVWF   POSTDEC1
+0062 EC00 F000 00255         CALL    __mulint
+0066 6E00      00256         MOVWF   r0x04
+0068 CFF3 F000 00257         MOVFF   PRODL, r0x05
+006C 0E04      00258         MOVLW   0x04
+006E 26E1      00259         ADDWF   FSR1L, F
+0070 5000      00260         MOVF    r0x04, W
+0072 5E00      00261         SUBWF   r0x00, F
+0074 5000      00262         MOVF    r0x05, W
+0076 5A00      00263         SUBWFB  r0x01, F
+               00264 ;       .line   42; src/clock.c minutes = remaining_seconds / SEC_IN_MIN;
+0078 0E00      00265         MOVLW   0x00
+007A 6EE5      00266         MOVWF   POSTDEC1
+007C 0E3C      00267         MOVLW   0x3c
+007E 6EE5      00268         MOVWF   POSTDEC1
+0080 5000      00269         MOVF    r0x01, W
+0082 6EE5      00270         MOVWF   POSTDEC1
+gpasm-0.13.7 beta               objects/clock.asm11-14-2013  17:00:04         PAGE  6
+
+
+LOC  OBJECT CODE     LINE SOURCE TEXT
+  VALUE
+ 
+0084 5000      00271         MOVF    r0x00, W
+0086 6EE5      00272         MOVWF   POSTDEC1
+0088 EC00 F000 00273         CALL    __divsint
+008C 6E00      00274         MOVWF   r0x04
+008E CFF3 F000 00275         MOVFF   PRODL, r0x05
+0092 0E04      00276         MOVLW   0x04
+0094 26E1      00277         ADDWF   FSR1L, F
+               00278 ;       .line   43; src/clock.c remaining_seconds -= minutes * SEC_IN_MIN;
+0096 5000      00279         MOVF    r0x05, W
+0098 6EE5      00280         MOVWF   POSTDEC1
+009A 5000      00281         MOVF    r0x04, W
+009C 6EE5      00282         MOVWF   POSTDEC1
+009E 0E00      00283         MOVLW   0x00
+00A0 6EE5      00284         MOVWF   POSTDEC1
+00A2 0E3C      00285         MOVLW   0x3c
+00A4 6EE5      00286         MOVWF   POSTDEC1
+00A6 EC00 F000 00287         CALL    __mulint
+00AA 6E00      00288         MOVWF   r0x06
+00AC CFF3 F000 00289         MOVFF   PRODL, r0x07
+00B0 0E04      00290         MOVLW   0x04
+00B2 26E1      00291         ADDWF   FSR1L, F
+00B4 5000      00292         MOVF    r0x06, W
+00B6 5E00      00293         SUBWF   r0x00, F
+00B8 5000      00294         MOVF    r0x07, W
+00BA 5A00      00295         SUBWFB  r0x01, F
+               00296 ;       .line   46; src/clock.c time.hours = hours;
+00BC 5000      00297         MOVF    r0x02, W
+00BE 0000      00298         BANKSEL _time
+00C0 6F00      00299         MOVWF   _time, B
+00C2 5000      00300         MOVF    r0x03, W
+00C4 0000      00301         BANKSEL (_time + 1)
+00C6 6F00      00302         MOVWF   (_time + 1), B
+               00303 ;       .line   47; src/clock.c time.minutes = minutes;
+00C8 5000      00304         MOVF    r0x04, W
+00CA 0000      00305         BANKSEL (_time + 2)
+00CC 6F00      00306         MOVWF   (_time + 2), B
+00CE 5000      00307         MOVF    r0x05, W
+00D0 0000      00308         BANKSEL (_time + 3)
+00D2 6F00      00309         MOVWF   (_time + 3), B
+               00310 ;       .line   48; src/clock.c time.seconds = remaining_seconds;
+00D4 5000      00311         MOVF    r0x00, W
+00D6 0000      00312         BANKSEL (_time + 4)
+00D8 6F00      00313         MOVWF   (_time + 4), B
+00DA 5000      00314         MOVF    r0x01, W
+00DC 0000      00315         BANKSEL (_time + 5)
+00DE 6F00      00316         MOVWF   (_time + 5), B
+00E0 CFE4 F000 00317         MOVFF   PREINC1, r0x07
+00E4 CFE4 F000 00318         MOVFF   PREINC1, r0x06
+00E8 CFE4 F000 00319         MOVFF   PREINC1, r0x05
+00EC CFE4 F000 00320         MOVFF   PREINC1, r0x04
+00F0 CFE4 F000 00321         MOVFF   PREINC1, r0x03
+00F4 CFE4 F000 00322         MOVFF   PREINC1, r0x02
+00F8 CFE4 F000 00323         MOVFF   PREINC1, r0x01
+00FC CFE4 F000 00324         MOVFF   PREINC1, r0x00
+gpasm-0.13.7 beta               objects/clock.asm11-14-2013  17:00:04         PAGE  7
+
+
+LOC  OBJECT CODE     LINE SOURCE TEXT
+  VALUE
+ 
+0100 CFE4 FFD9 00325         MOVFF   PREINC1, FSR2L
+0104 0012      00326         RETURN  
+               00327 
+               00328 ; ; Starting pCode block
+0106 00329 __str_0:
+0106 4F48 5255 00330         DB      0x48, 0x4f, 0x55, 0x52, 0x53, 0x3a, 0x20, 0x25, 0x64, 0x0a, 0x00
+     3A53 2520 
+     0A64 0000 
+               00331 ; ; Starting pCode block
+0112 00332 __str_1:
+0112 494D 534E 00333         DB      0x4d, 0x49, 0x4e, 0x53, 0x3a, 0x20, 0x25, 0x64, 0x0a, 0x00
+     203A 6425 
+     000A      
+               00334 ; ; Starting pCode block
+011C 00335 __str_2:
+011C 6573 6F63 00336         DB      0x73, 0x65, 0x63, 0x6f, 0x6e, 0x64, 0x73, 0x3a, 0x20, 0x25, 0x64, 0x0a
+     646E 3A73 
+     2520 0A64 
+0128 0000      00337         DB      0x00
+               00338 
+               00339 
+               00340 ; Statistics:
+               00341 ; code size:      592 (0x0250) bytes ( 0.45%)
+               00342 ;                 296 (0x0128) words
+               00343 ; udata size:      10 (0x000a) bytes ( 0.26%)
+               00344 ; access size:      8 (0x0008) bytes
+               00345 
+               00346 
+gpasm-0.13.7 beta               objects/clock.asm11-14-2013  17:00:04         PAGE  8
+
+
+SYMBOL TABLE
+  LABEL                             VALUE 
+
+FSR1L                             00000FE1
+FSR2L                             00000FD9
+PLUSW2                            00000FDB
+POSTDEC1                          00000FE5
+PREINC1                           00000FE4
+PRODL                             00000FF3
+WREG                              00000FE8
+__18F97J60                        00000001
+__divsint                         00000000
+__mulint                          00000000
+__str_0                           00000106
+__str_1                           00000112
+__str_2                           0000011C
+_main                             00000000
+_printf                           00000000
+_seconds_since_midnight           00000000
+_set_time                         00000000
+_stdin                            00000000
+_stdout                           00000000
+_time                             00000000
+_update_human_time                00000000
+r0x00                             00000000
+r0x01                             00000001
+r0x02                             00000002
+r0x03                             00000003
+r0x04                             00000004
+r0x05                             00000005
+r0x06                             00000006
+r0x07                             00000007
+
+
+Errors   :       0
+Warnings :       0 reported,       0 suppressed
+Messages :       0 reported,       0 suppressed
+
