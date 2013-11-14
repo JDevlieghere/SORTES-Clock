@@ -22,7 +22,7 @@ int main(void){
 
 }
 
-void human_time update_human_time(void){
+void update_human_time(void){
 	int hours, minutes, remaining_seconds;
 	remaining_seconds = seconds_since_midnight;
 
