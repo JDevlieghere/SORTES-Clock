@@ -19,7 +19,7 @@ SDCC_PIC16_HEADERS=/usr/local/share/sdcc/include/pic16/pic18f97j60.h
 
 TCPIP_HEADERS=   Include/TCPIP_Stack/ETH97J60.h \
    Include/TCPIP_Stack/LCDBlocking.h 
-   
+
 APP_HEADERS=Include/GenericTypeDefs.h \
    Include/Compiler.h \
    Include/HardwareProfile.h 
@@ -47,11 +47,11 @@ objects/time.o : src/time.c $(SDCC_HEADERS)  \
 	$(CC) -c -mpic16 -p18f97j60  -o "objects/time.o" \
               -L/usr/local/lib/pic16  src/time.c
 
-src/pcclock : src/time.o
-	gcc -o src/pcclock src/pcclock.c src/time.o 
+src/pcclock : src/time.o src/pcclock.c
+	gcc src/pcclock.c src/time.o -o src/pcclock
 
 src/time.o : src/time.c
-	gcc -c src/time.c
+	gcc -c src/time.c -o src/time.o
 
 clean : 
 	$(RM) $(OBJECTS)

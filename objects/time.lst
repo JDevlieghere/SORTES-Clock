@@ -1,0 +1,657 @@
+gpasm-0.13.7 beta               objects/time.asm11-14-2013  20:54:12         PAGE  1
+
+
+LOC  OBJECT CODE     LINE SOURCE TEXT
+  VALUE
+ 
+               00001 ;--------------------------------------------------------
+               00002 ; File Created by SDCC : free open source ANSI-C Compiler
+               00003 ; Version 2.9.4 #5595 (Nov 14 2013) (UNIX)
+               00004 ; This file was generated Thu Nov 14 20:54:12 2013
+               00005 ;--------------------------------------------------------
+               00006 ; PIC16 port for the Microchip 16-bit core micros
+               00007 ;--------------------------------------------------------
+               00008         list    p=18f97j60
+               00009 
+               00010         radix dec
+               00011 
+               00012 ;--------------------------------------------------------
+               00013 ; public variables in this module
+               00014 ;--------------------------------------------------------
+               00015         global _get_hours
+               00016         global _get_minutes
+               00017         global _get_seconds
+               00018         global _time2string
+               00019         global _to_double_digits
+               00020         global _set_time
+               00021         global _seconds_since_midnight
+               00022 
+               00023 ;--------------------------------------------------------
+               00024 ; extern variables in this module
+               00025 ;--------------------------------------------------------
+               00026         extern __gptrget1
+               00027         extern _stdin
+               00028         extern _stdout
+               00029         extern _sprintf
+               00030         extern __divsint
+               00031         extern __mulint
+               00032 ;--------------------------------------------------------
+               00033 ;       Equates to used internal registers
+               00034 ;--------------------------------------------------------
+  00000FD8     00035 STATUS  equ     0xfd8
+  00000FE8     00036 WREG    equ     0xfe8
+  00000FE9     00037 FSR0L   equ     0xfe9
+  00000FE1     00038 FSR1L   equ     0xfe1
+  00000FD9     00039 FSR2L   equ     0xfd9
+  00000FE5     00040 POSTDEC1        equ     0xfe5
+  00000FE4     00041 PREINC1 equ     0xfe4
+  00000FDB     00042 PLUSW2  equ     0xfdb
+  00000FF3     00043 PRODL   equ     0xff3
+  00000FF4     00044 PRODH   equ     0xff4
+               00045 
+               00046 
+               00047         idata
+               00048 _seconds_since_midnight db      0x00, 0x00
+               00049 
+               00050 
+               00051 ; Internal registers
+               00052 .registers      udata_ovr       0x0000
+               00053 r0x00   res     1
+               00054 r0x01   res     1
+gpasm-0.13.7 beta               objects/time.asm11-14-2013  20:54:12         PAGE  2
+
+
+LOC  OBJECT CODE     LINE SOURCE TEXT
+  VALUE
+ 
+               00055 r0x02   res     1
+               00056 r0x03   res     1
+               00057 r0x04   res     1
+               00058 r0x05   res     1
+               00059 
+               00060 udata_time_0    udata
+               00061 _time2string_string_1_1 res     9
+               00062 
+               00063 udata_time_1    udata
+               00064 _to_double_digits_buffer_1_1    res     3
+               00065 
+               00066 ;--------------------------------------------------------
+               00067 ; global & static initialisations
+               00068 ;--------------------------------------------------------
+               00069 ; I code from now on!
+               00070 ; ; Starting pCode block
+               00071 S_time__set_time        code
+0000 00072 _set_time:
+               00073 ;       .line   55; src/time.c  void set_time(int hours, int minutes, int seconds){
+0000 CFD9 FFE5 00074         MOVFF   FSR2L, POSTDEC1
+0004 CFE1 FFD9 00075         MOVFF   FSR1L, FSR2L
+0008 C000 FFE5 00076         MOVFF   r0x00, POSTDEC1
+000C C000 FFE5 00077         MOVFF   r0x01, POSTDEC1
+0010 C000 FFE5 00078         MOVFF   r0x02, POSTDEC1
+0014 C000 FFE5 00079         MOVFF   r0x03, POSTDEC1
+0018 C000 FFE5 00080         MOVFF   r0x04, POSTDEC1
+001C C000 FFE5 00081         MOVFF   r0x05, POSTDEC1
+0020 0E02      00082         MOVLW   0x02
+0022 CFDB F000 00083         MOVFF   PLUSW2, r0x00
+0026 0E03      00084         MOVLW   0x03
+0028 CFDB F000 00085         MOVFF   PLUSW2, r0x01
+002C 0E04      00086         MOVLW   0x04
+002E CFDB F000 00087         MOVFF   PLUSW2, r0x02
+0032 0E05      00088         MOVLW   0x05
+0034 CFDB F000 00089         MOVFF   PLUSW2, r0x03
+0038 0E06      00090         MOVLW   0x06
+003A CFDB F000 00091         MOVFF   PLUSW2, r0x04
+003E 0E07      00092         MOVLW   0x07
+0040 CFDB F000 00093         MOVFF   PLUSW2, r0x05
+               00094 ;       .line   56; src/time.c  seconds_since_midnight = seconds + minutes * SEC_IN_MIN + hours * SEC_IN_HOUR;
+0044 5000      00095         MOVF    r0x03, W
+0046 6EE5      00096         MOVWF   POSTDEC1
+0048 5000      00097         MOVF    r0x02, W
+004A 6EE5      00098         MOVWF   POSTDEC1
+004C 0E00      00099         MOVLW   0x00
+004E 6EE5      00100         MOVWF   POSTDEC1
+0050 0E3C      00101         MOVLW   0x3c
+0052 6EE5      00102         MOVWF   POSTDEC1
+0054 EC00 F000 00103         CALL    __mulint
+0058 6E00      00104         MOVWF   r0x02
+005A CFF3 F000 00105         MOVFF   PRODL, r0x03
+005E 0E04      00106         MOVLW   0x04
+0060 26E1      00107         ADDWF   FSR1L, F
+0062 5000      00108         MOVF    r0x02, W
+gpasm-0.13.7 beta               objects/time.asm11-14-2013  20:54:12         PAGE  3
+
+
+LOC  OBJECT CODE     LINE SOURCE TEXT
+  VALUE
+ 
+0064 2600      00109         ADDWF   r0x04, F
+0066 5000      00110         MOVF    r0x03, W
+0068 2200      00111         ADDWFC  r0x05, F
+006A 5000      00112         MOVF    r0x01, W
+006C 6EE5      00113         MOVWF   POSTDEC1
+006E 5000      00114         MOVF    r0x00, W
+0070 6EE5      00115         MOVWF   POSTDEC1
+0072 0E0E      00116         MOVLW   0x0e
+0074 6EE5      00117         MOVWF   POSTDEC1
+0076 0E10      00118         MOVLW   0x10
+0078 6EE5      00119         MOVWF   POSTDEC1
+007A EC00 F000 00120         CALL    __mulint
+007E 6E00      00121         MOVWF   r0x00
+0080 CFF3 F000 00122         MOVFF   PRODL, r0x01
+0084 0E04      00123         MOVLW   0x04
+0086 26E1      00124         ADDWF   FSR1L, F
+0088 5000      00125         MOVF    r0x00, W
+008A 2400      00126         ADDWF   r0x04, W
+008C 0000      00127         BANKSEL _seconds_since_midnight
+008E 6F00      00128         MOVWF   _seconds_since_midnight, B
+0090 5000      00129         MOVF    r0x01, W
+0092 2000      00130         ADDWFC  r0x05, W
+0094 0000      00131         BANKSEL (_seconds_since_midnight + 1)
+0096 6F00      00132         MOVWF   (_seconds_since_midnight + 1), B
+0098 CFE4 F000 00133         MOVFF   PREINC1, r0x05
+009C CFE4 F000 00134         MOVFF   PREINC1, r0x04
+00A0 CFE4 F000 00135         MOVFF   PREINC1, r0x03
+00A4 CFE4 F000 00136         MOVFF   PREINC1, r0x02
+00A8 CFE4 F000 00137         MOVFF   PREINC1, r0x01
+00AC CFE4 F000 00138         MOVFF   PREINC1, r0x00
+00B0 CFE4 FFD9 00139         MOVFF   PREINC1, FSR2L
+00B4 0012      00140         RETURN  
+               00141 
+               00142 ; ; Starting pCode block
+               00143 S_time__to_double_digits        code
+0000 00144 _to_double_digits:
+               00145 ;       .line   43; src/time.c  char* to_double_digits(int value){
+0000 CFD9 FFE5 00146         MOVFF   FSR2L, POSTDEC1
+0004 CFE1 FFD9 00147         MOVFF   FSR1L, FSR2L
+0008 C000 FFE5 00148         MOVFF   r0x00, POSTDEC1
+000C C000 FFE5 00149         MOVFF   r0x01, POSTDEC1
+0010 C000 FFE5 00150         MOVFF   r0x02, POSTDEC1
+0014 C000 FFE5 00151         MOVFF   r0x03, POSTDEC1
+0018 C000 FFE5 00152         MOVFF   r0x04, POSTDEC1
+001C 0E02      00153         MOVLW   0x02
+001E CFDB F000 00154         MOVFF   PLUSW2, r0x00
+0022 0E03      00155         MOVLW   0x03
+0024 CFDB F000 00156         MOVFF   PLUSW2, r0x01
+               00157 ;       .line   45; src/time.c  sprintf(buffer, "%02d", value);
+0028 0E00      00158         MOVLW   HIGH(_to_double_digits_buffer_1_1)
+002A 6E00      00159         MOVWF   r0x03
+002C 0E00      00160         MOVLW   LOW(_to_double_digits_buffer_1_1)
+002E 6E00      00161         MOVWF   r0x02
+0030 0E80      00162         MOVLW   0x80
+gpasm-0.13.7 beta               objects/time.asm11-14-2013  20:54:12         PAGE  4
+
+
+LOC  OBJECT CODE     LINE SOURCE TEXT
+  VALUE
+ 
+0032 6E00      00163         MOVWF   r0x04
+0034 5000      00164         MOVF    r0x01, W
+0036 6EE5      00165         MOVWF   POSTDEC1
+0038 5000      00166         MOVF    r0x00, W
+003A 6EE5      00167         MOVWF   POSTDEC1
+003C 0E00      00168         MOVLW   UPPER(__str_0)
+003E 6EE5      00169         MOVWF   POSTDEC1
+0040 0E00      00170         MOVLW   HIGH(__str_0)
+0042 6EE5      00171         MOVWF   POSTDEC1
+0044 0E00      00172         MOVLW   LOW(__str_0)
+0046 6EE5      00173         MOVWF   POSTDEC1
+0048 5000      00174         MOVF    r0x04, W
+004A 6EE5      00175         MOVWF   POSTDEC1
+004C 5000      00176         MOVF    r0x03, W
+004E 6EE5      00177         MOVWF   POSTDEC1
+0050 5000      00178         MOVF    r0x02, W
+0052 6EE5      00179         MOVWF   POSTDEC1
+0054 EC00 F000 00180         CALL    _sprintf
+0058 0E08      00181         MOVLW   0x08
+005A 26E1      00182         ADDWF   FSR1L, F
+               00183 ;       .line   46; src/time.c  return buffer;
+005C 0E00      00184         MOVLW   HIGH(_to_double_digits_buffer_1_1)
+005E 6E00      00185         MOVWF   r0x01
+0060 0E00      00186         MOVLW   LOW(_to_double_digits_buffer_1_1)
+0062 6E00      00187         MOVWF   r0x00
+0064 0E80      00188         MOVLW   0x80
+0066 6E00      00189         MOVWF   r0x02
+0068 C000 FFF4 00190         MOVFF   r0x02, PRODH
+006C C000 FFF3 00191         MOVFF   r0x01, PRODL
+0070 5000      00192         MOVF    r0x00, W
+0072 CFE4 F000 00193         MOVFF   PREINC1, r0x04
+0076 CFE4 F000 00194         MOVFF   PREINC1, r0x03
+007A CFE4 F000 00195         MOVFF   PREINC1, r0x02
+007E CFE4 F000 00196         MOVFF   PREINC1, r0x01
+0082 CFE4 F000 00197         MOVFF   PREINC1, r0x00
+0086 CFE4 FFD9 00198         MOVFF   PREINC1, FSR2L
+008A 0012      00199         RETURN  
+               00200 
+               00201 ; ; Starting pCode block
+               00202 S_time__time2string     code
+0000 00203 _time2string:
+               00204 ;       .line   26; src/time.c  char* time2string(void){
+0000 CFD9 FFE5 00205         MOVFF   FSR2L, POSTDEC1
+0004 CFE1 FFD9 00206         MOVFF   FSR1L, FSR2L
+0008 C000 FFE5 00207         MOVFF   r0x00, POSTDEC1
+000C C000 FFE5 00208         MOVFF   r0x01, POSTDEC1
+0010 C000 FFE5 00209         MOVFF   r0x02, POSTDEC1
+               00210 ;       .line   28; src/time.c  string[0] = to_double_digits(get_hours())[0];
+0014 EC00 F000 00211         CALL    _get_hours
+0018 6E00      00212         MOVWF   r0x00
+001A CFF3 F000 00213         MOVFF   PRODL, r0x01
+001E 5000      00214         MOVF    r0x01, W
+0020 6EE5      00215         MOVWF   POSTDEC1
+0022 5000      00216         MOVF    r0x00, W
+gpasm-0.13.7 beta               objects/time.asm11-14-2013  20:54:12         PAGE  5
+
+
+LOC  OBJECT CODE     LINE SOURCE TEXT
+  VALUE
+ 
+0024 6EE5      00217         MOVWF   POSTDEC1
+0026 EC00 F000 00218         CALL    _to_double_digits
+002A 6E00      00219         MOVWF   r0x00
+002C CFF3 F000 00220         MOVFF   PRODL, r0x01
+0030 CFF4 F000 00221         MOVFF   PRODH, r0x02
+0034 0E02      00222         MOVLW   0x02
+0036 26E1      00223         ADDWF   FSR1L, F
+0038 C000 FFE9 00224         MOVFF   r0x00, FSR0L
+003C C000 FFF3 00225         MOVFF   r0x01, PRODL
+0040 5000      00226         MOVF    r0x02, W
+0042 EC00 F000 00227         CALL    __gptrget1
+0046 6E00      00228         MOVWF   r0x00
+0048 5000      00229         MOVF    r0x00, W
+004A 0000      00230         BANKSEL _time2string_string_1_1
+004C 6F00      00231         MOVWF   _time2string_string_1_1, B
+               00232 ;       .line   29; src/time.c  string[1] = to_double_digits(get_hours())[1];
+004E EC00 F000 00233         CALL    _get_hours
+0052 6E00      00234         MOVWF   r0x00
+0054 CFF3 F000 00235         MOVFF   PRODL, r0x01
+0058 5000      00236         MOVF    r0x01, W
+005A 6EE5      00237         MOVWF   POSTDEC1
+005C 5000      00238         MOVF    r0x00, W
+005E 6EE5      00239         MOVWF   POSTDEC1
+0060 EC00 F000 00240         CALL    _to_double_digits
+0064 6E00      00241         MOVWF   r0x00
+0066 CFF3 F000 00242         MOVFF   PRODL, r0x01
+006A CFF4 F000 00243         MOVFF   PRODH, r0x02
+006E 0E02      00244         MOVLW   0x02
+0070 26E1      00245         ADDWF   FSR1L, F
+0072 2A00      00246         INCF    r0x00, F
+0074 B0D8      00247         BTFSC   STATUS, 0
+0076 2A00      00248         INCF    r0x01, F
+0078 B0D8      00249         BTFSC   STATUS, 0
+007A 2A00      00250         INCF    r0x02, F
+007C C000 FFE9 00251         MOVFF   r0x00, FSR0L
+0080 C000 FFF3 00252         MOVFF   r0x01, PRODL
+0084 5000      00253         MOVF    r0x02, W
+0086 EC00 F000 00254         CALL    __gptrget1
+008A 6E00      00255         MOVWF   r0x00
+008C 5000      00256         MOVF    r0x00, W
+008E 0000      00257         BANKSEL (_time2string_string_1_1 + 1)
+0090 6F00      00258         MOVWF   (_time2string_string_1_1 + 1), B
+               00259 ;       .line   30; src/time.c  string[2] = ':';
+0092 0E3A      00260         MOVLW   0x3a
+0094 0000      00261         BANKSEL (_time2string_string_1_1 + 2)
+0096 6F00      00262         MOVWF   (_time2string_string_1_1 + 2), B
+               00263 ;       .line   31; src/time.c  string[3] = to_double_digits(get_minutes())[0];
+0098 EC00 F000 00264         CALL    _get_minutes
+009C 6E00      00265         MOVWF   r0x00
+009E CFF3 F000 00266         MOVFF   PRODL, r0x01
+00A2 5000      00267         MOVF    r0x01, W
+00A4 6EE5      00268         MOVWF   POSTDEC1
+00A6 5000      00269         MOVF    r0x00, W
+00A8 6EE5      00270         MOVWF   POSTDEC1
+gpasm-0.13.7 beta               objects/time.asm11-14-2013  20:54:12         PAGE  6
+
+
+LOC  OBJECT CODE     LINE SOURCE TEXT
+  VALUE
+ 
+00AA EC00 F000 00271         CALL    _to_double_digits
+00AE 6E00      00272         MOVWF   r0x00
+00B0 CFF3 F000 00273         MOVFF   PRODL, r0x01
+00B4 CFF4 F000 00274         MOVFF   PRODH, r0x02
+00B8 0E02      00275         MOVLW   0x02
+00BA 26E1      00276         ADDWF   FSR1L, F
+00BC C000 FFE9 00277         MOVFF   r0x00, FSR0L
+00C0 C000 FFF3 00278         MOVFF   r0x01, PRODL
+00C4 5000      00279         MOVF    r0x02, W
+00C6 EC00 F000 00280         CALL    __gptrget1
+00CA 6E00      00281         MOVWF   r0x00
+00CC 5000      00282         MOVF    r0x00, W
+00CE 0000      00283         BANKSEL (_time2string_string_1_1 + 3)
+00D0 6F00      00284         MOVWF   (_time2string_string_1_1 + 3), B
+               00285 ;       .line   32; src/time.c  string[4] = to_double_digits(get_minutes())[1];
+00D2 EC00 F000 00286         CALL    _get_minutes
+00D6 6E00      00287         MOVWF   r0x00
+00D8 CFF3 F000 00288         MOVFF   PRODL, r0x01
+00DC 5000      00289         MOVF    r0x01, W
+00DE 6EE5      00290         MOVWF   POSTDEC1
+00E0 5000      00291         MOVF    r0x00, W
+00E2 6EE5      00292         MOVWF   POSTDEC1
+00E4 EC00 F000 00293         CALL    _to_double_digits
+00E8 6E00      00294         MOVWF   r0x00
+00EA CFF3 F000 00295         MOVFF   PRODL, r0x01
+00EE CFF4 F000 00296         MOVFF   PRODH, r0x02
+00F2 0E02      00297         MOVLW   0x02
+00F4 26E1      00298         ADDWF   FSR1L, F
+00F6 2A00      00299         INCF    r0x00, F
+00F8 B0D8      00300         BTFSC   STATUS, 0
+00FA 2A00      00301         INCF    r0x01, F
+00FC B0D8      00302         BTFSC   STATUS, 0
+00FE 2A00      00303         INCF    r0x02, F
+0100 C000 FFE9 00304         MOVFF   r0x00, FSR0L
+0104 C000 FFF3 00305         MOVFF   r0x01, PRODL
+0108 5000      00306         MOVF    r0x02, W
+010A EC00 F000 00307         CALL    __gptrget1
+010E 6E00      00308         MOVWF   r0x00
+0110 5000      00309         MOVF    r0x00, W
+0112 0000      00310         BANKSEL (_time2string_string_1_1 + 4)
+0114 6F00      00311         MOVWF   (_time2string_string_1_1 + 4), B
+               00312 ;       .line   33; src/time.c  string[5] = ':';
+0116 0E3A      00313         MOVLW   0x3a
+0118 0000      00314         BANKSEL (_time2string_string_1_1 + 5)
+011A 6F00      00315         MOVWF   (_time2string_string_1_1 + 5), B
+               00316 ;       .line   34; src/time.c  string[6] = to_double_digits(get_seconds())[0];
+011C EC00 F000 00317         CALL    _get_seconds
+0120 6E00      00318         MOVWF   r0x00
+0122 CFF3 F000 00319         MOVFF   PRODL, r0x01
+0126 5000      00320         MOVF    r0x01, W
+0128 6EE5      00321         MOVWF   POSTDEC1
+012A 5000      00322         MOVF    r0x00, W
+012C 6EE5      00323         MOVWF   POSTDEC1
+012E EC00 F000 00324         CALL    _to_double_digits
+gpasm-0.13.7 beta               objects/time.asm11-14-2013  20:54:12         PAGE  7
+
+
+LOC  OBJECT CODE     LINE SOURCE TEXT
+  VALUE
+ 
+0132 6E00      00325         MOVWF   r0x00
+0134 CFF3 F000 00326         MOVFF   PRODL, r0x01
+0138 CFF4 F000 00327         MOVFF   PRODH, r0x02
+013C 0E02      00328         MOVLW   0x02
+013E 26E1      00329         ADDWF   FSR1L, F
+0140 C000 FFE9 00330         MOVFF   r0x00, FSR0L
+0144 C000 FFF3 00331         MOVFF   r0x01, PRODL
+0148 5000      00332         MOVF    r0x02, W
+014A EC00 F000 00333         CALL    __gptrget1
+014E 6E00      00334         MOVWF   r0x00
+0150 5000      00335         MOVF    r0x00, W
+0152 0000      00336         BANKSEL (_time2string_string_1_1 + 6)
+0154 6F00      00337         MOVWF   (_time2string_string_1_1 + 6), B
+               00338 ;       .line   35; src/time.c  string[7] = to_double_digits(get_seconds())[1]; 
+0156 EC00 F000 00339         CALL    _get_seconds
+015A 6E00      00340         MOVWF   r0x00
+015C CFF3 F000 00341         MOVFF   PRODL, r0x01
+0160 5000      00342         MOVF    r0x01, W
+0162 6EE5      00343         MOVWF   POSTDEC1
+0164 5000      00344         MOVF    r0x00, W
+0166 6EE5      00345         MOVWF   POSTDEC1
+0168 EC00 F000 00346         CALL    _to_double_digits
+016C 6E00      00347         MOVWF   r0x00
+016E CFF3 F000 00348         MOVFF   PRODL, r0x01
+0172 CFF4 F000 00349         MOVFF   PRODH, r0x02
+0176 0E02      00350         MOVLW   0x02
+0178 26E1      00351         ADDWF   FSR1L, F
+017A 2A00      00352         INCF    r0x00, F
+017C B0D8      00353         BTFSC   STATUS, 0
+017E 2A00      00354         INCF    r0x01, F
+0180 B0D8      00355         BTFSC   STATUS, 0
+0182 2A00      00356         INCF    r0x02, F
+0184 C000 FFE9 00357         MOVFF   r0x00, FSR0L
+0188 C000 FFF3 00358         MOVFF   r0x01, PRODL
+018C 5000      00359         MOVF    r0x02, W
+018E EC00 F000 00360         CALL    __gptrget1
+0192 6E00      00361         MOVWF   r0x00
+0194 5000      00362         MOVF    r0x00, W
+0196 0000      00363         BANKSEL (_time2string_string_1_1 + 7)
+0198 6F00      00364         MOVWF   (_time2string_string_1_1 + 7), B
+019A 0000      00365         BANKSEL (_time2string_string_1_1 + 8)
+               00366 ;       .line   36; src/time.c  string[8] = '\0';
+019C 6B00      00367         CLRF    (_time2string_string_1_1 + 8), B
+               00368 ;       .line   37; src/time.c  return string;
+019E 0E00      00369         MOVLW   HIGH(_time2string_string_1_1)
+01A0 6E00      00370         MOVWF   r0x01
+01A2 0E00      00371         MOVLW   LOW(_time2string_string_1_1)
+01A4 6E00      00372         MOVWF   r0x00
+01A6 0E80      00373         MOVLW   0x80
+01A8 6E00      00374         MOVWF   r0x02
+01AA C000 FFF4 00375         MOVFF   r0x02, PRODH
+01AE C000 FFF3 00376         MOVFF   r0x01, PRODL
+01B2 5000      00377         MOVF    r0x00, W
+01B4 CFE4 F000 00378         MOVFF   PREINC1, r0x02
+gpasm-0.13.7 beta               objects/time.asm11-14-2013  20:54:12         PAGE  8
+
+
+LOC  OBJECT CODE     LINE SOURCE TEXT
+  VALUE
+ 
+01B8 CFE4 F000 00379         MOVFF   PREINC1, r0x01
+01BC CFE4 F000 00380         MOVFF   PREINC1, r0x00
+01C0 CFE4 FFD9 00381         MOVFF   PREINC1, FSR2L
+01C4 0012      00382         RETURN  
+               00383 
+               00384 ; ; Starting pCode block
+               00385 S_time__get_seconds     code
+0000 00386 _get_seconds:
+               00387 ;       .line   17; src/time.c  int get_seconds(void){
+0000 CFD9 FFE5 00388         MOVFF   FSR2L, POSTDEC1
+0004 CFE1 FFD9 00389         MOVFF   FSR1L, FSR2L
+0008 C000 FFE5 00390         MOVFF   r0x00, POSTDEC1
+000C C000 FFE5 00391         MOVFF   r0x01, POSTDEC1
+0010 C000 FFE5 00392         MOVFF   r0x02, POSTDEC1
+0014 C000 FFE5 00393         MOVFF   r0x03, POSTDEC1
+               00394 ;       .line   18; src/time.c  int remaining_seconds = seconds_since_midnight - (get_hours() * SEC_IN_HOUR + get_minutes() * SEC_IN_MIN);
+0018 EC00 F000 00395         CALL    _get_hours
+001C 6E00      00396         MOVWF   r0x00
+001E CFF3 F000 00397         MOVFF   PRODL, r0x01
+0022 5000      00398         MOVF    r0x01, W
+0024 6EE5      00399         MOVWF   POSTDEC1
+0026 5000      00400         MOVF    r0x00, W
+0028 6EE5      00401         MOVWF   POSTDEC1
+002A 0E0E      00402         MOVLW   0x0e
+002C 6EE5      00403         MOVWF   POSTDEC1
+002E 0E10      00404         MOVLW   0x10
+0030 6EE5      00405         MOVWF   POSTDEC1
+0032 EC00 F000 00406         CALL    __mulint
+0036 6E00      00407         MOVWF   r0x00
+0038 CFF3 F000 00408         MOVFF   PRODL, r0x01
+003C 0E04      00409         MOVLW   0x04
+003E 26E1      00410         ADDWF   FSR1L, F
+0040 EC00 F000 00411         CALL    _get_minutes
+0044 6E00      00412         MOVWF   r0x02
+0046 CFF3 F000 00413         MOVFF   PRODL, r0x03
+004A 5000      00414         MOVF    r0x03, W
+004C 6EE5      00415         MOVWF   POSTDEC1
+004E 5000      00416         MOVF    r0x02, W
+0050 6EE5      00417         MOVWF   POSTDEC1
+0052 0E00      00418         MOVLW   0x00
+0054 6EE5      00419         MOVWF   POSTDEC1
+0056 0E3C      00420         MOVLW   0x3c
+0058 6EE5      00421         MOVWF   POSTDEC1
+005A EC00 F000 00422         CALL    __mulint
+005E 6E00      00423         MOVWF   r0x02
+0060 CFF3 F000 00424         MOVFF   PRODL, r0x03
+0064 0E04      00425         MOVLW   0x04
+0066 26E1      00426         ADDWF   FSR1L, F
+0068 5000      00427         MOVF    r0x02, W
+006A 2600      00428         ADDWF   r0x00, F
+006C 5000      00429         MOVF    r0x03, W
+006E 2200      00430         ADDWFC  r0x01, F
+0070 5000      00431         MOVF    r0x00, W
+0072 0000      00432         BANKSEL _seconds_since_midnight
+gpasm-0.13.7 beta               objects/time.asm11-14-2013  20:54:12         PAGE  9
+
+
+LOC  OBJECT CODE     LINE SOURCE TEXT
+  VALUE
+ 
+0074 5D00      00433         SUBWF   _seconds_since_midnight, W, B
+0076 6E00      00434         MOVWF   r0x00
+0078 5000      00435         MOVF    r0x01, W
+007A 0000      00436         BANKSEL (_seconds_since_midnight + 1)
+007C 5900      00437         SUBWFB  (_seconds_since_midnight + 1), W, B
+007E 6E00      00438         MOVWF   r0x01
+               00439 ;       .line   19; src/time.c  return remaining_seconds;
+0080 C000 FFF3 00440         MOVFF   r0x01, PRODL
+0084 5000      00441         MOVF    r0x00, W
+0086 CFE4 F000 00442         MOVFF   PREINC1, r0x03
+008A CFE4 F000 00443         MOVFF   PREINC1, r0x02
+008E CFE4 F000 00444         MOVFF   PREINC1, r0x01
+0092 CFE4 F000 00445         MOVFF   PREINC1, r0x00
+0096 CFE4 FFD9 00446         MOVFF   PREINC1, FSR2L
+009A 0012      00447         RETURN  
+               00448 
+               00449 ; ; Starting pCode block
+               00450 S_time__get_minutes     code
+0000 00451 _get_minutes:
+               00452 ;       .line   12; src/time.c  int get_minutes(void){
+0000 CFD9 FFE5 00453         MOVFF   FSR2L, POSTDEC1
+0004 CFE1 FFD9 00454         MOVFF   FSR1L, FSR2L
+0008 C000 FFE5 00455         MOVFF   r0x00, POSTDEC1
+000C C000 FFE5 00456         MOVFF   r0x01, POSTDEC1
+               00457 ;       .line   13; src/time.c  int remaining_seconds = seconds_since_midnight - (get_hours() * SEC_IN_HOUR);
+0010 EC00 F000 00458         CALL    _get_hours
+0014 6E00      00459         MOVWF   r0x00
+0016 CFF3 F000 00460         MOVFF   PRODL, r0x01
+001A 5000      00461         MOVF    r0x01, W
+001C 6EE5      00462         MOVWF   POSTDEC1
+001E 5000      00463         MOVF    r0x00, W
+0020 6EE5      00464         MOVWF   POSTDEC1
+0022 0E0E      00465         MOVLW   0x0e
+0024 6EE5      00466         MOVWF   POSTDEC1
+0026 0E10      00467         MOVLW   0x10
+0028 6EE5      00468         MOVWF   POSTDEC1
+002A EC00 F000 00469         CALL    __mulint
+002E 6E00      00470         MOVWF   r0x00
+0030 CFF3 F000 00471         MOVFF   PRODL, r0x01
+0034 0E04      00472         MOVLW   0x04
+0036 26E1      00473         ADDWF   FSR1L, F
+0038 5000      00474         MOVF    r0x00, W
+003A 0000      00475         BANKSEL _seconds_since_midnight
+003C 5D00      00476         SUBWF   _seconds_since_midnight, W, B
+003E 6E00      00477         MOVWF   r0x00
+0040 5000      00478         MOVF    r0x01, W
+0042 0000      00479         BANKSEL (_seconds_since_midnight + 1)
+0044 5900      00480         SUBWFB  (_seconds_since_midnight + 1), W, B
+0046 6E00      00481         MOVWF   r0x01
+               00482 ;       .line   14; src/time.c  return (remaining_seconds / SEC_IN_MIN);
+0048 0E00      00483         MOVLW   0x00
+004A 6EE5      00484         MOVWF   POSTDEC1
+004C 0E3C      00485         MOVLW   0x3c
+004E 6EE5      00486         MOVWF   POSTDEC1
+gpasm-0.13.7 beta               objects/time.asm11-14-2013  20:54:12         PAGE 10
+
+
+LOC  OBJECT CODE     LINE SOURCE TEXT
+  VALUE
+ 
+0050 5000      00487         MOVF    r0x01, W
+0052 6EE5      00488         MOVWF   POSTDEC1
+0054 5000      00489         MOVF    r0x00, W
+0056 6EE5      00490         MOVWF   POSTDEC1
+0058 EC00 F000 00491         CALL    __divsint
+005C 6E00      00492         MOVWF   r0x00
+005E CFF3 F000 00493         MOVFF   PRODL, r0x01
+0062 0E04      00494         MOVLW   0x04
+0064 26E1      00495         ADDWF   FSR1L, F
+0066 C000 FFF3 00496         MOVFF   r0x01, PRODL
+006A 5000      00497         MOVF    r0x00, W
+006C CFE4 F000 00498         MOVFF   PREINC1, r0x01
+0070 CFE4 F000 00499         MOVFF   PREINC1, r0x00
+0074 CFE4 FFD9 00500         MOVFF   PREINC1, FSR2L
+0078 0012      00501         RETURN  
+               00502 
+               00503 ; ; Starting pCode block
+               00504 S_time__get_hours       code
+0000 00505 _get_hours:
+               00506 ;       .line   8; src/time.c   int get_hours(void){
+0000 CFD9 FFE5 00507         MOVFF   FSR2L, POSTDEC1
+0004 CFE1 FFD9 00508         MOVFF   FSR1L, FSR2L
+0008 C000 FFE5 00509         MOVFF   r0x00, POSTDEC1
+000C C000 FFE5 00510         MOVFF   r0x01, POSTDEC1
+               00511 ;       .line   9; src/time.c   return (int)(seconds_since_midnight / SEC_IN_HOUR);
+0010 0E0E      00512         MOVLW   0x0e
+0012 6EE5      00513         MOVWF   POSTDEC1
+0014 0E10      00514         MOVLW   0x10
+0016 6EE5      00515         MOVWF   POSTDEC1
+0018 0000      00516         BANKSEL (_seconds_since_midnight + 1)
+001A 5100      00517         MOVF    (_seconds_since_midnight + 1), W, B
+001C 6EE5      00518         MOVWF   POSTDEC1
+001E 0000      00519         BANKSEL _seconds_since_midnight
+0020 5100      00520         MOVF    _seconds_since_midnight, W, B
+0022 6EE5      00521         MOVWF   POSTDEC1
+0024 EC00 F000 00522         CALL    __divsint
+0028 6E00      00523         MOVWF   r0x00
+002A CFF3 F000 00524         MOVFF   PRODL, r0x01
+002E 0E04      00525         MOVLW   0x04
+0030 26E1      00526         ADDWF   FSR1L, F
+0032 C000 FFF3 00527         MOVFF   r0x01, PRODL
+0036 5000      00528         MOVF    r0x00, W
+0038 CFE4 F000 00529         MOVFF   PREINC1, r0x01
+003C CFE4 F000 00530         MOVFF   PREINC1, r0x00
+0040 CFE4 FFD9 00531         MOVFF   PREINC1, FSR2L
+0044 0012      00532         RETURN  
+               00533 
+               00534 ; ; Starting pCode block
+0046 00535 __str_0:
+0046 3025 6432 00536         DB      0x25, 0x30, 0x32, 0x64, 0x00
+     0000      
+               00537 
+               00538 
+               00539 ; Statistics:
+gpasm-0.13.7 beta               objects/time.asm11-14-2013  20:54:12         PAGE 11
+
+
+LOC  OBJECT CODE     LINE SOURCE TEXT
+  VALUE
+ 
+               00540 ; code size:     1126 (0x0466) bytes ( 0.86%)
+               00541 ;                 563 (0x0233) words
+               00542 ; udata size:      12 (0x000c) bytes ( 0.31%)
+               00543 ; access size:      6 (0x0006) bytes
+               00544 
+               00545 
+gpasm-0.13.7 beta               objects/time.asm11-14-2013  20:54:12         PAGE 12
+
+
+SYMBOL TABLE
+  LABEL                             VALUE 
+
+FSR0L                             00000FE9
+FSR1L                             00000FE1
+FSR2L                             00000FD9
+PLUSW2                            00000FDB
+POSTDEC1                          00000FE5
+PREINC1                           00000FE4
+PRODH                             00000FF4
+PRODL                             00000FF3
+STATUS                            00000FD8
+WREG                              00000FE8
+__18F97J60                        00000001
+__divsint                         00000000
+__gptrget1                        00000000
+__mulint                          00000000
+__str_0                           00000046
+_get_hours                        00000000
+_get_minutes                      00000000
+_get_seconds                      00000000
+_seconds_since_midnight           00000000
+_set_time                         00000000
+_sprintf                          00000000
+_stdin                            00000000
+_stdout                           00000000
+_time2string                      00000000
+_time2string_string_1_1           00000000
+_to_double_digits                 00000000
+_to_double_digits_buffer_1_1      00000000
+r0x00                             00000000
+r0x01                             00000001
+r0x02                             00000002
+r0x03                             00000003
+r0x04                             00000004
+r0x05                             00000005
+
+
+Errors   :       0
+Warnings :       0 reported,       0 suppressed
+Messages :       0 reported,       0 suppressed
+

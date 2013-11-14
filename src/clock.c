@@ -11,16 +11,13 @@
 #include "../Include/LCDBlocking.h"
 #include "time.h"
 
-
 /* Method declaration. */
 void DisplayString(BYTE pos, char* text);
 
 int main(void){
 	LCDInit();
-
-	seconds_since_midnight = 3661;
-	update_human_time();
- 	DisplayString(0, time2string(&time));
+	seconds_since_midnight = 3691;
+ 	DisplayString(0, time2string());
 	return 0;
 }
 

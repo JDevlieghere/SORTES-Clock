@@ -3,38 +3,37 @@
 #include <stdio.h>
 #include "time.h"
 
-/** 
- * Update human readable time based on the 
- * current amount of seconds that have elapsed
- * since midnight.
- */
-void update_human_time(void){
-	long hours, minutes, remaining_seconds;
-	remaining_seconds = seconds_since_midnight;
+int seconds_since_midnight = 0;
 
-	hours = remaining_seconds / SEC_IN_HOUR;
-	remaining_seconds -= (hours * SEC_IN_HOUR);
+int get_hours(void){
+	return (int)(seconds_since_midnight / SEC_IN_HOUR);
+}
 
-	minutes = remaining_seconds / SEC_IN_MIN;
-	remaining_seconds -= minutes * SEC_IN_MIN;
-	
-	/* Set the correct propterties in the struct. */
-	time.hours = hours;
-	time.minutes = minutes;
-	time.seconds = remaining_seconds;
+int get_minutes(void){
+	int remaining_seconds = seconds_since_midnight - (get_hours() * SEC_IN_HOUR);
+	return (remaining_seconds / SEC_IN_MIN);
+}
+
+int get_seconds(void){
+	int remaining_seconds = seconds_since_midnight - (get_hours() * SEC_IN_HOUR + get_minutes() * SEC_IN_MIN);
+	return remaining_seconds;
 }
 
 /**
  * Converts the current time to a stirng in 
  * human readable format.
  */
-char* time2string(struct human_time *time){
-	static char string[11];
-	strncat(string, to_double_digits(time->hours),2);
-	strncat(string, ":",1);
-	strncat(string, to_double_digits(time->minutes),2);
-	strncat(string, ":",1);
-	strncat(string, to_double_digits(time->seconds),2);	
+char* time2string(void){
+	static char string[9];
+	string[0] = to_double_digits(get_hours())[0];
+	string[1] = to_double_digits(get_hours())[1];
+	string[2] = ':';
+	string[3] = to_double_digits(get_minutes())[0];
+	string[4] = to_double_digits(get_minutes())[1];
+	string[5] = ':';
+	string[6] = to_double_digits(get_seconds())[0];
+	string[7] = to_double_digits(get_seconds())[1];	
+	string[8] = '\0';
 	return string;
 }
 
@@ -55,5 +54,4 @@ char* to_double_digits(int value){
  */
 void set_time(int hours, int minutes, int seconds){
 	seconds_since_midnight = seconds + minutes * SEC_IN_MIN + hours * SEC_IN_HOUR;
-	update_human_time();
 }

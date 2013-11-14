@@ -1,7 +1,7 @@
 ;--------------------------------------------------------
 ; File Created by SDCC : free open source ANSI-C Compiler
 ; Version 2.9.4 #5595 (Nov 14 2013) (UNIX)
-; This file was generated Thu Nov 14 19:17:14 2013
+; This file was generated Thu Nov 14 20:55:32 2013
 ;--------------------------------------------------------
 ; PIC16 port for the Microchip 16-bit core micros
 ;--------------------------------------------------------
@@ -145,6 +145,7 @@
 	extern _INTCONbits
 	extern _STKPTRbits
 	extern _LCDText
+	extern _seconds_since_midnight
 	extern _MAADR5
 	extern _MAADR6
 	extern _MAADR3
@@ -442,7 +443,6 @@
 	extern _strlen
 	extern _LCDInit
 	extern _LCDUpdate
-	extern _update_human_time
 	extern _time2string
 ;--------------------------------------------------------
 ;	Equates to used internal registers
@@ -472,12 +472,6 @@ r0x07	res	1
 r0x08	res	1
 r0x09	res	1
 
-udata_clock_0	udata
-_time	res	12
-
-udata_clock_1	udata
-_seconds_since_midnight	res	4
-
 ;--------------------------------------------------------
 ; interrupt vector 
 ;--------------------------------------------------------
@@ -489,40 +483,20 @@ _seconds_since_midnight	res	4
 ; ; Starting pCode block
 S_clock__main	code
 _main:
-;	.line	19; src/clock.c	LCDInit();
+;	.line	18; src/clock.c	LCDInit();
 	CALL	_LCDInit
-;	.line	21; src/clock.c	seconds_since_midnight = 3661;
-	MOVLW	0x4d
+;	.line	19; src/clock.c	seconds_since_midnight = 3691;
+	MOVLW	0x6b
 	BANKSEL	_seconds_since_midnight
 	MOVWF	_seconds_since_midnight, B
 	MOVLW	0x0e
 	BANKSEL	(_seconds_since_midnight + 1)
 	MOVWF	(_seconds_since_midnight + 1), B
-	BANKSEL	(_seconds_since_midnight + 2)
-	CLRF	(_seconds_since_midnight + 2), B
-	BANKSEL	(_seconds_since_midnight + 3)
-	CLRF	(_seconds_since_midnight + 3), B
-;	.line	22; src/clock.c	update_human_time();
-	CALL	_update_human_time
-;	.line	23; src/clock.c	DisplayString(0, time2string(&time));
-	MOVLW	HIGH(_time)
-	MOVWF	r0x01
-	MOVLW	LOW(_time)
-	MOVWF	r0x00
-	MOVLW	0x80
-	MOVWF	r0x02
-	MOVF	r0x02, W
-	MOVWF	POSTDEC1
-	MOVF	r0x01, W
-	MOVWF	POSTDEC1
-	MOVF	r0x00, W
-	MOVWF	POSTDEC1
+;	.line	20; src/clock.c	DisplayString(0, time2string());
 	CALL	_time2string
 	MOVWF	r0x00
 	MOVFF	PRODL, r0x01
 	MOVFF	PRODH, r0x02
-	MOVLW	0x03
-	ADDWF	FSR1L, F
 	MOVF	r0x02, W
 	MOVWF	POSTDEC1
 	MOVF	r0x01, W
@@ -534,7 +508,7 @@ _main:
 	CALL	_DisplayString
 	MOVLW	0x04
 	ADDWF	FSR1L, F
-;	.line	24; src/clock.c	return 0;
+;	.line	21; src/clock.c	return 0;
 	CLRF	PRODL
 	CLRF	WREG
 	RETURN	
@@ -542,7 +516,7 @@ _main:
 ; ; Starting pCode block
 S_clock__DisplayString	code
 _DisplayString:
-;	.line	27; src/clock.c	void DisplayString(BYTE pos, char* text)
+;	.line	24; src/clock.c	void DisplayString(BYTE pos, char* text)
 	MOVFF	FSR2L, POSTDEC1
 	MOVFF	FSR1L, FSR2L
 	MOVFF	r0x00, POSTDEC1
@@ -563,7 +537,7 @@ _DisplayString:
 	MOVFF	PLUSW2, r0x02
 	MOVLW	0x05
 	MOVFF	PLUSW2, r0x03
-;	.line	29; src/clock.c	BYTE        l = strlen(text);/*number of actual chars in the string*/
+;	.line	26; src/clock.c	BYTE        l = strlen(text);/*number of actual chars in the string*/
 	MOVF	r0x03, W
 	MOVWF	POSTDEC1
 	MOVF	r0x02, W
@@ -575,11 +549,11 @@ _DisplayString:
 	MOVFF	PRODL, r0x05
 	MOVLW	0x03
 	ADDWF	FSR1L, F
-;	.line	30; src/clock.c	BYTE      max = 32-pos;    /*available space on the lcd*/
+;	.line	27; src/clock.c	BYTE      max = 32-pos;    /*available space on the lcd*/
 	MOVF	r0x00, W
 	SUBLW	0x20
 	MOVWF	r0x05
-;	.line	31; src/clock.c	char       *d = (char*)&LCDText[pos];
+;	.line	28; src/clock.c	char       *d = (char*)&LCDText[pos];
 	CLRF	r0x06
 	MOVLW	LOW(_LCDText)
 	ADDWF	r0x00, F
@@ -591,19 +565,19 @@ _DisplayString:
 	MOVWF	r0x00
 	MOVLW	0x80
 	MOVWF	r0x07
-;	.line	33; src/clock.c	size_t      n = (l<max)?l:max;
+;	.line	30; src/clock.c	size_t      n = (l<max)?l:max;
 	MOVF	r0x05, W
 	SUBWF	r0x04, W
 	BNC	_00118_DS_
 	MOVFF	r0x05, r0x04
 _00118_DS_:
 	CLRF	r0x05
-;	.line	35; src/clock.c	if (n != 0)
+;	.line	32; src/clock.c	if (n != 0)
 	MOVF	r0x04, W
 	IORWF	r0x05, W
 	BZ	_00114_DS_
 _00110_DS_:
-;	.line	36; src/clock.c	while (n-- != 0)*d++ = *s++;
+;	.line	33; src/clock.c	while (n-- != 0)*d++ = *s++;
 	MOVFF	r0x04, r0x08
 	MOVFF	r0x05, r0x09
 	MOVLW	0xff
@@ -635,7 +609,7 @@ _00110_DS_:
 	INCF	r0x07, F
 	BRA	_00110_DS_
 _00114_DS_:
-;	.line	37; src/clock.c	LCDUpdate();
+;	.line	34; src/clock.c	LCDUpdate();
 	CALL	_LCDUpdate
 	MOVFF	PREINC1, r0x09
 	MOVFF	PREINC1, r0x08
@@ -653,9 +627,9 @@ _00114_DS_:
 
 
 ; Statistics:
-; code size:	  372 (0x0174) bytes ( 0.28%)
-;           	  186 (0x00ba) words
-; udata size:	   16 (0x0010) bytes ( 0.42%)
+; code size:	  332 (0x014c) bytes ( 0.25%)
+;           	  166 (0x00a6) words
+; udata size:	    0 (0x0000) bytes ( 0.00%)
 ; access size:	   10 (0x000a) bytes
 
 

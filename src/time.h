@@ -6,17 +6,19 @@
 
 /* Define and declare structure for the readable time. */
 struct human_time {
-	long hours;
-	long minutes;
-	long seconds; 
+	int hours;
+	int minutes;
+	int seconds; 
 };
 
-static struct human_time time;
-static long seconds_since_midnight;
+extern int seconds_since_midnight;
 
-void update_human_time(void);
 void set_time(int hours, int minutes, int seconds);
 char* to_double_digits(int value);
-char* time2string(struct human_time *time);
+char* time2string(void);
+
+int get_hours(void);
+int get_minutes(void);
+int get_seconds(void);
 
 #endif
