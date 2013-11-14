@@ -14,11 +14,11 @@ long seconds_since_midnight;
 void update_human_time(void);
 
 int main(void){
-	seconds_since_midnight = 10;
+	seconds_since_midnight = 3661;
 	update_human_time();
 	printf("HOURS: %d\n", time.hours);
-	printf("MINS: %d\n", time.hours);
-	printf("seconds: %d\n", time.hours);
+	printf("MINS: %d\n", time.minutes);
+	printf("seconds: %d\n", time.seconds);
 
 }
 
