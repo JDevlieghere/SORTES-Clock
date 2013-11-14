@@ -4,13 +4,17 @@
 #define SEC_IN_HOUR 3600		// one hour consists of 3600 seconds
 #define SEC_IN_MIN 	60			// one minute consists of 60 seconds
 
+/* Define and declare structure for the readable time. */
 struct human_time {
 	int hours;
 	int minutes;
 	int seconds; 
 }time;
+
+/* Variable declaration. */
 long seconds_since_midnight;
 
+/* Method declaration. */
 void update_human_time(void);
 void set_time(int hours, int minutes, int seconds);
 
@@ -44,8 +48,10 @@ void update_human_time(void){
 }
 
 /**
- * Set seconds since midnigh based on the given 
+ * Set seconds since midnight based on the given 
  * human readable time format.
+ *
+ * Updates the human readable time struct so inconsitency is impossible. 
  */
 void set_time(int hours, int minutes, int seconds){
 	seconds_since_midnight = seconds + minutes * SEC_IN_MIN + hours * SEC_IN_HOUR;
