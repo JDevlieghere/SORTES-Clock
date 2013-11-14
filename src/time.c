@@ -42,8 +42,8 @@ char* time2string(struct human_time *time){
  * Converts a integer value to a double digit string.
  */
 char* to_double_digits(int value){
-	static char buffer[2];
-	snprintf(buffer, 2, "%02d", value);
+	static char buffer[3];
+	sprintf(buffer, "%02d", value);
 	return buffer;
 }	
 

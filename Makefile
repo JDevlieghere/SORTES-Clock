@@ -24,10 +24,10 @@ APP_HEADERS=Include/GenericTypeDefs.h \
    Include/Compiler.h \
    Include/HardwareProfile.h 
 
-clock : objects/clock.o $(objects)
+clock : objects/time.o objects/clock.o $(objects)
 	$(LD) $(LDFLAGS) objects/clock.o $(objects)
 
-objects/clock.o : src/clock.c objects/time.o $(SDCC_HEADERS) $(SDCC_PIC16_HEADERS) \
+objects/clock.o : src/clock.c $(SDCC_HEADERS) $(SDCC_PIC16_HEADERS) \
    $(APP_HEADERS) $(TCPIP_HEADERS)
 	$(CC) $(CFLAGS) src/clock.c
 
@@ -48,10 +48,10 @@ objects/time.o : src/time.c $(SDCC_HEADERS)  \
               -L/usr/local/lib/pic16  src/time.c
 
 src/pcclock : src/time.o
-	gcc -o pcclock pcclock.c time.o
+	gcc -o src/pcclock src/pcclock.c src/time.o 
 
 src/time.o : src/time.c
-	gcc -c time.c
+	gcc -c src/time.c
 
 clean : 
 	$(RM) $(objects)

@@ -7,4 +7,5 @@ int main(void){
 	printf("HOURS: %lu\n", time.hours);
 	printf("MINS: %lu\n", time.minutes);
 	printf("seconds: %lu\n", time.seconds);
+	printf("%s\n", time2string(&time));
 }
