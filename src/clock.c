@@ -1,4 +1,5 @@
-#define __18CXX          		// means "any pic18"
+#define __18F97J60
+#define __SDCC__
 #define CLOCK_FREQ 	40000000 	// 40 Mhz
 #define THIS_INCLUDES_THE_MAIN_FUNCTION
 

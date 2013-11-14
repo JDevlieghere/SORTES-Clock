@@ -11,8 +11,8 @@ struct human_time {
 	long seconds; 
 };
 
-struct human_time time;
-long seconds_since_midnight;
+static struct human_time time;
+static long seconds_since_midnight;
 
 void update_human_time(void);
 void set_time(int hours, int minutes, int seconds);

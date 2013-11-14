@@ -1,13 +1,13 @@
 AS = gpasm
 CC = sdcc
-CFLAGS= -c -mpic16 -p18f97j60  -o$@ 
+CFLAGS= -c -mpic16 -p18f97j60  -o $@ 
 LD = sdcc
 LDFLAGS= -mpic16 -p18f97j60 -L/usr/local/lib/pic16 -llibio18f97j60.lib \
          -llibdev18f97j60.lib -llibc18f.lib
 AR = ar
 RM = rm
 
-objects= objects/LCDBlocking.o
+OBJECTS= objects/LCDBlocking.o objects/time.o
 
 SDCC_HEADERS=/usr/local/share/sdcc/include/string.h \
    /usr/local/share/sdcc/include/stdlib.h \
@@ -19,13 +19,13 @@ SDCC_PIC16_HEADERS=/usr/local/share/sdcc/include/pic16/pic18f97j60.h
 
 TCPIP_HEADERS=   Include/TCPIP_Stack/ETH97J60.h \
    Include/TCPIP_Stack/LCDBlocking.h 
-
+   
 APP_HEADERS=Include/GenericTypeDefs.h \
    Include/Compiler.h \
    Include/HardwareProfile.h 
 
-clock : objects/time.o objects/clock.o $(objects)
-	$(LD) $(LDFLAGS) objects/clock.o $(objects)
+clock : objects/clock.o $(OBJECTS)
+	$(LD) $(LDFLAGS) objects/clock.o $(OBJECTS)
 
 objects/clock.o : src/clock.c $(SDCC_HEADERS) $(SDCC_PIC16_HEADERS) \
    $(APP_HEADERS) $(TCPIP_HEADERS)
@@ -34,17 +34,17 @@ objects/clock.o : src/clock.c $(SDCC_HEADERS) $(SDCC_PIC16_HEADERS) \
 
 objects/LCDBlocking.o : lib/LCDBlocking.c $(SDCC_HEADERS)  \
    $(SDCC_PIC16_HEADERS) $(APP_HEADERS) $(TCPIP_HEADERS)
-	$(CC) -c -mpic16 -p18f97j60  -o"objects/LCDBlocking.o" \
+	$(CC) -c -mpic16 -p18f97j60  -o "objects/LCDBlocking.o" \
               -L/usr/local/lib/pic16  lib/LCDBlocking.c
 
 objects/Tick.o : lib/Tick.c  $(SDCC_HEADERS)  \
    $(SDCC_PIC16_HEADERS) $(APP_HEADERS) $(TCPIP_HEADERS)
-	$(CC) -c -mpic16 -p18f97j60  -o"objects/Tick.o" \
+	$(CC) -c -mpic16 -p18f97j60  -o "objects/Tick.o" \
               -L/usr/local/lib/pic16  lib/Tick.c
 
 objects/time.o : src/time.c $(SDCC_HEADERS)  \
    $(SDCC_PIC16_HEADERS) $(APP_HEADERS) $(TCPIP_HEADERS)
-	$(CC) -c -mpic16 -p18f97j60  -o"objects/time.o" \
+	$(CC) -c -mpic16 -p18f97j60  -o "objects/time.o" \
               -L/usr/local/lib/pic16  src/time.c
 
 src/pcclock : src/time.o
@@ -54,4 +54,4 @@ src/time.o : src/time.c
 	gcc -c src/time.c
 
 clean : 
-	$(RM) $(objects)
+	$(RM) $(OBJECTS)
