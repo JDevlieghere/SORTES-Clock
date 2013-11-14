@@ -41,7 +41,8 @@ void update_human_time(void){
 
 	minutes = remaining_seconds / SEC_IN_MIN;
 	remaining_seconds -= minutes * SEC_IN_MIN;
-
+	
+	/* Set the correct propterties in the struct. */
 	time.hours = hours;
 	time.minutes = minutes;
 	time.seconds = remaining_seconds;
