@@ -1,12 +1,10 @@
 #define __18F97J60
 #define __SDCC__
 #define THIS_INCLUDES_THE_MAIN_FUNCTION
-#include "Include/HardwareProfile.h"
-
 #include <string.h>
 #include <stdlib.h>
-
-#include "Include/LCDBlocking.h"
+#include "include/HardwareProfile.h"
+#include "include/LCDBlocking.h"
 
 void DisplayString(BYTE pos, char* text);
 

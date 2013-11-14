@@ -7,7 +7,7 @@ LDFLAGS= -mpic16 -p18f97j60 -L/usr/local/lib/pic16 -llibio18f97j60.lib \
 AR = ar
 RM = rm
 
-OBJECTS= Objects/LCDBlocking.o
+objects= objects/LCDBlocking.o
 
 SDCC_HEADERS=/usr/local/share/sdcc/include/string.h \
    /usr/local/share/sdcc/include/stdlib.h \
@@ -17,30 +17,30 @@ SDCC_HEADERS=/usr/local/share/sdcc/include/string.h \
 
 SDCC_PIC16_HEADERS=/usr/local/share/sdcc/include/pic16/pic18f97j60.h
 
-TCPIP_HEADERS=   Include/TCPIP_Stack/ETH97J60.h \
-   Include/TCPIP_Stack/LCDBlocking.h 
+TCPIP_HEADERS=   include/TCPIP_Stack/ETH97J60.h \
+   include/TCPIP_Stack/LCDBlocking.h 
 
-APP_HEADERS=Include/GenericTypeDefs.h \
-   Include/Compiler.h \
-   Include/HardwareProfile.h 
+APP_HEADERS=include/GenericTypeDefs.h \
+   include/Compiler.h \
+   include/HardwareProfile.h 
 
-hellolcd : Objects/hellolcd.o $(OBJECTS)
-	$(LD) $(LDFLAGS) Objects/hellolcd.o $(OBJECTS)
+hellolcd : objects/hellolcd.o $(objects)
+	$(LD) $(LDFLAGS) objects/hellolcd.o $(objects)
 
-Objects/hellolcd.o : hellolcd.c $(SDCC_HEADERS) $(SDCC_PIC16_HEADERS) \
+objects/hellolcd.o : src/hellolcd.c $(SDCC_HEADERS) $(SDCC_PIC16_HEADERS) \
    $(APP_HEADERS) $(TCPIP_HEADERS)
-	$(CC) $(CFLAGS) hellolcd.c
+	$(CC) $(CFLAGS) src/hellolcd.c
 
 
-Objects/LCDBlocking.o : TCPIP_Stack/LCDBlocking.c $(SDCC_HEADERS)  \
+objects/LCDBlocking.o : lib/LCDBlocking.c $(SDCC_HEADERS)  \
    $(SDCC_PIC16_HEADERS) $(APP_HEADERS) $(TCPIP_HEADERS)
-	$(CC) -c -mpic16 -p18f97j60  -o"Objects/LCDBlocking.o" \
-              -L/usr/local/lib/pic16  TCPIP_Stack/LCDBlocking.c
+	$(CC) -c -mpic16 -p18f97j60  -o"objects/LCDBlocking.o" \
+              -L/usr/local/lib/pic16  lib/LCDBlocking.c
 
-Objects/Tick.o : TCPIP_Stack/Tick.c  $(SDCC_HEADERS)  \
+objects/Tick.o : lib/Tick.c  $(SDCC_HEADERS)  \
    $(SDCC_PIC16_HEADERS) $(APP_HEADERS) $(TCPIP_HEADERS)
-	$(CC) -c -mpic16 -p18f97j60  -o"Objects/Tick.o" \
-              -L/usr/local/lib/pic16  TCPIP_Stack/Tick.c
+	$(CC) -c -mpic16 -p18f97j60  -o"objects/Tick.o" \
+              -L/usr/local/lib/pic16  lib/Tick.c
 
 clean : 
-	$(RM) $(OBJECTS)
+	$(RM) $(objects)
