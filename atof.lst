@@ -1,0 +1,729 @@
+gpasm-0.13.7 beta               atof.asm    11-15-2013  15:30:12         PAGE  1
+
+
+LOC  OBJECT CODE     LINE SOURCE TEXT
+  VALUE
+ 
+               00001 ;--------------------------------------------------------
+               00002 ; File Created by SDCC : free open source ANSI-C Compiler
+               00003 ; Version 2.9.4 #5595 (Nov 14 2013) (UNIX)
+               00004 ; This file was generated Fri Nov 15 15:30:12 2013
+               00005 ;--------------------------------------------------------
+               00006 ; PIC16 port for the Microchip 16-bit core micros
+               00007 ;--------------------------------------------------------
+               00008         list    p=18f97j60
+               00009 
+               00010         radix dec
+               00011 
+               00012 ;--------------------------------------------------------
+               00013 ; public variables in this module
+               00014 ;--------------------------------------------------------
+               00015         global _atof
+               00016 
+               00017 ;--------------------------------------------------------
+               00018 ; extern variables in this module
+               00019 ;--------------------------------------------------------
+               00020         extern __gptrget1
+               00021         extern _isdigit
+               00022         extern _islower
+               00023         extern _isspace
+               00024         extern _atoi
+               00025         extern ___fsmul
+               00026         extern ___sint2fs
+               00027         extern ___fsadd
+               00028 ;--------------------------------------------------------
+               00029 ;       Equates to used internal registers
+               00030 ;--------------------------------------------------------
+  00000FD8     00031 STATUS  equ     0xfd8
+  00000FE8     00032 WREG    equ     0xfe8
+  00000FE9     00033 FSR0L   equ     0xfe9
+  00000FE1     00034 FSR1L   equ     0xfe1
+  00000FD9     00035 FSR2L   equ     0xfd9
+  00000FE5     00036 POSTDEC1        equ     0xfe5
+  00000FE4     00037 PREINC1 equ     0xfe4
+  00000FDB     00038 PLUSW2  equ     0xfdb
+  00000FF3     00039 PRODL   equ     0xff3
+  00000FF4     00040 PRODH   equ     0xff4
+               00041 
+               00042 
+               00043 ; Internal registers
+               00044 .registers      udata_ovr       0x0000
+               00045 r0x00   res     1
+               00046 r0x01   res     1
+               00047 r0x02   res     1
+               00048 r0x03   res     1
+               00049 r0x04   res     1
+               00050 r0x05   res     1
+               00051 r0x06   res     1
+               00052 r0x07   res     1
+               00053 r0x08   res     1
+               00054 r0x09   res     1
+gpasm-0.13.7 beta               atof.asm    11-15-2013  15:30:12         PAGE  2
+
+
+LOC  OBJECT CODE     LINE SOURCE TEXT
+  VALUE
+ 
+               00055 r0x0a   res     1
+               00056 r0x0b   res     1
+               00057 r0x0c   res     1
+               00058 r0x0d   res     1
+               00059 r0x0e   res     1
+               00060 r0x0f   res     1
+               00061 r0x10   res     1
+               00062 r0x11   res     1
+               00063 r0x12   res     1
+               00064 
+               00065 ;--------------------------------------------------------
+               00066 ; global & static initialisations
+               00067 ;--------------------------------------------------------
+               00068 ; I code from now on!
+               00069 ; ; Starting pCode block
+               00070 S_atof__atof    code
+0000 00071 _atof:
+               00072 ;       .line   22; /usr/local/lib/pic16/pic16/libc/stdlib/atof.c       float atof(char * s)
+0000 CFD9 FFE5 00073         MOVFF   FSR2L, POSTDEC1
+0004 CFE1 FFD9 00074         MOVFF   FSR1L, FSR2L
+0008 C000 FFE5 00075         MOVFF   r0x00, POSTDEC1
+000C C000 FFE5 00076         MOVFF   r0x01, POSTDEC1
+0010 C000 FFE5 00077         MOVFF   r0x02, POSTDEC1
+0014 C000 FFE5 00078         MOVFF   r0x03, POSTDEC1
+0018 C000 FFE5 00079         MOVFF   r0x04, POSTDEC1
+001C C000 FFE5 00080         MOVFF   r0x05, POSTDEC1
+0020 C000 FFE5 00081         MOVFF   r0x06, POSTDEC1
+0024 C000 FFE5 00082         MOVFF   r0x07, POSTDEC1
+0028 C000 FFE5 00083         MOVFF   r0x08, POSTDEC1
+002C C000 FFE5 00084         MOVFF   r0x09, POSTDEC1
+0030 C000 FFE5 00085         MOVFF   r0x0a, POSTDEC1
+0034 C000 FFE5 00086         MOVFF   r0x0b, POSTDEC1
+0038 C000 FFE5 00087         MOVFF   r0x0c, POSTDEC1
+003C C000 FFE5 00088         MOVFF   r0x0d, POSTDEC1
+0040 C000 FFE5 00089         MOVFF   r0x0e, POSTDEC1
+0044 C000 FFE5 00090         MOVFF   r0x0f, POSTDEC1
+0048 C000 FFE5 00091         MOVFF   r0x10, POSTDEC1
+004C C000 FFE5 00092         MOVFF   r0x11, POSTDEC1
+0050 C000 FFE5 00093         MOVFF   r0x12, POSTDEC1
+0054 0E02      00094         MOVLW   0x02
+0056 CFDB F000 00095         MOVFF   PLUSW2, r0x00
+005A 0E03      00096         MOVLW   0x03
+005C CFDB F000 00097         MOVFF   PLUSW2, r0x01
+0060 0E04      00098         MOVLW   0x04
+0062 CFDB F000 00099         MOVFF   PLUSW2, r0x02
+               00100 ;       .line   29; /usr/local/lib/pic16/pic16/libc/stdlib/atof.c       while (isspace(*s)) s++;
+0066 C000 F000 00101         MOVFF   r0x00, r0x03
+006A C000 F000 00102         MOVFF   r0x01, r0x04
+006E C000 F000 00103         MOVFF   r0x02, r0x05
+0072 00104 _00105_DS_:
+0072 C000 FFE9 00105         MOVFF   r0x03, FSR0L
+0076 C000 FFF3 00106         MOVFF   r0x04, PRODL
+007A 5000      00107         MOVF    r0x05, W
+007C EC00 F000 00108         CALL    __gptrget1
+gpasm-0.13.7 beta               atof.asm    11-15-2013  15:30:12         PAGE  3
+
+
+LOC  OBJECT CODE     LINE SOURCE TEXT
+  VALUE
+ 
+0080 6E00      00109         MOVWF   r0x06
+0082 5000      00110         MOVF    r0x06, W
+0084 6EE5      00111         MOVWF   POSTDEC1
+0086 EC00 F000 00112         CALL    _isspace
+008A 6E00      00113         MOVWF   r0x06
+008C 2AE1      00114         INCF    FSR1L, F
+008E 5000      00115         MOVF    r0x06, W
+0090 E000      00116         BZ      _00152_DS_
+0092 2A00      00117         INCF    r0x03, F
+0094 B0D8      00118         BTFSC   STATUS, 0
+0096 2A00      00119         INCF    r0x04, F
+0098 B0D8      00120         BTFSC   STATUS, 0
+009A 2A00      00121         INCF    r0x05, F
+009C D000      00122         BRA     _00105_DS_
+009E 00123 _00152_DS_:
+009E C000 F000 00124         MOVFF   r0x03, r0x00
+00A2 C000 F000 00125         MOVFF   r0x04, r0x01
+00A6 C000 F000 00126         MOVFF   r0x05, r0x02
+               00127 ;       .line   32; /usr/local/lib/pic16/pic16/libc/stdlib/atof.c       if (*s == '-')
+00AA C000 FFE9 00128         MOVFF   r0x03, FSR0L
+00AE C000 FFF3 00129         MOVFF   r0x04, PRODL
+00B2 5000      00130         MOVF    r0x05, W
+00B4 EC00 F000 00131         CALL    __gptrget1
+00B8 6E00      00132         MOVWF   r0x06
+00BA 5000      00133         MOVF    r0x06, W
+00BC 0A2D      00134         XORLW   0x2d
+00BE E100      00135         BNZ     _00111_DS_
+               00136 ;       .line   34; /usr/local/lib/pic16/pic16/libc/stdlib/atof.c       sign=1;
+00C0 0E01      00137         MOVLW   0x01
+00C2 6E00      00138         MOVWF   r0x07
+               00139 ;       .line   35; /usr/local/lib/pic16/pic16/libc/stdlib/atof.c       s++;
+00C4 5000      00140         MOVF    r0x03, W
+00C6 0F01      00141         ADDLW   0x01
+00C8 6E00      00142         MOVWF   r0x00
+00CA 0E00      00143         MOVLW   0x00
+00CC 2000      00144         ADDWFC  r0x04, W
+00CE 6E00      00145         MOVWF   r0x01
+00D0 0E00      00146         MOVLW   0x00
+00D2 2000      00147         ADDWFC  r0x05, W
+00D4 6E00      00148         MOVWF   r0x02
+00D6 D000      00149         BRA     _00112_DS_
+00D8 00150 _00111_DS_:
+               00151 ;       .line   39; /usr/local/lib/pic16/pic16/libc/stdlib/atof.c       sign=0;
+00D8 6A00      00152         CLRF    r0x07
+               00153 ;       .line   40; /usr/local/lib/pic16/pic16/libc/stdlib/atof.c       if (*s == '+') s++;
+00DA 5000      00154         MOVF    r0x06, W
+00DC 0A2B      00155         XORLW   0x2b
+00DE E100      00156         BNZ     _00112_DS_
+00E0 5000      00157         MOVF    r0x03, W
+00E2 0F01      00158         ADDLW   0x01
+00E4 6E00      00159         MOVWF   r0x00
+00E6 0E00      00160         MOVLW   0x00
+00E8 2000      00161         ADDWFC  r0x04, W
+00EA 6E00      00162         MOVWF   r0x01
+gpasm-0.13.7 beta               atof.asm    11-15-2013  15:30:12         PAGE  4
+
+
+LOC  OBJECT CODE     LINE SOURCE TEXT
+  VALUE
+ 
+00EC 0E00      00163         MOVLW   0x00
+00EE 2000      00164         ADDWFC  r0x05, W
+00F0 6E00      00165         MOVWF   r0x02
+00F2 00166 _00112_DS_:
+               00167 ;       .line   44; /usr/local/lib/pic16/pic16/libc/stdlib/atof.c       for (value=0.0; isdigit(*s); s++)
+00F2 6A00      00168         CLRF    r0x03
+00F4 6A00      00169         CLRF    r0x04
+00F6 6A00      00170         CLRF    r0x05
+00F8 6A00      00171         CLRF    r0x06
+00FA C000 F000 00172         MOVFF   r0x00, r0x08
+00FE C000 F000 00173         MOVFF   r0x01, r0x09
+0102 C000 F000 00174         MOVFF   r0x02, r0x0a
+0106 00175 _00125_DS_:
+0106 C000 FFE9 00176         MOVFF   r0x08, FSR0L
+010A C000 FFF3 00177         MOVFF   r0x09, PRODL
+010E 5000      00178         MOVF    r0x0a, W
+0110 EC00 F000 00179         CALL    __gptrget1
+0114 6E00      00180         MOVWF   r0x0b
+0116 5000      00181         MOVF    r0x0b, W
+0118 6EE5      00182         MOVWF   POSTDEC1
+011A EC00 F000 00183         CALL    _isdigit
+011E 6E00      00184         MOVWF   r0x0b
+0120 2AE1      00185         INCF    FSR1L, F
+0122 5000      00186         MOVF    r0x0b, W
+0124 B4D8      00187         BTFSC   STATUS, 2
+0126 D000      00188         BRA     _00153_DS_
+               00189 ;       .line   46; /usr/local/lib/pic16/pic16/libc/stdlib/atof.c       value=10.0*value+(*s-'0');
+0128 5000      00190         MOVF    r0x06, W
+012A 6EE5      00191         MOVWF   POSTDEC1
+012C 5000      00192         MOVF    r0x05, W
+012E 6EE5      00193         MOVWF   POSTDEC1
+0130 5000      00194         MOVF    r0x04, W
+0132 6EE5      00195         MOVWF   POSTDEC1
+0134 5000      00196         MOVF    r0x03, W
+0136 6EE5      00197         MOVWF   POSTDEC1
+0138 0E41      00198         MOVLW   0x41
+013A 6EE5      00199         MOVWF   POSTDEC1
+013C 0E20      00200         MOVLW   0x20
+013E 6EE5      00201         MOVWF   POSTDEC1
+0140 0E00      00202         MOVLW   0x00
+0142 6EE5      00203         MOVWF   POSTDEC1
+0144 0E00      00204         MOVLW   0x00
+0146 6EE5      00205         MOVWF   POSTDEC1
+0148 EC00 F000 00206         CALL    ___fsmul
+014C 6E00      00207         MOVWF   r0x0b
+014E CFF3 F000 00208         MOVFF   PRODL, r0x0c
+0152 CFF4 F000 00209         MOVFF   PRODH, r0x0d
+0156 CFE9 F000 00210         MOVFF   FSR0L, r0x0e
+015A 0E08      00211         MOVLW   0x08
+015C 26E1      00212         ADDWF   FSR1L, F
+015E C000 FFE9 00213         MOVFF   r0x08, FSR0L
+0162 C000 FFF3 00214         MOVFF   r0x09, PRODL
+0166 5000      00215         MOVF    r0x0a, W
+0168 EC00 F000 00216         CALL    __gptrget1
+gpasm-0.13.7 beta               atof.asm    11-15-2013  15:30:12         PAGE  5
+
+
+LOC  OBJECT CODE     LINE SOURCE TEXT
+  VALUE
+ 
+016C 6E00      00217         MOVWF   r0x0f
+016E 6A00      00218         CLRF    r0x10
+0170 BE00      00219         BTFSC   r0x0f, 7
+0172 6800      00220         SETF    r0x10
+0174 0ED0      00221         MOVLW   0xd0
+0176 2600      00222         ADDWF   r0x0f, F
+0178 A0D8      00223         BTFSS   STATUS, 0
+017A 0600      00224         DECF    r0x10, F
+017C 5000      00225         MOVF    r0x10, W
+017E 6EE5      00226         MOVWF   POSTDEC1
+0180 5000      00227         MOVF    r0x0f, W
+0182 6EE5      00228         MOVWF   POSTDEC1
+0184 EC00 F000 00229         CALL    ___sint2fs
+0188 6E00      00230         MOVWF   r0x0f
+018A CFF3 F000 00231         MOVFF   PRODL, r0x10
+018E CFF4 F000 00232         MOVFF   PRODH, r0x11
+0192 CFE9 F000 00233         MOVFF   FSR0L, r0x12
+0196 0E02      00234         MOVLW   0x02
+0198 26E1      00235         ADDWF   FSR1L, F
+019A 5000      00236         MOVF    r0x12, W
+019C 6EE5      00237         MOVWF   POSTDEC1
+019E 5000      00238         MOVF    r0x11, W
+01A0 6EE5      00239         MOVWF   POSTDEC1
+01A2 5000      00240         MOVF    r0x10, W
+01A4 6EE5      00241         MOVWF   POSTDEC1
+01A6 5000      00242         MOVF    r0x0f, W
+01A8 6EE5      00243         MOVWF   POSTDEC1
+01AA 5000      00244         MOVF    r0x0e, W
+01AC 6EE5      00245         MOVWF   POSTDEC1
+01AE 5000      00246         MOVF    r0x0d, W
+01B0 6EE5      00247         MOVWF   POSTDEC1
+01B2 5000      00248         MOVF    r0x0c, W
+01B4 6EE5      00249         MOVWF   POSTDEC1
+01B6 5000      00250         MOVF    r0x0b, W
+01B8 6EE5      00251         MOVWF   POSTDEC1
+01BA EC00 F000 00252         CALL    ___fsadd
+01BE 6E00      00253         MOVWF   r0x03
+01C0 CFF3 F000 00254         MOVFF   PRODL, r0x04
+01C4 CFF4 F000 00255         MOVFF   PRODH, r0x05
+01C8 CFE9 F000 00256         MOVFF   FSR0L, r0x06
+01CC 0E08      00257         MOVLW   0x08
+01CE 26E1      00258         ADDWF   FSR1L, F
+               00259 ;       .line   44; /usr/local/lib/pic16/pic16/libc/stdlib/atof.c       for (value=0.0; isdigit(*s); s++)
+01D0 2A00      00260         INCF    r0x08, F
+01D2 B0D8      00261         BTFSC   STATUS, 0
+01D4 2A00      00262         INCF    r0x09, F
+01D6 B0D8      00263         BTFSC   STATUS, 0
+01D8 2A00      00264         INCF    r0x0a, F
+01DA D000      00265         BRA     _00125_DS_
+01DC 00266 _00153_DS_:
+01DC C000 F000 00267         MOVFF   r0x08, r0x00
+01E0 C000 F000 00268         MOVFF   r0x09, r0x01
+01E4 C000 F000 00269         MOVFF   r0x0a, r0x02
+               00270 ;       .line   50; /usr/local/lib/pic16/pic16/libc/stdlib/atof.c       if (*s == '.')
+gpasm-0.13.7 beta               atof.asm    11-15-2013  15:30:12         PAGE  6
+
+
+LOC  OBJECT CODE     LINE SOURCE TEXT
+  VALUE
+ 
+01E8 C000 FFE9 00271         MOVFF   r0x08, FSR0L
+01EC C000 FFF3 00272         MOVFF   r0x09, PRODL
+01F0 5000      00273         MOVF    r0x0a, W
+01F2 EC00 F000 00274         CALL    __gptrget1
+01F6 6E00      00275         MOVWF   r0x0b
+01F8 5000      00276         MOVF    r0x0b, W
+01FA 0A2E      00277         XORLW   0x2e
+01FC E000      00278         BZ      _00160_DS_
+01FE D000      00279         BRA     _00114_DS_
+0200 00280 _00160_DS_:
+               00281 ;       .line   52; /usr/local/lib/pic16/pic16/libc/stdlib/atof.c       s++;
+0200 5000      00282         MOVF    r0x08, W
+0202 0F01      00283         ADDLW   0x01
+0204 6E00      00284         MOVWF   r0x00
+0206 0E00      00285         MOVLW   0x00
+0208 2000      00286         ADDWFC  r0x09, W
+020A 6E00      00287         MOVWF   r0x01
+020C 0E00      00288         MOVLW   0x00
+020E 2000      00289         ADDWFC  r0x0a, W
+0210 6E00      00290         MOVWF   r0x02
+               00291 ;       .line   53; /usr/local/lib/pic16/pic16/libc/stdlib/atof.c       for (fraction=0.1; isdigit(*s); s++)
+0212 0ECD      00292         MOVLW   0xcd
+0214 6E00      00293         MOVWF   r0x08
+0216 0ECC      00294         MOVLW   0xcc
+0218 6E00      00295         MOVWF   r0x09
+021A 6E00      00296         MOVWF   r0x0a
+021C 0E3D      00297         MOVLW   0x3d
+021E 6E00      00298         MOVWF   r0x0b
+0220 C000 F000 00299         MOVFF   r0x00, r0x0c
+0224 C000 F000 00300         MOVFF   r0x01, r0x0d
+0228 C000 F000 00301         MOVFF   r0x02, r0x0e
+022C 00302 _00129_DS_:
+022C C000 FFE9 00303         MOVFF   r0x0c, FSR0L
+0230 C000 FFF3 00304         MOVFF   r0x0d, PRODL
+0234 5000      00305         MOVF    r0x0e, W
+0236 EC00 F000 00306         CALL    __gptrget1
+023A 6E00      00307         MOVWF   r0x0f
+023C 5000      00308         MOVF    r0x0f, W
+023E 6EE5      00309         MOVWF   POSTDEC1
+0240 EC00 F000 00310         CALL    _isdigit
+0244 6E00      00311         MOVWF   r0x0f
+0246 2AE1      00312         INCF    FSR1L, F
+0248 5000      00313         MOVF    r0x0f, W
+024A B4D8      00314         BTFSC   STATUS, 2
+024C D000      00315         BRA     _00154_DS_
+               00316 ;       .line   55; /usr/local/lib/pic16/pic16/libc/stdlib/atof.c       value+=(*s-'0')*fraction;
+024E C000 FFE9 00317         MOVFF   r0x0c, FSR0L
+0252 C000 FFF3 00318         MOVFF   r0x0d, PRODL
+0256 5000      00319         MOVF    r0x0e, W
+0258 EC00 F000 00320         CALL    __gptrget1
+025C 6E00      00321         MOVWF   r0x0f
+025E 6A00      00322         CLRF    r0x10
+0260 BE00      00323         BTFSC   r0x0f, 7
+0262 6800      00324         SETF    r0x10
+gpasm-0.13.7 beta               atof.asm    11-15-2013  15:30:12         PAGE  7
+
+
+LOC  OBJECT CODE     LINE SOURCE TEXT
+  VALUE
+ 
+0264 0ED0      00325         MOVLW   0xd0
+0266 2600      00326         ADDWF   r0x0f, F
+0268 A0D8      00327         BTFSS   STATUS, 0
+026A 0600      00328         DECF    r0x10, F
+026C 5000      00329         MOVF    r0x10, W
+026E 6EE5      00330         MOVWF   POSTDEC1
+0270 5000      00331         MOVF    r0x0f, W
+0272 6EE5      00332         MOVWF   POSTDEC1
+0274 EC00 F000 00333         CALL    ___sint2fs
+0278 6E00      00334         MOVWF   r0x0f
+027A CFF3 F000 00335         MOVFF   PRODL, r0x10
+027E CFF4 F000 00336         MOVFF   PRODH, r0x11
+0282 CFE9 F000 00337         MOVFF   FSR0L, r0x12
+0286 0E02      00338         MOVLW   0x02
+0288 26E1      00339         ADDWF   FSR1L, F
+028A 5000      00340         MOVF    r0x0b, W
+028C 6EE5      00341         MOVWF   POSTDEC1
+028E 5000      00342         MOVF    r0x0a, W
+0290 6EE5      00343         MOVWF   POSTDEC1
+0292 5000      00344         MOVF    r0x09, W
+0294 6EE5      00345         MOVWF   POSTDEC1
+0296 5000      00346         MOVF    r0x08, W
+0298 6EE5      00347         MOVWF   POSTDEC1
+029A 5000      00348         MOVF    r0x12, W
+029C 6EE5      00349         MOVWF   POSTDEC1
+029E 5000      00350         MOVF    r0x11, W
+02A0 6EE5      00351         MOVWF   POSTDEC1
+02A2 5000      00352         MOVF    r0x10, W
+02A4 6EE5      00353         MOVWF   POSTDEC1
+02A6 5000      00354         MOVF    r0x0f, W
+02A8 6EE5      00355         MOVWF   POSTDEC1
+02AA EC00 F000 00356         CALL    ___fsmul
+02AE 6E00      00357         MOVWF   r0x0f
+02B0 CFF3 F000 00358         MOVFF   PRODL, r0x10
+02B4 CFF4 F000 00359         MOVFF   PRODH, r0x11
+02B8 CFE9 F000 00360         MOVFF   FSR0L, r0x12
+02BC 0E08      00361         MOVLW   0x08
+02BE 26E1      00362         ADDWF   FSR1L, F
+02C0 5000      00363         MOVF    r0x12, W
+02C2 6EE5      00364         MOVWF   POSTDEC1
+02C4 5000      00365         MOVF    r0x11, W
+02C6 6EE5      00366         MOVWF   POSTDEC1
+02C8 5000      00367         MOVF    r0x10, W
+02CA 6EE5      00368         MOVWF   POSTDEC1
+02CC 5000      00369         MOVF    r0x0f, W
+02CE 6EE5      00370         MOVWF   POSTDEC1
+02D0 5000      00371         MOVF    r0x06, W
+02D2 6EE5      00372         MOVWF   POSTDEC1
+02D4 5000      00373         MOVF    r0x05, W
+02D6 6EE5      00374         MOVWF   POSTDEC1
+02D8 5000      00375         MOVF    r0x04, W
+02DA 6EE5      00376         MOVWF   POSTDEC1
+02DC 5000      00377         MOVF    r0x03, W
+02DE 6EE5      00378         MOVWF   POSTDEC1
+gpasm-0.13.7 beta               atof.asm    11-15-2013  15:30:12         PAGE  8
+
+
+LOC  OBJECT CODE     LINE SOURCE TEXT
+  VALUE
+ 
+02E0 EC00 F000 00379         CALL    ___fsadd
+02E4 6E00      00380         MOVWF   r0x03
+02E6 CFF3 F000 00381         MOVFF   PRODL, r0x04
+02EA CFF4 F000 00382         MOVFF   PRODH, r0x05
+02EE CFE9 F000 00383         MOVFF   FSR0L, r0x06
+02F2 0E08      00384         MOVLW   0x08
+02F4 26E1      00385         ADDWF   FSR1L, F
+               00386 ;       .line   56; /usr/local/lib/pic16/pic16/libc/stdlib/atof.c       fraction*=0.1;
+02F6 5000      00387         MOVF    r0x0b, W
+02F8 6EE5      00388         MOVWF   POSTDEC1
+02FA 5000      00389         MOVF    r0x0a, W
+02FC 6EE5      00390         MOVWF   POSTDEC1
+02FE 5000      00391         MOVF    r0x09, W
+0300 6EE5      00392         MOVWF   POSTDEC1
+0302 5000      00393         MOVF    r0x08, W
+0304 6EE5      00394         MOVWF   POSTDEC1
+0306 0E3D      00395         MOVLW   0x3d
+0308 6EE5      00396         MOVWF   POSTDEC1
+030A 0ECC      00397         MOVLW   0xcc
+030C 6EE5      00398         MOVWF   POSTDEC1
+030E 0ECC      00399         MOVLW   0xcc
+0310 6EE5      00400         MOVWF   POSTDEC1
+0312 0ECD      00401         MOVLW   0xcd
+0314 6EE5      00402         MOVWF   POSTDEC1
+0316 EC00 F000 00403         CALL    ___fsmul
+031A 6E00      00404         MOVWF   r0x08
+031C CFF3 F000 00405         MOVFF   PRODL, r0x09
+0320 CFF4 F000 00406         MOVFF   PRODH, r0x0a
+0324 CFE9 F000 00407         MOVFF   FSR0L, r0x0b
+0328 0E08      00408         MOVLW   0x08
+032A 26E1      00409         ADDWF   FSR1L, F
+               00410 ;       .line   53; /usr/local/lib/pic16/pic16/libc/stdlib/atof.c       for (fraction=0.1; isdigit(*s); s++)
+032C 2A00      00411         INCF    r0x0c, F
+032E B0D8      00412         BTFSC   STATUS, 0
+0330 2A00      00413         INCF    r0x0d, F
+0332 B0D8      00414         BTFSC   STATUS, 0
+0334 2A00      00415         INCF    r0x0e, F
+0336 D000      00416         BRA     _00129_DS_
+0338 00417 _00154_DS_:
+0338 C000 F000 00418         MOVFF   r0x0c, r0x00
+033C C000 F000 00419         MOVFF   r0x0d, r0x01
+0340 C000 F000 00420         MOVFF   r0x0e, r0x02
+0344 00421 _00114_DS_:
+               00422 ;       .line   61; /usr/local/lib/pic16/pic16/libc/stdlib/atof.c       if (toupper(*s)=='E')
+0344 C000 FFE9 00423         MOVFF   r0x00, FSR0L
+0348 C000 FFF3 00424         MOVFF   r0x01, PRODL
+034C 5000      00425         MOVF    r0x02, W
+034E EC00 F000 00426         CALL    __gptrget1
+0352 6E00      00427         MOVWF   r0x08
+0354 5000      00428         MOVF    r0x08, W
+0356 6EE5      00429         MOVWF   POSTDEC1
+0358 EC00 F000 00430         CALL    _islower
+035C 6E00      00431         MOVWF   r0x08
+035E 2AE1      00432         INCF    FSR1L, F
+gpasm-0.13.7 beta               atof.asm    11-15-2013  15:30:12         PAGE  9
+
+
+LOC  OBJECT CODE     LINE SOURCE TEXT
+  VALUE
+ 
+0360 5000      00433         MOVF    r0x08, W
+0362 E000      00434         BZ      _00135_DS_
+0364 C000 FFE9 00435         MOVFF   r0x00, FSR0L
+0368 C000 FFF3 00436         MOVFF   r0x01, PRODL
+036C 5000      00437         MOVF    r0x02, W
+036E EC00 F000 00438         CALL    __gptrget1
+0372 6E00      00439         MOVWF   r0x08
+0374 6A00      00440         CLRF    r0x09
+0376 BE00      00441         BTFSC   r0x08, 7
+0378 6800      00442         SETF    r0x09
+037A 9A00      00443         BCF     r0x08, 5
+037C D000      00444         BRA     _00136_DS_
+037E 00445 _00135_DS_:
+037E C000 FFE9 00446         MOVFF   r0x00, FSR0L
+0382 C000 FFF3 00447         MOVFF   r0x01, PRODL
+0386 5000      00448         MOVF    r0x02, W
+0388 EC00 F000 00449         CALL    __gptrget1
+038C 6E00      00450         MOVWF   r0x0a
+038E C000 F000 00451         MOVFF   r0x0a, r0x08
+0392 6A00      00452         CLRF    r0x09
+0394 BE00      00453         BTFSC   r0x0a, 7
+0396 6800      00454         SETF    r0x09
+0398 00455 _00136_DS_:
+0398 5000      00456         MOVF    r0x08, W
+039A 0A45      00457         XORLW   0x45
+039C E100      00458         BNZ     _00162_DS_
+039E 5000      00459         MOVF    r0x09, W
+03A0 E000      00460         BZ      _00163_DS_
+03A2 00461 _00162_DS_:
+03A2 D000      00462         BRA     _00122_DS_
+03A4 00463 _00163_DS_:
+               00464 ;       .line   63; /usr/local/lib/pic16/pic16/libc/stdlib/atof.c       s++;
+03A4 2A00      00465         INCF    r0x00, F
+03A6 B0D8      00466         BTFSC   STATUS, 0
+03A8 2A00      00467         INCF    r0x01, F
+03AA B0D8      00468         BTFSC   STATUS, 0
+03AC 2A00      00469         INCF    r0x02, F
+               00470 ;       .line   64; /usr/local/lib/pic16/pic16/libc/stdlib/atof.c       iexp=(char)atoi(s);
+03AE 5000      00471         MOVF    r0x02, W
+03B0 6EE5      00472         MOVWF   POSTDEC1
+03B2 5000      00473         MOVF    r0x01, W
+03B4 6EE5      00474         MOVWF   POSTDEC1
+03B6 5000      00475         MOVF    r0x00, W
+03B8 6EE5      00476         MOVWF   POSTDEC1
+03BA EC00 F000 00477         CALL    _atoi
+03BE 6E00      00478         MOVWF   r0x00
+03C0 CFF3 F000 00479         MOVFF   PRODL, r0x01
+03C4 0E03      00480         MOVLW   0x03
+03C6 26E1      00481         ADDWF   FSR1L, F
+03C8 00482 _00118_DS_:
+               00483 ;       .line   66; /usr/local/lib/pic16/pic16/libc/stdlib/atof.c       while(iexp!=0)
+03C8 5000      00484         MOVF    r0x00, W
+03CA B4D8      00485         BTFSC   STATUS, 2
+03CC D000      00486         BRA     _00122_DS_
+gpasm-0.13.7 beta               atof.asm    11-15-2013  15:30:12         PAGE 10
+
+
+LOC  OBJECT CODE     LINE SOURCE TEXT
+  VALUE
+ 
+               00487 ;       .line   68; /usr/local/lib/pic16/pic16/libc/stdlib/atof.c       if(iexp<0)
+03CE 80D8      00488         BSF     STATUS, 0
+03D0 AE00      00489         BTFSS   r0x00, 7
+03D2 90D8      00490         BCF     STATUS, 0
+03D4 E300      00491         BNC     _00116_DS_
+               00492 ;       .line   70; /usr/local/lib/pic16/pic16/libc/stdlib/atof.c       value*=0.1;
+03D6 5000      00493         MOVF    r0x06, W
+03D8 6EE5      00494         MOVWF   POSTDEC1
+03DA 5000      00495         MOVF    r0x05, W
+03DC 6EE5      00496         MOVWF   POSTDEC1
+03DE 5000      00497         MOVF    r0x04, W
+03E0 6EE5      00498         MOVWF   POSTDEC1
+03E2 5000      00499         MOVF    r0x03, W
+03E4 6EE5      00500         MOVWF   POSTDEC1
+03E6 0E3D      00501         MOVLW   0x3d
+03E8 6EE5      00502         MOVWF   POSTDEC1
+03EA 0ECC      00503         MOVLW   0xcc
+03EC 6EE5      00504         MOVWF   POSTDEC1
+03EE 0ECC      00505         MOVLW   0xcc
+03F0 6EE5      00506         MOVWF   POSTDEC1
+03F2 0ECD      00507         MOVLW   0xcd
+03F4 6EE5      00508         MOVWF   POSTDEC1
+03F6 EC00 F000 00509         CALL    ___fsmul
+03FA 6E00      00510         MOVWF   r0x03
+03FC CFF3 F000 00511         MOVFF   PRODL, r0x04
+0400 CFF4 F000 00512         MOVFF   PRODH, r0x05
+0404 CFE9 F000 00513         MOVFF   FSR0L, r0x06
+0408 0E08      00514         MOVLW   0x08
+040A 26E1      00515         ADDWF   FSR1L, F
+               00516 ;       .line   71; /usr/local/lib/pic16/pic16/libc/stdlib/atof.c       iexp++;
+040C 2A00      00517         INCF    r0x00, F
+040E D000      00518         BRA     _00118_DS_
+0410 00519 _00116_DS_:
+               00520 ;       .line   75; /usr/local/lib/pic16/pic16/libc/stdlib/atof.c       value*=10.0;
+0410 5000      00521         MOVF    r0x06, W
+0412 6EE5      00522         MOVWF   POSTDEC1
+0414 5000      00523         MOVF    r0x05, W
+0416 6EE5      00524         MOVWF   POSTDEC1
+0418 5000      00525         MOVF    r0x04, W
+041A 6EE5      00526         MOVWF   POSTDEC1
+041C 5000      00527         MOVF    r0x03, W
+041E 6EE5      00528         MOVWF   POSTDEC1
+0420 0E41      00529         MOVLW   0x41
+0422 6EE5      00530         MOVWF   POSTDEC1
+0424 0E20      00531         MOVLW   0x20
+0426 6EE5      00532         MOVWF   POSTDEC1
+0428 0E00      00533         MOVLW   0x00
+042A 6EE5      00534         MOVWF   POSTDEC1
+042C 0E00      00535         MOVLW   0x00
+042E 6EE5      00536         MOVWF   POSTDEC1
+0430 EC00 F000 00537         CALL    ___fsmul
+0434 6E00      00538         MOVWF   r0x03
+0436 CFF3 F000 00539         MOVFF   PRODL, r0x04
+043A CFF4 F000 00540         MOVFF   PRODH, r0x05
+gpasm-0.13.7 beta               atof.asm    11-15-2013  15:30:12         PAGE 11
+
+
+LOC  OBJECT CODE     LINE SOURCE TEXT
+  VALUE
+ 
+043E CFE9 F000 00541         MOVFF   FSR0L, r0x06
+0442 0E08      00542         MOVLW   0x08
+0444 26E1      00543         ADDWF   FSR1L, F
+               00544 ;       .line   76; /usr/local/lib/pic16/pic16/libc/stdlib/atof.c       iexp--;
+0446 0600      00545         DECF    r0x00, F
+0448 D000      00546         BRA     _00118_DS_
+044A 00547 _00122_DS_:
+               00548 ;       .line   82; /usr/local/lib/pic16/pic16/libc/stdlib/atof.c       if(sign) value*=-1.0;
+044A 5000      00549         MOVF    r0x07, W
+044C E000      00550         BZ      _00124_DS_
+044E 7E00      00551         BTG     r0x06, 7
+0450 00552 _00124_DS_:
+               00553 ;       .line   83; /usr/local/lib/pic16/pic16/libc/stdlib/atof.c       return (value);
+0450 C000 FFE9 00554         MOVFF   r0x06, FSR0L
+0454 C000 FFF4 00555         MOVFF   r0x05, PRODH
+0458 C000 FFF3 00556         MOVFF   r0x04, PRODL
+045C 5000      00557         MOVF    r0x03, W
+045E CFE4 F000 00558         MOVFF   PREINC1, r0x12
+0462 CFE4 F000 00559         MOVFF   PREINC1, r0x11
+0466 CFE4 F000 00560         MOVFF   PREINC1, r0x10
+046A CFE4 F000 00561         MOVFF   PREINC1, r0x0f
+046E CFE4 F000 00562         MOVFF   PREINC1, r0x0e
+0472 CFE4 F000 00563         MOVFF   PREINC1, r0x0d
+0476 CFE4 F000 00564         MOVFF   PREINC1, r0x0c
+047A CFE4 F000 00565         MOVFF   PREINC1, r0x0b
+047E CFE4 F000 00566         MOVFF   PREINC1, r0x0a
+0482 CFE4 F000 00567         MOVFF   PREINC1, r0x09
+0486 CFE4 F000 00568         MOVFF   PREINC1, r0x08
+048A CFE4 F000 00569         MOVFF   PREINC1, r0x07
+048E CFE4 F000 00570         MOVFF   PREINC1, r0x06
+0492 CFE4 F000 00571         MOVFF   PREINC1, r0x05
+0496 CFE4 F000 00572         MOVFF   PREINC1, r0x04
+049A CFE4 F000 00573         MOVFF   PREINC1, r0x03
+049E CFE4 F000 00574         MOVFF   PREINC1, r0x02
+04A2 CFE4 F000 00575         MOVFF   PREINC1, r0x01
+04A6 CFE4 F000 00576         MOVFF   PREINC1, r0x00
+04AA CFE4 FFD9 00577         MOVFF   PREINC1, FSR2L
+04AE 0012      00578         RETURN  
+               00579 
+               00580 
+               00581 
+               00582 ; Statistics:
+               00583 ; code size:     1200 (0x04b0) bytes ( 0.92%)
+               00584 ;                 600 (0x0258) words
+               00585 ; udata size:       0 (0x0000) bytes ( 0.00%)
+               00586 ; access size:     19 (0x0013) bytes
+               00587 
+               00588 
+gpasm-0.13.7 beta               atof.asm    11-15-2013  15:30:12         PAGE 12
+
+
+SYMBOL TABLE
+  LABEL                             VALUE 
+
+FSR0L                             00000FE9
+FSR1L                             00000FE1
+FSR2L                             00000FD9
+PLUSW2                            00000FDB
+POSTDEC1                          00000FE5
+PREINC1                           00000FE4
+PRODH                             00000FF4
+PRODL                             00000FF3
+STATUS                            00000FD8
+WREG                              00000FE8
+_00105_DS_                        00000072
+_00111_DS_                        000000D8
+_00112_DS_                        000000F2
+_00114_DS_                        00000344
+_00116_DS_                        00000410
+_00118_DS_                        000003C8
+_00122_DS_                        0000044A
+_00124_DS_                        00000450
+_00125_DS_                        00000106
+_00129_DS_                        0000022C
+_00135_DS_                        0000037E
+_00136_DS_                        00000398
+_00152_DS_                        0000009E
+_00153_DS_                        000001DC
+_00154_DS_                        00000338
+_00160_DS_                        00000200
+_00162_DS_                        000003A2
+_00163_DS_                        000003A4
+__18F97J60                        00000001
+___fsadd                          00000000
+___fsmul                          00000000
+___sint2fs                        00000000
+__gptrget1                        00000000
+_atof                             00000000
+_atoi                             00000000
+_isdigit                          00000000
+_islower                          00000000
+_isspace                          00000000
+r0x00                             00000000
+r0x01                             00000001
+r0x02                             00000002
+r0x03                             00000003
+r0x04                             00000004
+r0x05                             00000005
+r0x06                             00000006
+r0x07                             00000007
+r0x08                             00000008
+r0x09                             00000009
+r0x0a                             0000000A
+r0x0b                             0000000B
+r0x0c                             0000000C
+r0x0d                             0000000D
+r0x0e                             0000000E
+gpasm-0.13.7 beta               atof.asm    11-15-2013  15:30:12         PAGE 13
+
+
+LOC  OBJECT CODE     LINE SOURCE TEXT
+  VALUE
+ 
+r0x0f                             0000000F
+r0x10                             00000010
+r0x11                             00000011
+r0x12                             00000012
+
+
+Errors   :       0
+Warnings :       0 reported,       0 suppressed
+Messages :       0 reported,       0 suppressed
+
