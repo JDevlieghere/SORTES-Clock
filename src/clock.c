@@ -26,14 +26,19 @@ void update_display(void);
 void toggle_led(void);
 
 time _time;
+time _alarm;
 char display_line[32];
+int alarm_going_off = 0;
+int alarm_counter = 0;
 int overflow_counter = 0;
 
 int main(void){
 		_time = time_create();
+		_alarm = time_create();
 
 		init();
         init_clock(_time);
+		time_set(_alarm,0,0,5);
 		update_display();
         return 0;
 }
@@ -45,6 +50,11 @@ void update_display(void){
 
 void toggle_led(void){
 	LED0_IO^=1;
+}
+
+void alarm_led(void){
+	LED1_IO^=1;
+	LED2_IO^=1;
 }
 
 void init_clock(time t){
@@ -97,6 +107,17 @@ void lowPriorityInterruptHandler (void) __interrupt(1){
 		if(overflow_counter == 50){
 			toggle_led();
 		}else if(overflow_counter == 100){
+			if(time_equals(_alarm,_time)){
+				alarm_going_off = 1;
+			}
+			if(alarm_going_off){
+				alarm_counter++;
+				alarm_led();
+				if(alarm_counter==30){
+					alarm_going_off =0;
+					alarm_counter = 0;
+				}
+			}
 			overflow_counter = 0;
 			toggle_led();
 			add_second(_time);
@@ -105,6 +126,7 @@ void lowPriorityInterruptHandler (void) __interrupt(1){
         INTCONbits.TMR0IF = 0;
     }
 }
+
 
 void init(void){
 	// Initialize LCD
