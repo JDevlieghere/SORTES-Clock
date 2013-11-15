@@ -18,14 +18,21 @@ void DisplayString(BYTE pos, char* text);
 int getInput(int maxvalue, char *text);
 void delay_1ms(void);
 void delay_ms(unsigned int ms);
+void initClock();
 
 int main(void){
 	LCDInit();
-	set_time(getInput(24, "HOURS:"),0,0);
+	initClock();
 	DisplayString(0, time2string());
 	return 0;
 }
 
+void initClock(){
+	int h = getInput(24, "HOURS:");
+	int m = getInput(60, "MINUTES:");
+	int s = getInput(60, "SECONDS:");
+	set_time(h,m,s);
+}
 
 int getInput(int maxvalue, char *text){
 	BYTE length = strlen(text);
