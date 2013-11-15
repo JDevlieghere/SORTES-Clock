@@ -2,8 +2,8 @@
 #define __SDCC__
 #define THIS_INCLUDES_THE_MAIN_FUNCTION
 
-#define CLOCK_FREQ        40000000         // 40 Mhz
-#define EXEC_FREQ         CLOCK_FREQ/4 // 4 clock cycles to execute an instruction
+#define CLOCK_FREQ        40000000      // 40 Mhz
+#define EXEC_FREQ         CLOCK_FREQ/4 	// 4 clock cycles to execute an instruction
 
 #include <stdlib.h>
 #include <stdio.h>
@@ -11,6 +11,7 @@
 #include "../Include/HardwareProfile.h"
 #include "../Include/LCDBlocking.h"
 #include "../Include/TCPIP_Stack/Delay.h"
+
 #include "newtime.h"
 
 /* Method declaration. */
@@ -39,7 +40,7 @@ void initClock(){
     h = getInput(24, "HOURS:");
     m = getInput(60, "MINUTES:");
     s = getInput(60, "SECONDS:");
-    set_time(_time,h,m,s);
+    time_set(_time,h,m,s);
 
 }
 

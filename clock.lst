@@ -1,6 +1,6 @@
 gplink-0.13.7 beta
 Copyright (c) 1998-2005 gputils project
-Listing File Generated: 11-15-2013  16:39:34
+Listing File Generated: 11-15-2013  19:15:36
  
  
 Address  Value    Disassembly              Source
@@ -8,7 +8,7 @@ Address  Value    Disassembly              Source
                                            ;--------------------------------------------------------
                                            ; File Created by SDCC : free open source ANSI-C Compiler
                                            ; Version 2.9.4 #5595 (Nov 14 2013) (UNIX)
-                                           ; This file was generated Fri Nov 15 16:39:32 2013
+                                           ; This file was generated Fri Nov 15 19:10:15 2013
                                            ;--------------------------------------------------------
                                            ; PIC16 port for the Microchip 16-bit core micros
                                            ;--------------------------------------------------------
@@ -459,7 +459,7 @@ Address  Value    Disassembly              Source
                                            	extern _LCDUpdate
                                            	extern _LCDErase
                                            	extern _time_create
-                                           	extern _set_time
+                                           	extern _time_set
                                            	extern _time_print
                                            	extern __modsint
                                            ;--------------------------------------------------------
@@ -510,7 +510,7 @@ Address  Value    Disassembly              Source
                                            ; ; Starting pCode block
                                            S_clock__main	code
                                            _main:
-                                           ;	.line	29; src/clock.c	_time = time_create();
+                                           ;	.line	30; src/clock.c	_time = time_create();
 00294c   ece3     call	0x27c6, 0           	CALL	_time_create
 00294e   f013
 002950   010f     movlb	0xf                	BANKSEL	__time
@@ -519,13 +519,13 @@ Address  Value    Disassembly              Source
 002956   ff4f
 002958   cff4     movff	0xff4, 0xf50       	MOVFF	PRODH, (__time + 2)
 00295a   ff50
-                                           ;	.line	30; src/clock.c	LCDInit();
+                                           ;	.line	31; src/clock.c	LCDInit();
 00295c   ec52     call	0xaa4, 0            	CALL	_LCDInit
 00295e   f005
-                                           ;	.line	31; src/clock.c	initClock();
+                                           ;	.line	32; src/clock.c	initClock();
 002960   ecdb     call	0x19b6, 0           	CALL	_initClock
 002962   f00c
-                                           ;	.line	32; src/clock.c	time_print(_time, display_line);
+                                           ;	.line	33; src/clock.c	time_print(_time, display_line);
 002964   0e0f     movlw	0xf                	MOVLW	HIGH(_display_line)
 002966   6e01     movwf	0x1, 0             	MOVWF	r0x01
 002968   0e21     movlw	0x21               	MOVLW	LOW(_display_line)
@@ -551,7 +551,7 @@ Address  Value    Disassembly              Source
 002990   f00a
 002992   0e06     movlw	0x6                	MOVLW	0x06
 002994   26e1     addwf	0xe1, 0x1, 0       	ADDWF	FSR1L, F
-                                           ;	.line	33; src/clock.c	DisplayString(0, display_line);
+                                           ;	.line	34; src/clock.c	DisplayString(0, display_line);
 002996   0e0f     movlw	0xf                	MOVLW	HIGH(_display_line)
 002998   6e01     movwf	0x1, 0             	MOVWF	r0x01
 00299a   0e21     movlw	0x21               	MOVLW	LOW(_display_line)
@@ -570,7 +570,7 @@ Address  Value    Disassembly              Source
 0029b4   f00b
 0029b6   0e04     movlw	0x4                	MOVLW	0x04
 0029b8   26e1     addwf	0xe1, 0x1, 0       	ADDWF	FSR1L, F
-                                           ;	.line	34; src/clock.c	return 0;
+                                           ;	.line	35; src/clock.c	return 0;
 0029ba   6af3     clrf	0xf3, 0             	CLRF	PRODL
 0029bc   6ae8     clrf	0xe8, 0             	CLRF	WREG
 0029be   0012     return	0                 	RETURN	
@@ -578,7 +578,7 @@ Address  Value    Disassembly              Source
                                            ; ; Starting pCode block
                                            S_clock__to_double_digits	code
                                            _to_double_digits:
-                                           ;	.line	95; src/clock.c	char* to_double_digits(int value){
+                                           ;	.line	96; src/clock.c	char* to_double_digits(int value){
 00273a   cfd9     movff	0xfd9, 0xfe5       	MOVFF	FSR2L, POSTDEC1
 00273c   ffe5
 00273e   cfe1     movff	0xfe1, 0xfd9       	MOVFF	FSR1L, FSR2L
@@ -599,7 +599,7 @@ Address  Value    Disassembly              Source
 00275c   0e03     movlw	0x3                	MOVLW	0x03
 00275e   cfdb     movff	0xfdb, 0x1         	MOVFF	PLUSW2, r0x01
 002760   f001
-                                           ;	.line	97; src/clock.c	sprintf(buffer, "%02d", value);
+                                           ;	.line	98; src/clock.c	sprintf(buffer, "%02d", value);
 002762   0e0f     movlw	0xf                	MOVLW	HIGH(_to_double_digits_buffer_1_1)
 002764   6e03     movwf	0x3, 0             	MOVWF	r0x03
 002766   0e51     movlw	0x51               	MOVLW	LOW(_to_double_digits_buffer_1_1)
@@ -626,7 +626,7 @@ Address  Value    Disassembly              Source
 002790   f00e
 002792   0e08     movlw	0x8                	MOVLW	0x08
 002794   26e1     addwf	0xe1, 0x1, 0       	ADDWF	FSR1L, F
-                                           ;	.line	98; src/clock.c	return buffer;
+                                           ;	.line	99; src/clock.c	return buffer;
 002796   0e0f     movlw	0xf                	MOVLW	HIGH(_to_double_digits_buffer_1_1)
 002798   6e01     movwf	0x1, 0             	MOVWF	r0x01
 00279a   0e51     movlw	0x51               	MOVLW	LOW(_to_double_digits_buffer_1_1)
@@ -655,7 +655,7 @@ Address  Value    Disassembly              Source
                                            ; ; Starting pCode block
                                            S_clock__delay_ms	code
                                            _delay_ms:
-                                           ;	.line	89; src/clock.c	void delay_ms(unsigned int ms) {
+                                           ;	.line	90; src/clock.c	void delay_ms(unsigned int ms) {
 002a22   cfd9     movff	0xfd9, 0xfe5       	MOVFF	FSR2L, POSTDEC1
 002a24   ffe5
 002a26   cfe1     movff	0xfe1, 0xfd9       	MOVFF	FSR1L, FSR2L
@@ -675,7 +675,7 @@ Address  Value    Disassembly              Source
 002a42   cfdb     movff	0xfdb, 0x1         	MOVFF	PLUSW2, r0x01
 002a44   f001
                                            _00153_DS_:
-                                           ;	.line	90; src/clock.c	while (ms--) {
+                                           ;	.line	91; src/clock.c	while (ms--) {
 002a46   c000     movff	0, 0x2             	MOVFF	r0x00, r0x02
 002a48   f002
 002a4a   c001     movff	0x1, 0x3           	MOVFF	r0x01, r0x03
@@ -687,7 +687,7 @@ Address  Value    Disassembly              Source
 002a56   5002     movf	0x2, 0, 0           	MOVF	r0x02, W
 002a58   1003     iorwf	0x3, 0, 0          	IORWF	r0x03, W
 002a5a   e003     bz	0x2a62                	BZ	_00156_DS_
-                                           ;	.line	91; src/clock.c	delay_1ms();
+                                           ;	.line	92; src/clock.c	delay_1ms();
 002a5c   eca4     call	0x2b48, 0           	CALL	_delay_1ms
 002a5e   f015
 002a60   d7f2     bra	0x2a46               	BRA	_00153_DS_
@@ -707,36 +707,36 @@ Address  Value    Disassembly              Source
                                            ; ; Starting pCode block
                                            S_clock__delay_1ms	code
                                            _delay_1ms:
-                                           ;	.line	75; src/clock.c	void delay_1ms(void) {
+                                           ;	.line	76; src/clock.c	void delay_1ms(void) {
 002b48   cfd9     movff	0xfd9, 0xfe5       	MOVFF	FSR2L, POSTDEC1
 002b4a   ffe5
 002b4c   cfe1     movff	0xfe1, 0xfd9       	MOVFF	FSR1L, FSR2L
 002b4e   ffd9
-                                           ;	.line	76; src/clock.c	TMR0H=(0x10000-EXEC_FREQ/1000)>>8;
+                                           ;	.line	77; src/clock.c	TMR0H=(0x10000-EXEC_FREQ/1000)>>8;
 002b50   0ed8     movlw	0xd8               	MOVLW	0xd8
 002b52   6ed7     movwf	0xd7, 0            	MOVWF	_TMR0H
-                                           ;	.line	77; src/clock.c	TMR0L=(0x10000-EXEC_FREQ/1000)&0xff;
+                                           ;	.line	78; src/clock.c	TMR0L=(0x10000-EXEC_FREQ/1000)&0xff;
 002b54   0ef0     movlw	0xf0               	MOVLW	0xf0
 002b56   6ed6     movwf	0xd6, 0            	MOVWF	_TMR0L
-                                           ;	.line	78; src/clock.c	T0CONbits.TMR0ON=0; // disable timer0
+                                           ;	.line	79; src/clock.c	T0CONbits.TMR0ON=0; // disable timer0
 002b58   9ed5     bcf	0xd5, 0x7, 0         	BCF	_T0CONbits, 7
-                                           ;	.line	79; src/clock.c	T0CONbits.T08BIT=0; // use timer0 16-bit counter
+                                           ;	.line	80; src/clock.c	T0CONbits.T08BIT=0; // use timer0 16-bit counter
 002b5a   9cd5     bcf	0xd5, 0x6, 0         	BCF	_T0CONbits, 6
-                                           ;	.line	80; src/clock.c	T0CONbits.T0CS=0; // use timer0 instruction cycle clock
+                                           ;	.line	81; src/clock.c	T0CONbits.T0CS=0; // use timer0 instruction cycle clock
 002b5c   9ad5     bcf	0xd5, 0x5, 0         	BCF	_T0CONbits, 5
-                                           ;	.line	81; src/clock.c	T0CONbits.PSA=1; // disable timer0 prescaler
+                                           ;	.line	82; src/clock.c	T0CONbits.PSA=1; // disable timer0 prescaler
 002b5e   86d5     bsf	0xd5, 0x3, 0         	BSF	_T0CONbits, 3
-                                           ;	.line	82; src/clock.c	INTCONbits.T0IF=0; // clear timer0 overflow bit
+                                           ;	.line	83; src/clock.c	INTCONbits.T0IF=0; // clear timer0 overflow bit
 002b60   94f2     bcf	0xf2, 0x2, 0         	BCF	_INTCONbits, 2
-                                           ;	.line	83; src/clock.c	T0CONbits.TMR0ON=1; // enable timer0
+                                           ;	.line	84; src/clock.c	T0CONbits.TMR0ON=1; // enable timer0
 002b62   8ed5     bsf	0xd5, 0x7, 0         	BSF	_T0CONbits, 7
                                            _00145_DS_:
-                                           ;	.line	84; src/clock.c	while (!INTCONbits.T0IF) {} // wait for timer0 overflow
+                                           ;	.line	85; src/clock.c	while (!INTCONbits.T0IF) {} // wait for timer0 overflow
 002b64   a4f2     btfss	0xf2, 0x2, 0       	BTFSS	_INTCONbits, 2
 002b66   d7fe     bra	0x2b64               	BRA	_00145_DS_
-                                           ;	.line	85; src/clock.c	INTCONbits.T0IF=0; // clear timer0 overflow bit
+                                           ;	.line	86; src/clock.c	INTCONbits.T0IF=0; // clear timer0 overflow bit
 002b68   94f2     bcf	0xf2, 0x2, 0         	BCF	_INTCONbits, 2
-                                           ;	.line	86; src/clock.c	T0CONbits.TMR0ON=0; // disable timer0
+                                           ;	.line	87; src/clock.c	T0CONbits.TMR0ON=0; // disable timer0
 002b6a   9ed5     bcf	0xd5, 0x7, 0         	BCF	_T0CONbits, 7
 002b6c   cfe4     movff	0xfe4, 0xfd9       	MOVFF	PREINC1, FSR2L
 002b6e   ffd9
@@ -745,7 +745,7 @@ Address  Value    Disassembly              Source
                                            ; ; Starting pCode block
                                            S_clock__DisplayString	code
                                            _DisplayString:
-                                           ;	.line	63; src/clock.c	void DisplayString(BYTE pos, char* text){
+                                           ;	.line	64; src/clock.c	void DisplayString(BYTE pos, char* text){
 0017a8   cfd9     movff	0xfd9, 0xfe5       	MOVFF	FSR2L, POSTDEC1
 0017aa   ffe5
 0017ac   cfe1     movff	0xfe1, 0xfd9       	MOVFF	FSR1L, FSR2L
@@ -782,7 +782,7 @@ Address  Value    Disassembly              Source
 0017ea   0e05     movlw	0x5                	MOVLW	0x05
 0017ec   cfdb     movff	0xfdb, 0x3         	MOVFF	PLUSW2, r0x03
 0017ee   f003
-                                           ;	.line	64; src/clock.c	BYTE        l = strlen(text);/*number of actual chars in the string*/
+                                           ;	.line	65; src/clock.c	BYTE        l = strlen(text);/*number of actual chars in the string*/
 0017f0   5003     movf	0x3, 0, 0           	MOVF	r0x03, W
 0017f2   6ee5     movwf	0xe5, 0            	MOVWF	POSTDEC1
 0017f4   5002     movf	0x2, 0, 0           	MOVF	r0x02, W
@@ -796,11 +796,11 @@ Address  Value    Disassembly              Source
 001804   f005
 001806   0e03     movlw	0x3                	MOVLW	0x03
 001808   26e1     addwf	0xe1, 0x1, 0       	ADDWF	FSR1L, F
-                                           ;	.line	65; src/clock.c	BYTE      max = 32-pos;    /*available space on the lcd*/
+                                           ;	.line	66; src/clock.c	BYTE      max = 32-pos;    /*available space on the lcd*/
 00180a   5000     movf	0, 0, 0             	MOVF	r0x00, W
 00180c   0820     sublw	0x20               	SUBLW	0x20
 00180e   6e05     movwf	0x5, 0             	MOVWF	r0x05
-                                           ;	.line	66; src/clock.c	char       *d = (char*)&LCDText[pos];
+                                           ;	.line	67; src/clock.c	char       *d = (char*)&LCDText[pos];
 001810   6a06     clrf	0x6, 0              	CLRF	r0x06
 001812   0e00     movlw	0                  	MOVLW	LOW(_LCDText)
 001814   2600     addwf	0, 0x1, 0          	ADDWF	r0x00, F
@@ -812,7 +812,7 @@ Address  Value    Disassembly              Source
 001820   6e00     movwf	0, 0               	MOVWF	r0x00
 001822   0e80     movlw	0x80               	MOVLW	0x80
 001824   6e07     movwf	0x7, 0             	MOVWF	r0x07
-                                           ;	.line	68; src/clock.c	size_t      n = (l<max)?l:max;
+                                           ;	.line	69; src/clock.c	size_t      n = (l<max)?l:max;
 001826   5005     movf	0x5, 0, 0           	MOVF	r0x05, W
 001828   5c04     subwf	0x4, 0, 0          	SUBWF	r0x04, W
 00182a   e302     bnc	0x1830               	BNC	_00135_DS_
@@ -820,12 +820,12 @@ Address  Value    Disassembly              Source
 00182e   f004
                                            _00135_DS_:
 001830   6a05     clrf	0x5, 0              	CLRF	r0x05
-                                           ;	.line	70; src/clock.c	if (n != 0)
+                                           ;	.line	71; src/clock.c	if (n != 0)
 001832   5004     movf	0x4, 0, 0           	MOVF	r0x04, W
 001834   1005     iorwf	0x5, 0, 0          	IORWF	r0x05, W
 001836   e027     bz	0x1886                	BZ	_00131_DS_
                                            _00127_DS_:
-                                           ;	.line	71; src/clock.c	while (n-- != 0)*d++ = *s++;
+                                           ;	.line	72; src/clock.c	while (n-- != 0)*d++ = *s++;
 001838   c004     movff	0x4, 0x8           	MOVFF	r0x04, r0x08
 00183a   f008
 00183c   c005     movff	0x5, 0x9           	MOVFF	r0x05, r0x09
@@ -866,7 +866,7 @@ Address  Value    Disassembly              Source
 001882   2a07     incf	0x7, 0x1, 0         	INCF	r0x07, F
 001884   d7d9     bra	0x1838               	BRA	_00127_DS_
                                            _00131_DS_:
-                                           ;	.line	72; src/clock.c	LCDUpdate();
+                                           ;	.line	73; src/clock.c	LCDUpdate();
 001886   ec1d     call	0x83a, 0            	CALL	_LCDUpdate
 001888   f004
 00188a   cfe4     movff	0xfe4, 0x9         	MOVFF	PREINC1, r0x09
@@ -896,7 +896,7 @@ Address  Value    Disassembly              Source
                                            ; ; Starting pCode block
                                            S_clock__getInput	code
                                            _getInput:
-                                           ;	.line	46; src/clock.c	int getInput(int maxvalue, char *text){
+                                           ;	.line	47; src/clock.c	int getInput(int maxvalue, char *text){
 00144a   cfd9     movff	0xfd9, 0xfe5       	MOVFF	FSR2L, POSTDEC1
 00144c   ffe5
 00144e   cfe1     movff	0xfe1, 0xfd9       	MOVFF	FSR1L, FSR2L
@@ -932,7 +932,7 @@ Address  Value    Disassembly              Source
 00148a   0e06     movlw	0x6                	MOVLW	0x06
 00148c   cfdb     movff	0xfdb, 0x4         	MOVFF	PLUSW2, r0x04
 00148e   f004
-                                           ;	.line	47; src/clock.c	BYTE length = strlen(text);
+                                           ;	.line	48; src/clock.c	BYTE length = strlen(text);
 001490   5004     movf	0x4, 0, 0           	MOVF	r0x04, W
 001492   6ee5     movwf	0xe5, 0            	MOVWF	POSTDEC1
 001494   5003     movf	0x3, 0, 0           	MOVF	r0x03, W
@@ -946,10 +946,10 @@ Address  Value    Disassembly              Source
 0014a4   f006
 0014a6   0e03     movlw	0x3                	MOVLW	0x03
 0014a8   26e1     addwf	0xe1, 0x1, 0       	ADDWF	FSR1L, F
-                                           ;	.line	48; src/clock.c	int value = 0;
+                                           ;	.line	49; src/clock.c	int value = 0;
 0014aa   6a06     clrf	0x6, 0              	CLRF	r0x06
 0014ac   6a07     clrf	0x7, 0              	CLRF	r0x07
-                                           ;	.line	49; src/clock.c	DisplayString(0, text);
+                                           ;	.line	50; src/clock.c	DisplayString(0, text);
 0014ae   5004     movf	0x4, 0, 0           	MOVF	r0x04, W
 0014b0   6ee5     movwf	0xe5, 0            	MOVWF	POSTDEC1
 0014b2   5003     movf	0x3, 0, 0           	MOVF	r0x03, W
@@ -962,26 +962,26 @@ Address  Value    Disassembly              Source
 0014c0   f00b
 0014c2   0e04     movlw	0x4                	MOVLW	0x04
 0014c4   26e1     addwf	0xe1, 0x1, 0       	ADDWF	FSR1L, F
-                                           ;	.line	50; src/clock.c	while(1)
+                                           ;	.line	51; src/clock.c	while(1)
 0014c6   2805     incf	0x5, 0, 0           	INCF	r0x05, W
 0014c8   6e02     movwf	0x2, 0             	MOVWF	r0x02
                                            _00120_DS_:
-                                           ;	.line	52; src/clock.c	if(BUTTON1_IO == 0u){
+                                           ;	.line	53; src/clock.c	if(BUTTON1_IO == 0u){
 0014ca   b281     btfsc	0x81, 0x1, 0       	BTFSC	_PORTBbits, 1
 0014cc   d006     bra	0x14da               	BRA	_00116_DS_
-                                           ;	.line	53; src/clock.c	LCDErase();
+                                           ;	.line	54; src/clock.c	LCDErase();
 0014ce   eca4     call	0x2548, 0           	CALL	_LCDErase
 0014d0   f012
-                                           ;	.line	54; src/clock.c	return value;
+                                           ;	.line	55; src/clock.c	return value;
 0014d2   c007     movff	0x7, 0xff3         	MOVFF	r0x07, PRODL
 0014d4   fff3
 0014d6   5006     movf	0x6, 0, 0           	MOVF	r0x06, W
 0014d8   d036     bra	0x1546               	BRA	_00122_DS_
                                            _00116_DS_:
-                                           ;	.line	56; src/clock.c	if(BUTTON0_IO == 0u) 
+                                           ;	.line	57; src/clock.c	if(BUTTON0_IO == 0u) 
 0014da   b681     btfsc	0x81, 0x3, 0       	BTFSC	_PORTBbits, 3
 0014dc   d012     bra	0x1502               	BRA	_00118_DS_
-                                           ;	.line	57; src/clock.c	value = (++value)%maxvalue;
+                                           ;	.line	58; src/clock.c	value = (++value)%maxvalue;
 0014de   2a06     incf	0x6, 0x1, 0         	INCF	r0x06, F
 0014e0   b0d8     btfsc	0xd8, 0, 0         	BTFSC	STATUS, 0
 0014e2   2a07     incf	0x7, 0x1, 0         	INCF	r0x07, F
@@ -1001,7 +1001,7 @@ Address  Value    Disassembly              Source
 0014fe   0e04     movlw	0x4                	MOVLW	0x04
 001500   26e1     addwf	0xe1, 0x1, 0       	ADDWF	FSR1L, F
                                            _00118_DS_:
-                                           ;	.line	58; src/clock.c	DisplayString(length + 1, to_double_digits(value));
+                                           ;	.line	59; src/clock.c	DisplayString(length + 1, to_double_digits(value));
 001502   5007     movf	0x7, 0, 0           	MOVF	r0x07, W
 001504   6ee5     movwf	0xe5, 0            	MOVWF	POSTDEC1
 001506   5006     movf	0x6, 0, 0           	MOVF	r0x06, W
@@ -1027,7 +1027,7 @@ Address  Value    Disassembly              Source
 00152e   f00b
 001530   0e04     movlw	0x4                	MOVLW	0x04
 001532   26e1     addwf	0xe1, 0x1, 0       	ADDWF	FSR1L, F
-                                           ;	.line	59; src/clock.c	delay_ms(50);
+                                           ;	.line	60; src/clock.c	delay_ms(50);
 001534   0e00     movlw	0                  	MOVLW	0x00
 001536   6ee5     movwf	0xe5, 0            	MOVWF	POSTDEC1
 001538   0e32     movlw	0x32               	MOVLW	0x32
@@ -1061,7 +1061,7 @@ Address  Value    Disassembly              Source
                                            ; ; Starting pCode block
                                            S_clock__initClock	code
                                            _initClock:
-                                           ;	.line	37; src/clock.c	void initClock(){
+                                           ;	.line	38; src/clock.c	void initClock(){
 0019b6   cfd9     movff	0xfd9, 0xfe5       	MOVFF	FSR2L, POSTDEC1
 0019b8   ffe5
 0019ba   cfe1     movff	0xfe1, 0xfd9       	MOVFF	FSR1L, FSR2L
@@ -1078,7 +1078,7 @@ Address  Value    Disassembly              Source
 0019d0   ffe5
 0019d2   c005     movff	0x5, 0xfe5         	MOVFF	r0x05, POSTDEC1
 0019d4   ffe5
-                                           ;	.line	39; src/clock.c	h = getInput(24, "HOURS:");
+                                           ;	.line	40; src/clock.c	h = getInput(24, "HOURS:");
 0019d6   0e00     movlw	0                  	MOVLW	UPPER(__str_0)
 0019d8   6ee5     movwf	0xe5, 0            	MOVWF	POSTDEC1
 0019da   0e1a     movlw	0x1a               	MOVLW	HIGH(__str_0)
@@ -1096,7 +1096,7 @@ Address  Value    Disassembly              Source
 0019f2   f001
 0019f4   0e05     movlw	0x5                	MOVLW	0x05
 0019f6   26e1     addwf	0xe1, 0x1, 0       	ADDWF	FSR1L, F
-                                           ;	.line	40; src/clock.c	m = getInput(60, "MINUTES:");
+                                           ;	.line	41; src/clock.c	m = getInput(60, "MINUTES:");
 0019f8   0e00     movlw	0                  	MOVLW	UPPER(__str_1)
 0019fa   6ee5     movwf	0xe5, 0            	MOVWF	POSTDEC1
 0019fc   0e1a     movlw	0x1a               	MOVLW	HIGH(__str_1)
@@ -1114,7 +1114,7 @@ Address  Value    Disassembly              Source
 001a14   f003
 001a16   0e05     movlw	0x5                	MOVLW	0x05
 001a18   26e1     addwf	0xe1, 0x1, 0       	ADDWF	FSR1L, F
-                                           ;	.line	41; src/clock.c	s = getInput(60, "SECONDS:");
+                                           ;	.line	42; src/clock.c	s = getInput(60, "SECONDS:");
 001a1a   0e00     movlw	0                  	MOVLW	UPPER(__str_2)
 001a1c   6ee5     movwf	0xe5, 0            	MOVWF	POSTDEC1
 001a1e   0e1a     movlw	0x1a               	MOVLW	HIGH(__str_2)
@@ -1132,7 +1132,7 @@ Address  Value    Disassembly              Source
 001a36   f005
 001a38   0e05     movlw	0x5                	MOVLW	0x05
 001a3a   26e1     addwf	0xe1, 0x1, 0       	ADDWF	FSR1L, F
-                                           ;	.line	42; src/clock.c	set_time(_time,h,m,s);
+                                           ;	.line	43; src/clock.c	time_set(_time,h,m,s);
 001a3c   5005     movf	0x5, 0, 0           	MOVF	r0x05, W
 001a3e   6ee5     movwf	0xe5, 0            	MOVWF	POSTDEC1
 001a40   5004     movf	0x4, 0, 0           	MOVF	r0x04, W
@@ -1154,7 +1154,7 @@ Address  Value    Disassembly              Source
 001a60   010f     movlb	0xf                	BANKSEL	__time
 001a62   514e     movf	0x4e, 0, 0x1        	MOVF	__time, W, B
 001a64   6ee5     movwf	0xe5, 0            	MOVWF	POSTDEC1
-001a66   ec31     call	0x1e62, 0           	CALL	_set_time
+001a66   ec31     call	0x1e62, 0           	CALL	_time_set
 001a68   f00f
 001a6a   0e09     movlw	0x9                	MOVLW	0x09
 001a6c   26e1     addwf	0xe1, 0x1, 0       	ADDWF	FSR1L, F
@@ -1212,7 +1212,7 @@ Address  Value    Disassembly              Source
                                            ;--------------------------------------------------------
                                            ; File Created by SDCC : free open source ANSI-C Compiler
                                            ; Version 2.9.4 #5595 (Nov 14 2013) (UNIX)
-                                           ; This file was generated Fri Nov 15 16:39:32 2013
+                                           ; This file was generated Fri Nov 15 19:10:15 2013
                                            ;--------------------------------------------------------
                                            ; PIC16 port for the Microchip 16-bit core micros
                                            ;--------------------------------------------------------
@@ -2555,7 +2555,7 @@ Address  Value    Disassembly              Source
                                            ;--------------------------------------------------------
                                            ; File Created by SDCC : free open source ANSI-C Compiler
                                            ; Version 2.9.4 #5595 (Nov 14 2013) (UNIX)
-                                           ; This file was generated Fri Nov 15 16:39:32 2013
+                                           ; This file was generated Fri Nov 15 19:15:36 2013
                                            ;--------------------------------------------------------
                                            ; PIC16 port for the Microchip 16-bit core micros
                                            ;--------------------------------------------------------
@@ -2568,7 +2568,7 @@ Address  Value    Disassembly              Source
                                            ;--------------------------------------------------------
                                            	global _heap
                                            	global _time_create
-                                           	global _set_time
+                                           	global _time_set
                                            	global _set_hours
                                            	global _set_minutes
                                            	global _set_seconds
@@ -2619,7 +2619,7 @@ Address  Value    Disassembly              Source
                                            r0x0a	res	1
                                            
                                            udata_newtime_0	udata
-                                           _heap	res	256
+                                           _heap	res	32
                                            
                                            ;--------------------------------------------------------
                                            ; global & static initialisations
@@ -3403,7 +3403,7 @@ Address  Value    Disassembly              Source
 002110   0e06     movlw	0x6                	MOVLW	0x06
 002112   cfdb     movff	0xfdb, 0x4         	MOVFF	PLUSW2, r0x04
 002114   f004
-                                           ;	.line	34; src/newtime.c	int overflow = value / 60;
+                                           ;	.line	34; src/newtime.c	int overflow = value/60;
 002116   0e00     movlw	0                  	MOVLW	0x00
 002118   6ee5     movwf	0xe5, 0            	MOVWF	POSTDEC1
 00211a   0e3c     movlw	0x3c               	MOVLW	0x3c
@@ -3419,7 +3419,7 @@ Address  Value    Disassembly              Source
 00212e   f006
 002130   0e04     movlw	0x4                	MOVLW	0x04
 002132   26e1     addwf	0xe1, 0x1, 0       	ADDWF	FSR1L, F
-                                           ;	.line	35; src/newtime.c	t->minutes = value % 60;
+                                           ;	.line	35; src/newtime.c	t->minutes = value%60;
 002134   0e02     movlw	0x2                	MOVLW	0x02
 002136   2600     addwf	0, 0x1, 0          	ADDWF	r0x00, F
 002138   0e00     movlw	0                  	MOVLW	0x00
@@ -3511,7 +3511,7 @@ Address  Value    Disassembly              Source
 0022a0   0e06     movlw	0x6                	MOVLW	0x06
 0022a2   cfdb     movff	0xfdb, 0x4         	MOVFF	PLUSW2, r0x04
 0022a4   f004
-                                           ;	.line	28; src/newtime.c	int overflow = value / 24;
+                                           ;	.line	28; src/newtime.c	int overflow = value/24;
 0022a6   0e00     movlw	0                  	MOVLW	0x00
 0022a8   6ee5     movwf	0xe5, 0            	MOVWF	POSTDEC1
 0022aa   0e18     movlw	0x18               	MOVLW	0x18
@@ -3527,7 +3527,7 @@ Address  Value    Disassembly              Source
 0022be   f006
 0022c0   0e04     movlw	0x4                	MOVLW	0x04
 0022c2   26e1     addwf	0xe1, 0x1, 0       	ADDWF	FSR1L, F
-                                           ;	.line	29; src/newtime.c	t->hours = value % 24;
+                                           ;	.line	29; src/newtime.c	t->hours = value%24;
 0022c4   0e00     movlw	0                  	MOVLW	0x00
 0022c6   6ee5     movwf	0xe5, 0            	MOVWF	POSTDEC1
 0022c8   0e18     movlw	0x18               	MOVLW	0x18
@@ -3577,9 +3577,9 @@ Address  Value    Disassembly              Source
 00231e   0012     return	0                 	RETURN	
                                            
                                            ; ; Starting pCode block
-                                           S_newtime__set_time	code
-                                           _set_time:
-                                           ;	.line	21; src/newtime.c	void set_time(time t, int hours, int minutes, int seconds){
+                                           S_newtime__time_set	code
+                                           _time_set:
+                                           ;	.line	21; src/newtime.c	void time_set(time t, int hours, int minutes, int seconds){
 001e62   cfd9     movff	0xfd9, 0xfe5       	MOVFF	FSR2L, POSTDEC1
 001e64   ffe5
 001e66   cfe1     movff	0xfe1, 0xfd9       	MOVFF	FSR1L, FSR2L
@@ -3725,7 +3725,7 @@ Address  Value    Disassembly              Source
 0027f0   6e00     movwf	0, 0               	MOVWF	r0x00
 0027f2   0e80     movlw	0x80               	MOVLW	0x80
 0027f4   6e02     movwf	0x2, 0             	MOVWF	r0x02
-                                           ;	.line	17; src/newtime.c	set_time(t,0,0,0);
+                                           ;	.line	17; src/newtime.c	time_set(t,0,0,0);
 0027f6   0e00     movlw	0                  	MOVLW	0x00
 0027f8   6ee5     movwf	0xe5, 0            	MOVWF	POSTDEC1
 0027fa   0e00     movlw	0                  	MOVLW	0x00
@@ -3744,7 +3744,7 @@ Address  Value    Disassembly              Source
 002814   6ee5     movwf	0xe5, 0            	MOVWF	POSTDEC1
 002816   5000     movf	0, 0, 0             	MOVF	r0x00, W
 002818   6ee5     movwf	0xe5, 0            	MOVWF	POSTDEC1
-00281a   ec31     call	0x1e62, 0           	CALL	_set_time
+00281a   ec31     call	0x1e62, 0           	CALL	_time_set
 00281c   f00f
 00281e   0e09     movlw	0x9                	MOVLW	0x09
 002820   26e1     addwf	0xe1, 0x1, 0       	ADDWF	FSR1L, F
@@ -3779,7 +3779,7 @@ Address  Value    Disassembly              Source
                                            ; Statistics:
                                            ; code size:	 2108 (0x083c) bytes ( 1.61%)
                                            ;           	 1054 (0x041e) words
-                                           ; udata size:	  256 (0x0100) bytes ( 6.67%)
+                                           ; udata size:	   32 (0x0020) bytes ( 0.83%)
                                            ; access size:	   11 (0x000b) bytes
                                            
                                            

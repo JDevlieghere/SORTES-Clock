@@ -1,7 +1,7 @@
 ;--------------------------------------------------------
 ; File Created by SDCC : free open source ANSI-C Compiler
 ; Version 2.9.4 #5595 (Nov 14 2013) (UNIX)
-; This file was generated Fri Nov 15 16:39:32 2013
+; This file was generated Fri Nov 15 19:15:36 2013
 ;--------------------------------------------------------
 ; PIC16 port for the Microchip 16-bit core micros
 ;--------------------------------------------------------
@@ -14,7 +14,7 @@
 ;--------------------------------------------------------
 	global _heap
 	global _time_create
-	global _set_time
+	global _time_set
 	global _set_hours
 	global _set_minutes
 	global _set_seconds
@@ -65,7 +65,7 @@ r0x09	res	1
 r0x0a	res	1
 
 udata_newtime_0	udata
-_heap	res	256
+_heap	res	32
 
 ;--------------------------------------------------------
 ; global & static initialisations
@@ -633,7 +633,7 @@ _set_minutes:
 	MOVFF	PLUSW2, r0x03
 	MOVLW	0x06
 	MOVFF	PLUSW2, r0x04
-;	.line	34; src/newtime.c	int overflow = value / 60;
+;	.line	34; src/newtime.c	int overflow = value/60;
 	MOVLW	0x00
 	MOVWF	POSTDEC1
 	MOVLW	0x3c
@@ -647,7 +647,7 @@ _set_minutes:
 	MOVFF	PRODL, r0x06
 	MOVLW	0x04
 	ADDWF	FSR1L, F
-;	.line	35; src/newtime.c	t->minutes = value % 60;
+;	.line	35; src/newtime.c	t->minutes = value%60;
 	MOVLW	0x02
 	ADDWF	r0x00, F
 	MOVLW	0x00
@@ -709,7 +709,7 @@ _set_hours:
 	MOVFF	PLUSW2, r0x03
 	MOVLW	0x06
 	MOVFF	PLUSW2, r0x04
-;	.line	28; src/newtime.c	int overflow = value / 24;
+;	.line	28; src/newtime.c	int overflow = value/24;
 	MOVLW	0x00
 	MOVWF	POSTDEC1
 	MOVLW	0x18
@@ -723,7 +723,7 @@ _set_hours:
 	MOVFF	PRODL, r0x06
 	MOVLW	0x04
 	ADDWF	FSR1L, F
-;	.line	29; src/newtime.c	t->hours = value % 24;
+;	.line	29; src/newtime.c	t->hours = value%24;
 	MOVLW	0x00
 	MOVWF	POSTDEC1
 	MOVLW	0x18
@@ -757,9 +757,9 @@ _set_hours:
 	RETURN	
 
 ; ; Starting pCode block
-S_newtime__set_time	code
-_set_time:
-;	.line	21; src/newtime.c	void set_time(time t, int hours, int minutes, int seconds){
+S_newtime__time_set	code
+_time_set:
+;	.line	21; src/newtime.c	void time_set(time t, int hours, int minutes, int seconds){
 	MOVFF	FSR2L, POSTDEC1
 	MOVFF	FSR1L, FSR2L
 	MOVFF	r0x00, POSTDEC1
@@ -865,7 +865,7 @@ _time_create:
 	MOVWF	r0x00
 	MOVLW	0x80
 	MOVWF	r0x02
-;	.line	17; src/newtime.c	set_time(t,0,0,0);
+;	.line	17; src/newtime.c	time_set(t,0,0,0);
 	MOVLW	0x00
 	MOVWF	POSTDEC1
 	MOVLW	0x00
@@ -884,7 +884,7 @@ _time_create:
 	MOVWF	POSTDEC1
 	MOVF	r0x00, W
 	MOVWF	POSTDEC1
-	CALL	_set_time
+	CALL	_time_set
 	MOVLW	0x09
 	ADDWF	FSR1L, F
 ;	.line	18; src/newtime.c	return t;
@@ -906,7 +906,7 @@ __str_0:
 ; Statistics:
 ; code size:	 2108 (0x083c) bytes ( 1.61%)
 ;           	 1054 (0x041e) words
-; udata size:	  256 (0x0100) bytes ( 6.67%)
+; udata size:	   32 (0x0020) bytes ( 0.83%)
 ; access size:	   11 (0x000b) bytes
 
 

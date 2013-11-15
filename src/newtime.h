@@ -5,7 +5,7 @@ struct time_struct;
 typedef struct time_struct *time;
 
 time time_create();
-void set_time(time t, int hours, int minutes, int seconds);
+void time_set(time t, int hours, int minutes, int seconds);
 
 int set_hours(time t, int value);
 int set_minutes(time t, int value);

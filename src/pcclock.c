@@ -1,10 +1,13 @@
 #include <stdio.h>
-#include "time.h"
+#include <stdlib.h>
+
+#include "newtime.h"
 
 int main(void){
-        seconds_since_midnight = 3691;
-        printf("HOURS: %d\n", get_hours());
-        printf("MINS: %d\n", get_minutes());
-        printf("seconds: %d\n", get_seconds());
-        printf("%s\n", time2string());
+	time _time;
+	_time = time_create();
+	time_set(_time, 10,13,14);
+	char str[20];
+	time_print(_time,str);
+	printf("%s\n", str);
 }
