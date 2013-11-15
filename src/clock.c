@@ -15,53 +15,51 @@
 #include "newtime.h"
 
 /* Method declaration. */
-void DisplayString(BYTE pos, char* text);
-int getInput(int maxvalue, char *text);
+void display_string(BYTE pos, char* text);
+int get_input(int maxvalue, char *text);
 void delay_1ms(void);
 void delay_ms(unsigned int ms);
-void initClock();
+void init_clock(time t);
 char* to_double_digits(int value);
 
 time _time;
 char display_line[32];
 
 int main(void){
-		
 		_time = time_create();
         LCDInit();
-        initClock();
+        init_clock(_time);
         time_print(_time, display_line);
-        DisplayString(0, display_line);
+        display_string(0, display_line);
         return 0;
 }
 
-void initClock(){
+void init_clock(time t){
     int h, m, s;
-    h = getInput(24, "HOURS:");
-    m = getInput(60, "MINUTES:");
-    s = getInput(60, "SECONDS:");
-    time_set(_time,h,m,s);
-
+    h = get_input(24, "HOURS:");
+    m = get_input(60, "MINUTES:");
+    s = get_input(60, "SECONDS:");
+    time_set(t,h,m,s);
 }
 
-int getInput(int maxvalue, char *text){
+int get_input(int maxvalue, char *text){
         BYTE length = strlen(text);
         int value = 0;
-        DisplayString(0, text);
+        display_string(0, text);
         while(1)
         {
-                if(BUTTON1_IO == 0u){
-                		LCDErase();
-                        return value;
-                }
-                if(BUTTON0_IO == 0u) 
-                        value = (++value)%maxvalue;
-                DisplayString(length + 1, to_double_digits(value));
-                delay_ms(50);
+			if(BUTTON1_IO == 0u){
+					LCDErase();
+			        return value;
+			}
+			if(BUTTON0_IO == 0u) 
+			        value = (++value)%maxvalue;
+			display_string(length + 1, to_double_digits(value));
+			delay_ms(50);
         }
 }
 
-void DisplayString(BYTE pos, char* text){
+void display_string(BYTE pos, char* text){
 	BYTE        l = strlen(text);/*number of actual chars in the string*/
 	BYTE      max = 32-pos;    /*available space on the lcd*/
 	char       *d = (char*)&LCDText[pos];
