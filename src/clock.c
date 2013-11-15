@@ -28,10 +28,17 @@ int read_and_clear(int *variable);
 
 time _time;
 time _alarm;
+
 char display_line[32];
+
+// State indicators
 int alarm_going_off = 0;
+
+// Counters
 int alarm_counter = 0;
 int overflow_counter = 0;
+
+// Dummy button registers
 int but1_pressed = 0;
 int but2_pressed = 0;
 
@@ -114,9 +121,10 @@ char* to_double_digits(int value){
 
 void lowPriorityInterruptHandler (void) __interrupt(1){
     if(INTCON3bits.INT1F == 1){
-		but2_pressed = 1;	
-		if(BUTTON1_IO);
+    	but2_pressed = 1;	
+    	if(BUTTON0_IO);
 		INTCON3bits.INT1F = 0; 
+
 	}
 	if(INTCON3bits.INT3F  == 1){
 		but1_pressed = 1;	
@@ -153,6 +161,7 @@ void init(void){
 	// Initialize LCD
 	LCDInit();
 
+	// Enable buttons
 	BUTTON0_TRIS = 1;
 	BUTTON1_TRIS = 1;
 
