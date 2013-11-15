@@ -3,19 +3,19 @@
 #include <stdio.h>
 #include "time.h"
 
-int seconds_since_midnight = 0;
+long seconds_since_midnight = 0;
 
-int get_hours(void){
-	return (int)(seconds_since_midnight / SEC_IN_HOUR);
+long get_hours(void){
+	return (seconds_since_midnight / SEC_IN_HOUR);
 }
 
-int get_minutes(void){
+long get_minutes(void){
 	int remaining_seconds = seconds_since_midnight - (get_hours() * SEC_IN_HOUR);
 	return (remaining_seconds / SEC_IN_MIN);
 }
 
-int get_seconds(void){
-	int remaining_seconds = seconds_since_midnight - (get_hours() * SEC_IN_HOUR + get_minutes() * SEC_IN_MIN);
+long get_seconds(void){
+	long remaining_seconds = seconds_since_midnight - (get_hours() * SEC_IN_HOUR + get_minutes() * SEC_IN_MIN);
 	return remaining_seconds;
 }
 
@@ -40,9 +40,9 @@ char* time2string(void){
 /**
  * Converts a integer value to a double digit string.
  */
-char* to_double_digits(int value){
+char* to_double_digits(long value){
 	static char buffer[3];
-	sprintf(buffer, "%02d", value);
+	sprintf(buffer, "%02lu", value);
 	return buffer;
 }	
 
@@ -52,6 +52,13 @@ char* to_double_digits(int value){
  *
  * Updates the human readable time struct so inconsitency is impossible. 
  */
-void set_time(int hours, int minutes, int seconds){
-	seconds_since_midnight = seconds + minutes * SEC_IN_MIN + hours * SEC_IN_HOUR;
+int set_time(int hours, int minutes, int seconds){
+	if(hours < 0 || hours >= 24)
+		return ERROR_HOURS;
+	if(minutes < 0 || minutes >= 60)
+		return ERROR_MINS;
+	if(seconds < 0 || seconds >= 60)
+		return ERROR_SECS;
+	seconds_since_midnight = (long)seconds + (long)minutes * SEC_IN_MIN + (long)hours * SEC_IN_HOUR;
+	return 0;
 }

@@ -4,21 +4,18 @@
 #define SEC_IN_HOUR 3600		// one hour consists of 3600 seconds
 #define SEC_IN_MIN 	60			// one minute consists of 60 seconds
 
-/* Define and declare structure for the readable time. */
-struct human_time {
-	int hours;
-	int minutes;
-	int seconds; 
-};
+#define ERROR_HOURS -1
+#define ERROR_MINS 	-2
+#define ERROR_SECS 	-3
 
-extern int seconds_since_midnight;
+extern long seconds_since_midnight;
 
-void set_time(int hours, int minutes, int seconds);
-char* to_double_digits(int value);
+int set_time(int hours, int minutes, int seconds);
+char* to_double_digits(long value);
 char* time2string(void);
 
-int get_hours(void);
-int get_minutes(void);
-int get_seconds(void);
+long get_hours(void);
+long get_minutes(void);
+long get_seconds(void);
 
 #endif
