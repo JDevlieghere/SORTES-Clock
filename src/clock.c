@@ -24,6 +24,7 @@ char* to_double_digits(int value);
 void init(void);
 void update_display(void);
 void toggle_led(void);
+int read_and_clear(int *variable);
 
 time _time;
 time _alarm;
@@ -31,6 +32,8 @@ char display_line[32];
 int alarm_going_off = 0;
 int alarm_counter = 0;
 int overflow_counter = 0;
+int but1_pressed = 0;
+int but2_pressed = 0;
 
 int main(void){
 		_time = time_create();
@@ -67,6 +70,13 @@ void init_clock(time t){
     T0CONbits.TMR0ON = 1;
 }
 
+int read_and_clear(int *variable){
+	if(*variable){
+		*variable = 0;
+		return 1;
+	}
+	return 0;
+}
 int get_input(int maxvalue, char *text){
         BYTE length = strlen(text);
         int value = 0;
@@ -74,13 +84,14 @@ int get_input(int maxvalue, char *text){
         while(1)
         {
         	DelayMs(10);
-			if(BUTTON1_IO == 0u){
-					LCDErase();
-			        return value;
+			if(read_and_clear(&but2_pressed)){
+				LCDErase();
+				return value;
 			}
-			if(BUTTON0_IO == 0u) 
-			        value = (++value)%maxvalue;
-			display_string(length + 1, to_double_digits(value));
+			if(read_and_clear(&but1_pressed)){ 
+				value = (++value)%maxvalue;
+				display_string(length + 1, to_double_digits(value));
+			}
         }
 }
 
@@ -102,7 +113,17 @@ char* to_double_digits(int value){
 }        
 
 void lowPriorityInterruptHandler (void) __interrupt(1){
-	if (INTCONbits.TMR0IF == 1) {
+    if(INTCON3bits.INT1F == 1){
+		but2_pressed = 1;	
+		if(BUTTON1_IO);
+		INTCON3bits.INT1F = 0; 
+	}
+	if(INTCON3bits.INT3F  == 1){
+		but1_pressed = 1;	
+		if(BUTTON1_IO);
+		INTCON3bits.INT3F = 0; 
+	}
+	if(INTCONbits.TMR0IF == 1) {
 		overflow_counter++;
 		if(overflow_counter == 50){
 			toggle_led();
@@ -132,9 +153,13 @@ void init(void){
 	// Initialize LCD
 	LCDInit();
 
+	BUTTON0_TRIS = 1;
+	BUTTON1_TRIS = 1;
+
 	// Enable interrupts
 	INTCONbits.GIE = 1;
     INTCONbits.PEIE = 1;
+    RCONbits.IPEN = 1; 
 
     // Disable timer
     T0CONbits.TMR0ON = 0;
@@ -155,11 +180,9 @@ void init(void){
     // Enable timer and interrupts
 	INTCONbits.TMR0IE = 1;
 
-	// // Enable button interrupts
- //    INTCON3bits.INT1P  = 1;   //connect INT1 interrupt (button 2) to high priority
- //    INTCON2bits.INTEDG1= 0;   //INT1 interrupts on falling edge
- //    INTCON3bits.INT1E  = 1;   //enable INT1 interrupt (button 2)
- //    INTCON3bits.INT1F  = 0;   //clear INT1 flag
+	// Enable button interrupts
+    INTCON3bits.INT1IE = 1;
+    INTCON3bits.INT3IE = 1;
 
 	// Enable leds
 	LED0_TRIS = 0;
