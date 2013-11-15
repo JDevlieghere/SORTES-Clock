@@ -2,8 +2,9 @@
 #define __SDCC__
 #define THIS_INCLUDES_THE_MAIN_FUNCTION
 
-#define CLOCK_FREQ        40000000      
-#define EXEC_FREQ         CLOCK_FREQ/4 	
+#define CLOCK_FREQ  40000000      
+#define EXEC_FREQ   CLOCK_FREQ/4 	
+#define CYCLES 		90
 
 #include <stdlib.h>
 #include <stdio.h>
@@ -119,7 +120,7 @@ char* to_double_digits(int value){
         return buffer;
 }        
 
-void lowPriorityInterruptHandler (void) __interrupt(1){
+void highPriorityInterruptHandler (void) __interrupt(1){
     if(INTCON3bits.INT1F == 1){
     	but2_pressed = 1;	
     	if(BUTTON0_IO);
@@ -133,9 +134,9 @@ void lowPriorityInterruptHandler (void) __interrupt(1){
 	}
 	if(INTCONbits.TMR0IF == 1) {
 		overflow_counter++;
-		if(overflow_counter == 50){
+		if(overflow_counter == CYCLES/2){
 			toggle_led();
-		}else if(overflow_counter == 100){
+		}else if(overflow_counter == CYCLES){
 			if(time_equals(_alarm,_time)){
 				alarm_going_off = 1;
 			}
