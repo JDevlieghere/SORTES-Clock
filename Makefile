@@ -60,5 +60,13 @@ objects/test.o : src/test.c $(SDCC_HEADERS) $(SDCC_PIC16_HEADERS) \
 	 $(APP_HEADERS) $(TCPIP_HEADERS)
 	$(CC) $(CFLAGS) src/test.c
 
+
+testint : objects/testint.o $(OBJECTS)
+	$(LD) $(LDFLAGS) objects/testint.o $(OBJECTS)
+
+objects/testint.o : src/testint.c $(SDCC_HEADERS) $(SDCC_PIC16_HEADERS) \
+	 $(APP_HEADERS) $(TCPIP_HEADERS)
+	$(CC) $(CFLAGS) src/testint.c
+
 clean : 
 	$(RM) $(OBJECTS)

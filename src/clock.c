@@ -20,25 +20,58 @@ void delay_1ms(void);
 void delay_ms(unsigned int ms);
 void initClock();
 
+// void high_isr (void) interrupt 1
+// {
+//     if(INTCON3bits.INT1F  = 1)
+//     {
+//     	if(BUTTON0_IO);  //just read the bit
+//         INTCON3bits.INT1F  = 0;   //clear INT1 flag
+
+//         if(configuring == 0){
+//         	initClock();
+//         }else{
+// 			configuring++;
+//         }
+//     }
+// }
+
 int main(void){
-	LCDInit();
-	initClock();
-	DisplayString(0, time2string());
-	return 0;
+    BUTTON0_TRIS 		= 1; 	//configure button0 as input
+
+    RCONbits.IPEN      	= 1;	//enable interrupts priority levels
+    INTCON3bits.INT1P  	= 1;	//connect INT1 interrupt (button 2) to high prio
+    INTCON2bits.INTEDG1	= 0;	//INT1 interrupts on falling edge
+    INTCONbits.GIE     	= 1;	//enable high priority interrupts
+    INTCON3bits.INT1E  	= 1;	//enable INT1 interrupt (button 2)
+    INTCON3bits.INT1F  	= 0;	//clear INT1 flag
+
+	// Setting flags of the timer.
+	T0CONbits.TMR0ON=0; // disable timer0
+	T0CONbits.T08BIT=0; // use timer0 16-bit counter
+	T0CONbits.T0CS=0; // use timer0 instruction cycle clock
+	T0CONbits.PSA=1; // disable timer0 prescaler
+	INTCONbits.T0IF=0; // clear timer0 overflow bit
+
+    LCDInit();
+    initClock();
+	while(1);
 }
 
-void initClock(){
-	int h = getInput(24, "HOURS:");
-	int m = getInput(60, "MINUTES:");
-	int s = getInput(60, "SECONDS:");
-	set_time(h,m,s);
+void high_isr (void) interrupt 1
+{
+    if(INTCON3bits.INT1F  = 1)
+    {
+        LED1_IO ^= 1; //change state of red leds
+        LED2_IO ^= 1; 
+        if(BUTTON0_IO);  //just read the bit
+        INTCON3bits.INT1F  = 0;   //clear INT1 flag
+    }
 }
 
 int getInput(int maxvalue, char *text){
 	BYTE length = strlen(text);
 	int value = 0;
 	DisplayString(0, text);
-
 	while(1)
 	{
 		if(BUTTON1_IO == 0u){
@@ -67,11 +100,6 @@ void DisplayString(BYTE pos, char* text){
 void delay_1ms(void) {
 	TMR0H=(0x10000-EXEC_FREQ/1000)>>8;
 	TMR0L=(0x10000-EXEC_FREQ/1000)&0xff;
-	T0CONbits.TMR0ON=0; // disable timer0
-	T0CONbits.T08BIT=0; // use timer0 16-bit counter
-	T0CONbits.T0CS=0; // use timer0 instruction cycle clock
-	T0CONbits.PSA=1; // disable timer0 prescaler
-	INTCONbits.T0IF=0; // clear timer0 overflow bit
 	T0CONbits.TMR0ON=1; // enable timer0
 	while (!INTCONbits.T0IF) {} // wait for timer0 overflow
 	INTCONbits.T0IF=0; // clear timer0 overflow bit

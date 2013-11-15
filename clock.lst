@@ -1,6 +1,6 @@
 gplink-0.13.7 beta
 Copyright (c) 1998-2005 gputils project
-Listing File Generated: 11-15-2013  11:59:32
+Listing File Generated: 11-15-2013  12:42:18
  
  
 Address  Value    Disassembly              Source
@@ -8,7 +8,7 @@ Address  Value    Disassembly              Source
                                            ;--------------------------------------------------------
                                            ; File Created by SDCC : free open source ANSI-C Compiler
                                            ; Version 2.9.4 #5595 (Nov 14 2013) (UNIX)
-                                           ; This file was generated Fri Nov 15 11:59:32 2013
+                                           ; This file was generated Fri Nov 15 12:42:18 2013
                                            ;--------------------------------------------------------
                                            ; PIC16 port for the Microchip 16-bit core micros
                                            ;--------------------------------------------------------
@@ -498,131 +498,145 @@ Address  Value    Disassembly              Source
                                            ; ; Starting pCode block
                                            S_clock__main	code
                                            _main:
-                                           ;	.line	24; src/clock.c	LCDInit();
-002872   ec52     call	0xaa4, 0            	CALL	_LCDInit
-002874   f005
-                                           ;	.line	25; src/clock.c	initClock();
-002876   ecd6     call	0x1fac, 0           	CALL	_initClock
-002878   f00f
-                                           ;	.line	26; src/clock.c	DisplayString(0, time2string());
-00287a   ec80     call	0xd00, 0            	CALL	_time2string
-00287c   f006
-00287e   6e00     movwf	0, 0               	MOVWF	r0x00
-002880   cff3     movff	0xff3, 0x1         	MOVFF	PRODL, r0x01
-002882   f001
-002884   cff4     movff	0xff4, 0x2         	MOVFF	PRODH, r0x02
-002886   f002
-002888   5002     movf	0x2, 0, 0           	MOVF	r0x02, W
-00288a   6ee5     movwf	0xe5, 0            	MOVWF	POSTDEC1
-00288c   5001     movf	0x1, 0, 0           	MOVF	r0x01, W
-00288e   6ee5     movwf	0xe5, 0            	MOVWF	POSTDEC1
-002890   5000     movf	0, 0, 0             	MOVF	r0x00, W
-002892   6ee5     movwf	0xe5, 0            	MOVWF	POSTDEC1
-002894   0e00     movlw	0                  	MOVLW	0x00
-002896   6ee5     movwf	0xe5, 0            	MOVWF	POSTDEC1
-002898   ec6d     call	0x1ada, 0           	CALL	_DisplayString
-00289a   f00d
-00289c   0e04     movlw	0x4                	MOVLW	0x04
-00289e   26e1     addwf	0xe1, 0x1, 0       	ADDWF	FSR1L, F
-                                           ;	.line	27; src/clock.c	return 0;
-0028a0   6af3     clrf	0xf3, 0             	CLRF	PRODL
-0028a2   6ae8     clrf	0xe8, 0             	CLRF	WREG
-0028a4   0012     return	0                 	RETURN	
+                                           ;	.line	39; src/clock.c	BUTTON0_TRIS 		= 1; 	//configure button0 as input
+002800   8693     bsf	0x93, 0x3, 0         	BSF	_TRISBbits, 3
+                                           ;	.line	41; src/clock.c	RCONbits.IPEN      	= 1;	//enable interrupts priority levels
+002802   8ed0     bsf	0xd0, 0x7, 0         	BSF	_RCONbits, 7
+                                           ;	.line	42; src/clock.c	INTCON3bits.INT1P  	= 1;	//connect INT1 interrupt (button 2) to high prio
+002804   8cf0     bsf	0xf0, 0x6, 0         	BSF	_INTCON3bits, 6
+                                           ;	.line	43; src/clock.c	INTCON2bits.INTEDG1	= 0;	//INT1 interrupts on falling edge
+002806   9af1     bcf	0xf1, 0x5, 0         	BCF	_INTCON2bits, 5
+                                           ;	.line	44; src/clock.c	INTCONbits.GIE     	= 1;	//enable high priority interrupts
+002808   8ef2     bsf	0xf2, 0x7, 0         	BSF	_INTCONbits, 7
+                                           ;	.line	45; src/clock.c	INTCON3bits.INT1E  	= 1;	//enable INT1 interrupt (button 2)
+00280a   86f0     bsf	0xf0, 0x3, 0         	BSF	_INTCON3bits, 3
+                                           ;	.line	46; src/clock.c	INTCON3bits.INT1F  	= 0;	//clear INT1 flag
+00280c   90f0     bcf	0xf0, 0, 0           	BCF	_INTCON3bits, 0
+                                           ;	.line	48; src/clock.c	LCDInit();
+00280e   ec52     call	0xaa4, 0            	CALL	_LCDInit
+002810   f005
+                                           ;	.line	49; src/clock.c	initClock();
+002812   ec64     call	0x1ec8, 0           	CALL	_initClock
+002814   f00f
+                                           ;	.line	50; src/clock.c	DisplayString(0, time2string());
+002816   ec80     call	0xd00, 0            	CALL	_time2string
+002818   f006
+00281a   6e00     movwf	0, 0               	MOVWF	r0x00
+00281c   cff3     movff	0xff3, 0x1         	MOVFF	PRODL, r0x01
+00281e   f001
+002820   cff4     movff	0xff4, 0x2         	MOVFF	PRODH, r0x02
+002822   f002
+002824   5002     movf	0x2, 0, 0           	MOVF	r0x02, W
+002826   6ee5     movwf	0xe5, 0            	MOVWF	POSTDEC1
+002828   5001     movf	0x1, 0, 0           	MOVF	r0x01, W
+00282a   6ee5     movwf	0xe5, 0            	MOVWF	POSTDEC1
+00282c   5000     movf	0, 0, 0             	MOVF	r0x00, W
+00282e   6ee5     movwf	0xe5, 0            	MOVWF	POSTDEC1
+002830   0e00     movlw	0                  	MOVLW	0x00
+002832   6ee5     movwf	0xe5, 0            	MOVWF	POSTDEC1
+002834   ec6d     call	0x1ada, 0           	CALL	_DisplayString
+002836   f00d
+002838   0e04     movlw	0x4                	MOVLW	0x04
+00283a   26e1     addwf	0xe1, 0x1, 0       	ADDWF	FSR1L, F
+                                           ;	.line	51; src/clock.c	return 0;
+00283c   6af3     clrf	0xf3, 0             	CLRF	PRODL
+00283e   6ae8     clrf	0xe8, 0             	CLRF	WREG
+002840   0012     return	0                 	RETURN	
                                            
                                            ; ; Starting pCode block
                                            S_clock__delay_ms	code
                                            _delay_ms:
-                                           ;	.line	81; src/clock.c	void delay_ms(unsigned int ms) {
-0027a6   cfd9     movff	0xfd9, 0xfe5       	MOVFF	FSR2L, POSTDEC1
-0027a8   ffe5
-0027aa   cfe1     movff	0xfe1, 0xfd9       	MOVFF	FSR1L, FSR2L
-0027ac   ffd9
-0027ae   c000     movff	0, 0xfe5           	MOVFF	r0x00, POSTDEC1
-0027b0   ffe5
-0027b2   c001     movff	0x1, 0xfe5         	MOVFF	r0x01, POSTDEC1
+                                           ;	.line	106; src/clock.c	void delay_ms(unsigned int ms) {
+0027aa   cfd9     movff	0xfd9, 0xfe5       	MOVFF	FSR2L, POSTDEC1
+0027ac   ffe5
+0027ae   cfe1     movff	0xfe1, 0xfd9       	MOVFF	FSR1L, FSR2L
+0027b0   ffd9
+0027b2   c000     movff	0, 0xfe5           	MOVFF	r0x00, POSTDEC1
 0027b4   ffe5
-0027b6   c002     movff	0x2, 0xfe5         	MOVFF	r0x02, POSTDEC1
+0027b6   c001     movff	0x1, 0xfe5         	MOVFF	r0x01, POSTDEC1
 0027b8   ffe5
-0027ba   c003     movff	0x3, 0xfe5         	MOVFF	r0x03, POSTDEC1
+0027ba   c002     movff	0x2, 0xfe5         	MOVFF	r0x02, POSTDEC1
 0027bc   ffe5
-0027be   0e02     movlw	0x2                	MOVLW	0x02
-0027c0   cfdb     movff	0xfdb, 0           	MOVFF	PLUSW2, r0x00
-0027c2   f000
-0027c4   0e03     movlw	0x3                	MOVLW	0x03
-0027c6   cfdb     movff	0xfdb, 0x1         	MOVFF	PLUSW2, r0x01
-0027c8   f001
+0027be   c003     movff	0x3, 0xfe5         	MOVFF	r0x03, POSTDEC1
+0027c0   ffe5
+0027c2   0e02     movlw	0x2                	MOVLW	0x02
+0027c4   cfdb     movff	0xfdb, 0           	MOVFF	PLUSW2, r0x00
+0027c6   f000
+0027c8   0e03     movlw	0x3                	MOVLW	0x03
+0027ca   cfdb     movff	0xfdb, 0x1         	MOVFF	PLUSW2, r0x01
+0027cc   f001
                                            _00153_DS_:
-                                           ;	.line	82; src/clock.c	while (ms--) {
-0027ca   c000     movff	0, 0x2             	MOVFF	r0x00, r0x02
-0027cc   f002
-0027ce   c001     movff	0x1, 0x3           	MOVFF	r0x01, r0x03
-0027d0   f003
-0027d2   0eff     movlw	0xff               	MOVLW	0xff
-0027d4   2600     addwf	0, 0x1, 0          	ADDWF	r0x00, F
-0027d6   a0d8     btfss	0xd8, 0, 0         	BTFSS	STATUS, 0
-0027d8   0601     decf	0x1, 0x1, 0         	DECF	r0x01, F
-0027da   5002     movf	0x2, 0, 0           	MOVF	r0x02, W
-0027dc   1003     iorwf	0x3, 0, 0          	IORWF	r0x03, W
-0027de   e003     bz	0x27e6                	BZ	_00156_DS_
-                                           ;	.line	83; src/clock.c	delay_1ms();
-0027e0   ec80     call	0x2900, 0           	CALL	_delay_1ms
-0027e2   f014
-0027e4   d7f2     bra	0x27ca               	BRA	_00153_DS_
+                                           ;	.line	107; src/clock.c	while (ms--) {
+0027ce   c000     movff	0, 0x2             	MOVFF	r0x00, r0x02
+0027d0   f002
+0027d2   c001     movff	0x1, 0x3           	MOVFF	r0x01, r0x03
+0027d4   f003
+0027d6   0eff     movlw	0xff               	MOVLW	0xff
+0027d8   2600     addwf	0, 0x1, 0          	ADDWF	r0x00, F
+0027da   a0d8     btfss	0xd8, 0, 0         	BTFSS	STATUS, 0
+0027dc   0601     decf	0x1, 0x1, 0         	DECF	r0x01, F
+0027de   5002     movf	0x2, 0, 0           	MOVF	r0x02, W
+0027e0   1003     iorwf	0x3, 0, 0          	IORWF	r0x03, W
+0027e2   e003     bz	0x27ea                	BZ	_00156_DS_
+                                           ;	.line	108; src/clock.c	delay_1ms();
+0027e4   ec89     call	0x2912, 0           	CALL	_delay_1ms
+0027e6   f014
+0027e8   d7f2     bra	0x27ce               	BRA	_00153_DS_
                                            _00156_DS_:
-0027e6   cfe4     movff	0xfe4, 0x3         	MOVFF	PREINC1, r0x03
-0027e8   f003
-0027ea   cfe4     movff	0xfe4, 0x2         	MOVFF	PREINC1, r0x02
-0027ec   f002
-0027ee   cfe4     movff	0xfe4, 0x1         	MOVFF	PREINC1, r0x01
-0027f0   f001
-0027f2   cfe4     movff	0xfe4, 0           	MOVFF	PREINC1, r0x00
-0027f4   f000
-0027f6   cfe4     movff	0xfe4, 0xfd9       	MOVFF	PREINC1, FSR2L
-0027f8   ffd9
-0027fa   0012     return	0                 	RETURN	
+0027ea   cfe4     movff	0xfe4, 0x3         	MOVFF	PREINC1, r0x03
+0027ec   f003
+0027ee   cfe4     movff	0xfe4, 0x2         	MOVFF	PREINC1, r0x02
+0027f0   f002
+0027f2   cfe4     movff	0xfe4, 0x1         	MOVFF	PREINC1, r0x01
+0027f4   f001
+0027f6   cfe4     movff	0xfe4, 0           	MOVFF	PREINC1, r0x00
+0027f8   f000
+0027fa   cfe4     movff	0xfe4, 0xfd9       	MOVFF	PREINC1, FSR2L
+0027fc   ffd9
+0027fe   0012     return	0                 	RETURN	
                                            
                                            ; ; Starting pCode block
                                            S_clock__delay_1ms	code
                                            _delay_1ms:
-                                           ;	.line	67; src/clock.c	void delay_1ms(void) {
-002900   cfd9     movff	0xfd9, 0xfe5       	MOVFF	FSR2L, POSTDEC1
-002902   ffe5
-002904   cfe1     movff	0xfe1, 0xfd9       	MOVFF	FSR1L, FSR2L
-002906   ffd9
-                                           ;	.line	68; src/clock.c	TMR0H=(0x10000-EXEC_FREQ/1000)>>8;
-002908   0ed8     movlw	0xd8               	MOVLW	0xd8
-00290a   6ed7     movwf	0xd7, 0            	MOVWF	_TMR0H
-                                           ;	.line	69; src/clock.c	TMR0L=(0x10000-EXEC_FREQ/1000)&0xff;
-00290c   0ef0     movlw	0xf0               	MOVLW	0xf0
-00290e   6ed6     movwf	0xd6, 0            	MOVWF	_TMR0L
-                                           ;	.line	70; src/clock.c	T0CONbits.TMR0ON=0; // disable timer0
-002910   9ed5     bcf	0xd5, 0x7, 0         	BCF	_T0CONbits, 7
-                                           ;	.line	71; src/clock.c	T0CONbits.T08BIT=0; // use timer0 16-bit counter
-002912   9cd5     bcf	0xd5, 0x6, 0         	BCF	_T0CONbits, 6
-                                           ;	.line	72; src/clock.c	T0CONbits.T0CS=0; // use timer0 instruction cycle clock
-002914   9ad5     bcf	0xd5, 0x5, 0         	BCF	_T0CONbits, 5
-                                           ;	.line	73; src/clock.c	T0CONbits.PSA=1; // disable timer0 prescaler
-002916   86d5     bsf	0xd5, 0x3, 0         	BSF	_T0CONbits, 3
-                                           ;	.line	74; src/clock.c	INTCONbits.T0IF=0; // clear timer0 overflow bit
-002918   94f2     bcf	0xf2, 0x2, 0         	BCF	_INTCONbits, 2
-                                           ;	.line	75; src/clock.c	T0CONbits.TMR0ON=1; // enable timer0
-00291a   8ed5     bsf	0xd5, 0x7, 0         	BSF	_T0CONbits, 7
-                                           _00145_DS_:
-                                           ;	.line	76; src/clock.c	while (!INTCONbits.T0IF) {} // wait for timer0 overflow
-00291c   a4f2     btfss	0xf2, 0x2, 0       	BTFSS	_INTCONbits, 2
-00291e   d7fe     bra	0x291c               	BRA	_00145_DS_
-                                           ;	.line	77; src/clock.c	INTCONbits.T0IF=0; // clear timer0 overflow bit
-002920   94f2     bcf	0xf2, 0x2, 0         	BCF	_INTCONbits, 2
-                                           ;	.line	78; src/clock.c	T0CONbits.TMR0ON=0; // disable timer0
+                                           ;	.line	92; src/clock.c	void delay_1ms(void) {
+002912   cfd9     movff	0xfd9, 0xfe5       	MOVFF	FSR2L, POSTDEC1
+002914   ffe5
+002916   cfe1     movff	0xfe1, 0xfd9       	MOVFF	FSR1L, FSR2L
+002918   ffd9
+                                           ;	.line	93; src/clock.c	TMR0H=(0x10000-EXEC_FREQ/1000)>>8;
+00291a   0ed8     movlw	0xd8               	MOVLW	0xd8
+00291c   6ed7     movwf	0xd7, 0            	MOVWF	_TMR0H
+                                           ;	.line	94; src/clock.c	TMR0L=(0x10000-EXEC_FREQ/1000)&0xff;
+00291e   0ef0     movlw	0xf0               	MOVLW	0xf0
+002920   6ed6     movwf	0xd6, 0            	MOVWF	_TMR0L
+                                           ;	.line	95; src/clock.c	T0CONbits.TMR0ON=0; // disable timer0
 002922   9ed5     bcf	0xd5, 0x7, 0         	BCF	_T0CONbits, 7
-002924   cfe4     movff	0xfe4, 0xfd9       	MOVFF	PREINC1, FSR2L
-002926   ffd9
-002928   0012     return	0                 	RETURN	
+                                           ;	.line	96; src/clock.c	T0CONbits.T08BIT=0; // use timer0 16-bit counter
+002924   9cd5     bcf	0xd5, 0x6, 0         	BCF	_T0CONbits, 6
+                                           ;	.line	97; src/clock.c	T0CONbits.T0CS=0; // use timer0 instruction cycle clock
+002926   9ad5     bcf	0xd5, 0x5, 0         	BCF	_T0CONbits, 5
+                                           ;	.line	98; src/clock.c	T0CONbits.PSA=1; // disable timer0 prescaler
+002928   86d5     bsf	0xd5, 0x3, 0         	BSF	_T0CONbits, 3
+                                           ;	.line	99; src/clock.c	INTCONbits.T0IF=0; // clear timer0 overflow bit
+00292a   94f2     bcf	0xf2, 0x2, 0         	BCF	_INTCONbits, 2
+                                           ;	.line	100; src/clock.c	T0CONbits.TMR0ON=1; // enable timer0
+00292c   8ed5     bsf	0xd5, 0x7, 0         	BSF	_T0CONbits, 7
+                                           _00145_DS_:
+                                           ;	.line	101; src/clock.c	while (!INTCONbits.T0IF) {} // wait for timer0 overflow
+00292e   a4f2     btfss	0xf2, 0x2, 0       	BTFSS	_INTCONbits, 2
+002930   d7fe     bra	0x292e               	BRA	_00145_DS_
+                                           ;	.line	102; src/clock.c	INTCONbits.T0IF=0; // clear timer0 overflow bit
+002932   94f2     bcf	0xf2, 0x2, 0         	BCF	_INTCONbits, 2
+                                           ;	.line	103; src/clock.c	T0CONbits.TMR0ON=0; // disable timer0
+002934   9ed5     bcf	0xd5, 0x7, 0         	BCF	_T0CONbits, 7
+002936   cfe4     movff	0xfe4, 0xfd9       	MOVFF	PREINC1, FSR2L
+002938   ffd9
+00293a   0012     return	0                 	RETURN	
                                            
                                            ; ; Starting pCode block
                                            S_clock__DisplayString	code
                                            _DisplayString:
-                                           ;	.line	55; src/clock.c	void DisplayString(BYTE pos, char* text){
+                                           ;	.line	80; src/clock.c	void DisplayString(BYTE pos, char* text){
 001ada   cfd9     movff	0xfd9, 0xfe5       	MOVFF	FSR2L, POSTDEC1
 001adc   ffe5
 001ade   cfe1     movff	0xfe1, 0xfd9       	MOVFF	FSR1L, FSR2L
@@ -659,25 +673,25 @@ Address  Value    Disassembly              Source
 001b1c   0e05     movlw	0x5                	MOVLW	0x05
 001b1e   cfdb     movff	0xfdb, 0x3         	MOVFF	PLUSW2, r0x03
 001b20   f003
-                                           ;	.line	56; src/clock.c	BYTE        l = strlen(text);/*number of actual chars in the string*/
+                                           ;	.line	81; src/clock.c	BYTE        l = strlen(text);/*number of actual chars in the string*/
 001b22   5003     movf	0x3, 0, 0           	MOVF	r0x03, W
 001b24   6ee5     movwf	0xe5, 0            	MOVWF	POSTDEC1
 001b26   5002     movf	0x2, 0, 0           	MOVF	r0x02, W
 001b28   6ee5     movwf	0xe5, 0            	MOVWF	POSTDEC1
 001b2a   5001     movf	0x1, 0, 0           	MOVF	r0x01, W
 001b2c   6ee5     movwf	0xe5, 0            	MOVWF	POSTDEC1
-001b2e   ec62     call	0x26c4, 0           	CALL	_strlen
+001b2e   ec64     call	0x26c8, 0           	CALL	_strlen
 001b30   f013
 001b32   6e04     movwf	0x4, 0             	MOVWF	r0x04
 001b34   cff3     movff	0xff3, 0x5         	MOVFF	PRODL, r0x05
 001b36   f005
 001b38   0e03     movlw	0x3                	MOVLW	0x03
 001b3a   26e1     addwf	0xe1, 0x1, 0       	ADDWF	FSR1L, F
-                                           ;	.line	57; src/clock.c	BYTE      max = 32-pos;    /*available space on the lcd*/
+                                           ;	.line	82; src/clock.c	BYTE      max = 32-pos;    /*available space on the lcd*/
 001b3c   5000     movf	0, 0, 0             	MOVF	r0x00, W
 001b3e   0820     sublw	0x20               	SUBLW	0x20
 001b40   6e05     movwf	0x5, 0             	MOVWF	r0x05
-                                           ;	.line	58; src/clock.c	char       *d = (char*)&LCDText[pos];
+                                           ;	.line	83; src/clock.c	char       *d = (char*)&LCDText[pos];
 001b42   6a06     clrf	0x6, 0              	CLRF	r0x06
 001b44   0e00     movlw	0                  	MOVLW	LOW(_LCDText)
 001b46   2600     addwf	0, 0x1, 0          	ADDWF	r0x00, F
@@ -689,7 +703,7 @@ Address  Value    Disassembly              Source
 001b52   6e00     movwf	0, 0               	MOVWF	r0x00
 001b54   0e80     movlw	0x80               	MOVLW	0x80
 001b56   6e07     movwf	0x7, 0             	MOVWF	r0x07
-                                           ;	.line	60; src/clock.c	size_t      n = (l<max)?l:max;
+                                           ;	.line	85; src/clock.c	size_t      n = (l<max)?l:max;
 001b58   5005     movf	0x5, 0, 0           	MOVF	r0x05, W
 001b5a   5c04     subwf	0x4, 0, 0          	SUBWF	r0x04, W
 001b5c   e302     bnc	0x1b62               	BNC	_00135_DS_
@@ -697,12 +711,12 @@ Address  Value    Disassembly              Source
 001b60   f004
                                            _00135_DS_:
 001b62   6a05     clrf	0x5, 0              	CLRF	r0x05
-                                           ;	.line	62; src/clock.c	if (n != 0)
+                                           ;	.line	87; src/clock.c	if (n != 0)
 001b64   5004     movf	0x4, 0, 0           	MOVF	r0x04, W
 001b66   1005     iorwf	0x5, 0, 0          	IORWF	r0x05, W
 001b68   e027     bz	0x1bb8                	BZ	_00131_DS_
                                            _00127_DS_:
-                                           ;	.line	63; src/clock.c	while (n-- != 0)*d++ = *s++;
+                                           ;	.line	88; src/clock.c	while (n-- != 0)*d++ = *s++;
 001b6a   c004     movff	0x4, 0x8           	MOVFF	r0x04, r0x08
 001b6c   f008
 001b6e   c005     movff	0x5, 0x9           	MOVFF	r0x05, r0x09
@@ -719,7 +733,7 @@ Address  Value    Disassembly              Source
 001b84   c002     movff	0x2, 0xff3         	MOVFF	r0x02, PRODL
 001b86   fff3
 001b88   5003     movf	0x3, 0, 0           	MOVF	r0x03, W
-001b8a   ec95     call	0x292a, 0           	CALL	__gptrget1
+001b8a   ec9e     call	0x293c, 0           	CALL	__gptrget1
 001b8c   f014
 001b8e   6e08     movwf	0x8, 0             	MOVWF	r0x08
 001b90   2a01     incf	0x1, 0x1, 0         	INCF	r0x01, F
@@ -734,7 +748,7 @@ Address  Value    Disassembly              Source
 001ba2   c006     movff	0x6, 0xff3         	MOVFF	r0x06, PRODL
 001ba4   fff3
 001ba6   5007     movf	0x7, 0, 0           	MOVF	r0x07, W
-001ba8   ecc0     call	0x2980, 0           	CALL	__gptrput1
+001ba8   ecc9     call	0x2992, 0           	CALL	__gptrput1
 001baa   f014
 001bac   2a00     incf	0, 0x1, 0           	INCF	r0x00, F
 001bae   b0d8     btfsc	0xd8, 0, 0         	BTFSC	STATUS, 0
@@ -743,7 +757,7 @@ Address  Value    Disassembly              Source
 001bb4   2a07     incf	0x7, 0x1, 0         	INCF	r0x07, F
 001bb6   d7d9     bra	0x1b6a               	BRA	_00127_DS_
                                            _00131_DS_:
-                                           ;	.line	64; src/clock.c	LCDUpdate();
+                                           ;	.line	89; src/clock.c	LCDUpdate();
 001bb8   ec1d     call	0x83a, 0            	CALL	_LCDUpdate
 001bba   f004
 001bbc   cfe4     movff	0xfe4, 0x9         	MOVFF	PREINC1, r0x09
@@ -773,7 +787,7 @@ Address  Value    Disassembly              Source
                                            ; ; Starting pCode block
                                            S_clock__getInput	code
                                            _getInput:
-                                           ;	.line	37; src/clock.c	int getInput(int maxvalue, char *text){
+                                           ;	.line	63; src/clock.c	int getInput(int maxvalue, char *text){
 00163c   cfd9     movff	0xfd9, 0xfe5       	MOVFF	FSR2L, POSTDEC1
 00163e   ffe5
 001640   cfe1     movff	0xfe1, 0xfd9       	MOVFF	FSR1L, FSR2L
@@ -811,24 +825,24 @@ Address  Value    Disassembly              Source
 001680   0e06     movlw	0x6                	MOVLW	0x06
 001682   cfdb     movff	0xfdb, 0x4         	MOVFF	PLUSW2, r0x04
 001684   f004
-                                           ;	.line	38; src/clock.c	BYTE length = strlen(text);
+                                           ;	.line	64; src/clock.c	BYTE length = strlen(text);
 001686   5004     movf	0x4, 0, 0           	MOVF	r0x04, W
 001688   6ee5     movwf	0xe5, 0            	MOVWF	POSTDEC1
 00168a   5003     movf	0x3, 0, 0           	MOVF	r0x03, W
 00168c   6ee5     movwf	0xe5, 0            	MOVWF	POSTDEC1
 00168e   5002     movf	0x2, 0, 0           	MOVF	r0x02, W
 001690   6ee5     movwf	0xe5, 0            	MOVWF	POSTDEC1
-001692   ec62     call	0x26c4, 0           	CALL	_strlen
+001692   ec64     call	0x26c8, 0           	CALL	_strlen
 001694   f013
 001696   6e05     movwf	0x5, 0             	MOVWF	r0x05
 001698   cff3     movff	0xff3, 0x6         	MOVFF	PRODL, r0x06
 00169a   f006
 00169c   0e03     movlw	0x3                	MOVLW	0x03
 00169e   26e1     addwf	0xe1, 0x1, 0       	ADDWF	FSR1L, F
-                                           ;	.line	39; src/clock.c	int value = 0;
+                                           ;	.line	65; src/clock.c	int value = 0;
 0016a0   6a06     clrf	0x6, 0              	CLRF	r0x06
 0016a2   6a07     clrf	0x7, 0              	CLRF	r0x07
-                                           ;	.line	40; src/clock.c	DisplayString(0, text);
+                                           ;	.line	66; src/clock.c	DisplayString(0, text);
 0016a4   5004     movf	0x4, 0, 0           	MOVF	r0x04, W
 0016a6   6ee5     movwf	0xe5, 0            	MOVWF	POSTDEC1
 0016a8   5003     movf	0x3, 0, 0           	MOVF	r0x03, W
@@ -841,26 +855,26 @@ Address  Value    Disassembly              Source
 0016b6   f00d
 0016b8   0e04     movlw	0x4                	MOVLW	0x04
 0016ba   26e1     addwf	0xe1, 0x1, 0       	ADDWF	FSR1L, F
-                                           ;	.line	42; src/clock.c	while(1)
+                                           ;	.line	67; src/clock.c	while(1)
 0016bc   2805     incf	0x5, 0, 0           	INCF	r0x05, W
 0016be   6e02     movwf	0x2, 0             	MOVWF	r0x02
                                            _00120_DS_:
-                                           ;	.line	44; src/clock.c	if(BUTTON1_IO == 0u){
+                                           ;	.line	69; src/clock.c	if(BUTTON1_IO == 0u){
 0016c0   b281     btfsc	0x81, 0x1, 0       	BTFSC	_PORTBbits, 1
 0016c2   d006     bra	0x16d0               	BRA	_00116_DS_
-                                           ;	.line	45; src/clock.c	LCDErase();
-0016c4   ecd1     call	0x23a2, 0           	CALL	_LCDErase
+                                           ;	.line	70; src/clock.c	LCDErase();
+0016c4   ecd3     call	0x23a6, 0           	CALL	_LCDErase
 0016c6   f011
-                                           ;	.line	46; src/clock.c	return value;
+                                           ;	.line	71; src/clock.c	return value;
 0016c8   c007     movff	0x7, 0xff3         	MOVFF	r0x07, PRODL
 0016ca   fff3
 0016cc   5006     movf	0x6, 0, 0           	MOVF	r0x06, W
 0016ce   d043     bra	0x1756               	BRA	_00122_DS_
                                            _00116_DS_:
-                                           ;	.line	48; src/clock.c	if(BUTTON0_IO == 0u) 
+                                           ;	.line	73; src/clock.c	if(BUTTON0_IO == 0u) 
 0016d0   b681     btfsc	0x81, 0x3, 0       	BTFSC	_PORTBbits, 3
 0016d2   d012     bra	0x16f8               	BRA	_00118_DS_
-                                           ;	.line	49; src/clock.c	value = (++value)%maxvalue;
+                                           ;	.line	74; src/clock.c	value = (++value)%maxvalue;
 0016d4   2a06     incf	0x6, 0x1, 0         	INCF	r0x06, F
 0016d6   b0d8     btfsc	0xd8, 0, 0         	BTFSC	STATUS, 0
 0016d8   2a07     incf	0x7, 0x1, 0         	INCF	r0x07, F
@@ -872,7 +886,7 @@ Address  Value    Disassembly              Source
 0016e4   6ee5     movwf	0xe5, 0            	MOVWF	POSTDEC1
 0016e6   5006     movf	0x6, 0, 0           	MOVF	r0x06, W
 0016e8   6ee5     movwf	0xe5, 0            	MOVWF	POSTDEC1
-0016ea   ec64     call	0x1ec8, 0           	CALL	__modsint
+0016ea   ecd6     call	0x1fac, 0           	CALL	__modsint
 0016ec   f00f
 0016ee   6e06     movwf	0x6, 0             	MOVWF	r0x06
 0016f0   cff3     movff	0xff3, 0x7         	MOVFF	PRODL, r0x07
@@ -880,7 +894,7 @@ Address  Value    Disassembly              Source
 0016f4   0e04     movlw	0x4                	MOVLW	0x04
 0016f6   26e1     addwf	0xe1, 0x1, 0       	ADDWF	FSR1L, F
                                            _00118_DS_:
-                                           ;	.line	50; src/clock.c	DisplayString(length + 1, to_double_digits(value));
+                                           ;	.line	75; src/clock.c	DisplayString(length + 1, to_double_digits(value));
 0016f8   c006     movff	0x6, 0x3           	MOVFF	r0x06, r0x03
 0016fa   f003
 0016fc   c007     movff	0x7, 0x4           	MOVFF	r0x07, r0x04
@@ -898,7 +912,7 @@ Address  Value    Disassembly              Source
 001714   6ee5     movwf	0xe5, 0            	MOVWF	POSTDEC1
 001716   5003     movf	0x3, 0, 0           	MOVF	r0x03, W
 001718   6ee5     movwf	0xe5, 0            	MOVWF	POSTDEC1
-00171a   ec29     call	0x2452, 0           	CALL	_to_double_digits
+00171a   ec2b     call	0x2456, 0           	CALL	_to_double_digits
 00171c   f012
 00171e   6e03     movwf	0x3, 0             	MOVWF	r0x03
 001720   cff3     movff	0xff3, 0x4         	MOVFF	PRODL, r0x04
@@ -919,12 +933,12 @@ Address  Value    Disassembly              Source
 00173e   f00d
 001740   0e04     movlw	0x4                	MOVLW	0x04
 001742   26e1     addwf	0xe1, 0x1, 0       	ADDWF	FSR1L, F
-                                           ;	.line	51; src/clock.c	delay_ms(50);
+                                           ;	.line	76; src/clock.c	delay_ms(50);
 001744   0e00     movlw	0                  	MOVLW	0x00
 001746   6ee5     movwf	0xe5, 0            	MOVWF	POSTDEC1
 001748   0e32     movlw	0x32               	MOVLW	0x32
 00174a   6ee5     movwf	0xe5, 0            	MOVWF	POSTDEC1
-00174c   ecd3     call	0x27a6, 0           	CALL	_delay_ms
+00174c   ecd5     call	0x27aa, 0           	CALL	_delay_ms
 00174e   f013
 001750   0e02     movlw	0x2                	MOVLW	0x02
 001752   26e1     addwf	0xe1, 0x1, 0       	ADDWF	FSR1L, F
@@ -955,135 +969,138 @@ Address  Value    Disassembly              Source
                                            ; ; Starting pCode block
                                            S_clock__initClock	code
                                            _initClock:
-                                           ;	.line	30; src/clock.c	void initClock(){
-001fac   cfd9     movff	0xfd9, 0xfe5       	MOVFF	FSR2L, POSTDEC1
-001fae   ffe5
-001fb0   cfe1     movff	0xfe1, 0xfd9       	MOVFF	FSR1L, FSR2L
-001fb2   ffd9
-001fb4   c000     movff	0, 0xfe5           	MOVFF	r0x00, POSTDEC1
-001fb6   ffe5
-001fb8   c001     movff	0x1, 0xfe5         	MOVFF	r0x01, POSTDEC1
-001fba   ffe5
-001fbc   c002     movff	0x2, 0xfe5         	MOVFF	r0x02, POSTDEC1
-001fbe   ffe5
-001fc0   c003     movff	0x3, 0xfe5         	MOVFF	r0x03, POSTDEC1
-001fc2   ffe5
-001fc4   c004     movff	0x4, 0xfe5         	MOVFF	r0x04, POSTDEC1
-001fc6   ffe5
-001fc8   c005     movff	0x5, 0xfe5         	MOVFF	r0x05, POSTDEC1
-001fca   ffe5
-                                           ;	.line	31; src/clock.c	int h = getInput(24, "HOURS:");
-001fcc   0e00     movlw	0                  	MOVLW	UPPER(__str_0)
-001fce   6ee5     movwf	0xe5, 0            	MOVWF	POSTDEC1
-001fd0   0e20     movlw	0x20               	MOVLW	HIGH(__str_0)
-001fd2   6ee5     movwf	0xe5, 0            	MOVWF	POSTDEC1
-001fd4   0e70     movlw	0x70               	MOVLW	LOW(__str_0)
-001fd6   6ee5     movwf	0xe5, 0            	MOVWF	POSTDEC1
-001fd8   0e00     movlw	0                  	MOVLW	0x00
-001fda   6ee5     movwf	0xe5, 0            	MOVWF	POSTDEC1
-001fdc   0e18     movlw	0x18               	MOVLW	0x18
-001fde   6ee5     movwf	0xe5, 0            	MOVWF	POSTDEC1
-001fe0   ec1e     call	0x163c, 0           	CALL	_getInput
-001fe2   f00b
-001fe4   6e00     movwf	0, 0               	MOVWF	r0x00
-001fe6   cff3     movff	0xff3, 0x1         	MOVFF	PRODL, r0x01
-001fe8   f001
-001fea   0e05     movlw	0x5                	MOVLW	0x05
-001fec   26e1     addwf	0xe1, 0x1, 0       	ADDWF	FSR1L, F
-                                           ;	.line	32; src/clock.c	int m = getInput(60, "MINUTES:");
-001fee   0e00     movlw	0                  	MOVLW	UPPER(__str_1)
-001ff0   6ee5     movwf	0xe5, 0            	MOVWF	POSTDEC1
-001ff2   0e20     movlw	0x20               	MOVLW	HIGH(__str_1)
-001ff4   6ee5     movwf	0xe5, 0            	MOVWF	POSTDEC1
-001ff6   0e78     movlw	0x78               	MOVLW	LOW(__str_1)
-001ff8   6ee5     movwf	0xe5, 0            	MOVWF	POSTDEC1
-001ffa   0e00     movlw	0                  	MOVLW	0x00
-001ffc   6ee5     movwf	0xe5, 0            	MOVWF	POSTDEC1
-001ffe   0e3c     movlw	0x3c               	MOVLW	0x3c
-002000   6ee5     movwf	0xe5, 0            	MOVWF	POSTDEC1
-002002   ec1e     call	0x163c, 0           	CALL	_getInput
-002004   f00b
-002006   6e02     movwf	0x2, 0             	MOVWF	r0x02
-002008   cff3     movff	0xff3, 0x3         	MOVFF	PRODL, r0x03
-00200a   f003
-00200c   0e05     movlw	0x5                	MOVLW	0x05
-00200e   26e1     addwf	0xe1, 0x1, 0       	ADDWF	FSR1L, F
-                                           ;	.line	33; src/clock.c	int s = getInput(60, "SECONDS:");
-002010   0e00     movlw	0                  	MOVLW	UPPER(__str_2)
-002012   6ee5     movwf	0xe5, 0            	MOVWF	POSTDEC1
-002014   0e20     movlw	0x20               	MOVLW	HIGH(__str_2)
-002016   6ee5     movwf	0xe5, 0            	MOVWF	POSTDEC1
-002018   0e82     movlw	0x82               	MOVLW	LOW(__str_2)
-00201a   6ee5     movwf	0xe5, 0            	MOVWF	POSTDEC1
-00201c   0e00     movlw	0                  	MOVLW	0x00
-00201e   6ee5     movwf	0xe5, 0            	MOVWF	POSTDEC1
-002020   0e3c     movlw	0x3c               	MOVLW	0x3c
-002022   6ee5     movwf	0xe5, 0            	MOVWF	POSTDEC1
-002024   ec1e     call	0x163c, 0           	CALL	_getInput
-002026   f00b
-002028   6e04     movwf	0x4, 0             	MOVWF	r0x04
-00202a   cff3     movff	0xff3, 0x5         	MOVFF	PRODL, r0x05
-00202c   f005
-00202e   0e05     movlw	0x5                	MOVLW	0x05
-002030   26e1     addwf	0xe1, 0x1, 0       	ADDWF	FSR1L, F
-                                           ;	.line	34; src/clock.c	set_time(h,m,s);
-002032   5005     movf	0x5, 0, 0           	MOVF	r0x05, W
-002034   6ee5     movwf	0xe5, 0            	MOVWF	POSTDEC1
-002036   5004     movf	0x4, 0, 0           	MOVF	r0x04, W
-002038   6ee5     movwf	0xe5, 0            	MOVWF	POSTDEC1
-00203a   5003     movf	0x3, 0, 0           	MOVF	r0x03, W
-00203c   6ee5     movwf	0xe5, 0            	MOVWF	POSTDEC1
-00203e   5002     movf	0x2, 0, 0           	MOVF	r0x02, W
-002040   6ee5     movwf	0xe5, 0            	MOVWF	POSTDEC1
-002042   5001     movf	0x1, 0, 0           	MOVF	r0x01, W
-002044   6ee5     movwf	0xe5, 0            	MOVWF	POSTDEC1
-002046   5000     movf	0, 0, 0             	MOVF	r0x00, W
-002048   6ee5     movwf	0xe5, 0            	MOVWF	POSTDEC1
-00204a   ec54     call	0x14a8, 0           	CALL	_set_time
-00204c   f00a
-00204e   0e06     movlw	0x6                	MOVLW	0x06
-002050   26e1     addwf	0xe1, 0x1, 0       	ADDWF	FSR1L, F
-002052   cfe4     movff	0xfe4, 0x5         	MOVFF	PREINC1, r0x05
-002054   f005
-002056   cfe4     movff	0xfe4, 0x4         	MOVFF	PREINC1, r0x04
-002058   f004
-00205a   cfe4     movff	0xfe4, 0x3         	MOVFF	PREINC1, r0x03
-00205c   f003
-00205e   cfe4     movff	0xfe4, 0x2         	MOVFF	PREINC1, r0x02
-002060   f002
-002062   cfe4     movff	0xfe4, 0x1         	MOVFF	PREINC1, r0x01
-002064   f001
-002066   cfe4     movff	0xfe4, 0           	MOVFF	PREINC1, r0x00
-002068   f000
-00206a   cfe4     movff	0xfe4, 0xfd9       	MOVFF	PREINC1, FSR2L
-00206c   ffd9
-00206e   0012     return	0                 	RETURN	
+                                           ;	.line	54; src/clock.c	void initClock(){
+001ec8   cfd9     movff	0xfd9, 0xfe5       	MOVFF	FSR2L, POSTDEC1
+001eca   ffe5
+001ecc   cfe1     movff	0xfe1, 0xfd9       	MOVFF	FSR1L, FSR2L
+001ece   ffd9
+001ed0   c000     movff	0, 0xfe5           	MOVFF	r0x00, POSTDEC1
+001ed2   ffe5
+001ed4   c001     movff	0x1, 0xfe5         	MOVFF	r0x01, POSTDEC1
+001ed6   ffe5
+001ed8   c002     movff	0x2, 0xfe5         	MOVFF	r0x02, POSTDEC1
+001eda   ffe5
+001edc   c003     movff	0x3, 0xfe5         	MOVFF	r0x03, POSTDEC1
+001ede   ffe5
+001ee0   c004     movff	0x4, 0xfe5         	MOVFF	r0x04, POSTDEC1
+001ee2   ffe5
+001ee4   c005     movff	0x5, 0xfe5         	MOVFF	r0x05, POSTDEC1
+001ee6   ffe5
+                                           ;	.line	56; src/clock.c	LCDErase();
+001ee8   ecd3     call	0x23a6, 0           	CALL	_LCDErase
+001eea   f011
+                                           ;	.line	57; src/clock.c	h = getInput(24, "HOURS:");
+001eec   0e00     movlw	0                  	MOVLW	UPPER(__str_0)
+001eee   6ee5     movwf	0xe5, 0            	MOVWF	POSTDEC1
+001ef0   0e1f     movlw	0x1f               	MOVLW	HIGH(__str_0)
+001ef2   6ee5     movwf	0xe5, 0            	MOVWF	POSTDEC1
+001ef4   0e90     movlw	0x90               	MOVLW	LOW(__str_0)
+001ef6   6ee5     movwf	0xe5, 0            	MOVWF	POSTDEC1
+001ef8   0e00     movlw	0                  	MOVLW	0x00
+001efa   6ee5     movwf	0xe5, 0            	MOVWF	POSTDEC1
+001efc   0e18     movlw	0x18               	MOVLW	0x18
+001efe   6ee5     movwf	0xe5, 0            	MOVWF	POSTDEC1
+001f00   ec1e     call	0x163c, 0           	CALL	_getInput
+001f02   f00b
+001f04   6e00     movwf	0, 0               	MOVWF	r0x00
+001f06   cff3     movff	0xff3, 0x1         	MOVFF	PRODL, r0x01
+001f08   f001
+001f0a   0e05     movlw	0x5                	MOVLW	0x05
+001f0c   26e1     addwf	0xe1, 0x1, 0       	ADDWF	FSR1L, F
+                                           ;	.line	58; src/clock.c	m = getInput(60, "MINUTES:");
+001f0e   0e00     movlw	0                  	MOVLW	UPPER(__str_1)
+001f10   6ee5     movwf	0xe5, 0            	MOVWF	POSTDEC1
+001f12   0e1f     movlw	0x1f               	MOVLW	HIGH(__str_1)
+001f14   6ee5     movwf	0xe5, 0            	MOVWF	POSTDEC1
+001f16   0e98     movlw	0x98               	MOVLW	LOW(__str_1)
+001f18   6ee5     movwf	0xe5, 0            	MOVWF	POSTDEC1
+001f1a   0e00     movlw	0                  	MOVLW	0x00
+001f1c   6ee5     movwf	0xe5, 0            	MOVWF	POSTDEC1
+001f1e   0e3c     movlw	0x3c               	MOVLW	0x3c
+001f20   6ee5     movwf	0xe5, 0            	MOVWF	POSTDEC1
+001f22   ec1e     call	0x163c, 0           	CALL	_getInput
+001f24   f00b
+001f26   6e02     movwf	0x2, 0             	MOVWF	r0x02
+001f28   cff3     movff	0xff3, 0x3         	MOVFF	PRODL, r0x03
+001f2a   f003
+001f2c   0e05     movlw	0x5                	MOVLW	0x05
+001f2e   26e1     addwf	0xe1, 0x1, 0       	ADDWF	FSR1L, F
+                                           ;	.line	59; src/clock.c	s = getInput(60, "SECONDS:");
+001f30   0e00     movlw	0                  	MOVLW	UPPER(__str_2)
+001f32   6ee5     movwf	0xe5, 0            	MOVWF	POSTDEC1
+001f34   0e1f     movlw	0x1f               	MOVLW	HIGH(__str_2)
+001f36   6ee5     movwf	0xe5, 0            	MOVWF	POSTDEC1
+001f38   0ea2     movlw	0xa2               	MOVLW	LOW(__str_2)
+001f3a   6ee5     movwf	0xe5, 0            	MOVWF	POSTDEC1
+001f3c   0e00     movlw	0                  	MOVLW	0x00
+001f3e   6ee5     movwf	0xe5, 0            	MOVWF	POSTDEC1
+001f40   0e3c     movlw	0x3c               	MOVLW	0x3c
+001f42   6ee5     movwf	0xe5, 0            	MOVWF	POSTDEC1
+001f44   ec1e     call	0x163c, 0           	CALL	_getInput
+001f46   f00b
+001f48   6e04     movwf	0x4, 0             	MOVWF	r0x04
+001f4a   cff3     movff	0xff3, 0x5         	MOVFF	PRODL, r0x05
+001f4c   f005
+001f4e   0e05     movlw	0x5                	MOVLW	0x05
+001f50   26e1     addwf	0xe1, 0x1, 0       	ADDWF	FSR1L, F
+                                           ;	.line	60; src/clock.c	set_time(h,m,s);
+001f52   5005     movf	0x5, 0, 0           	MOVF	r0x05, W
+001f54   6ee5     movwf	0xe5, 0            	MOVWF	POSTDEC1
+001f56   5004     movf	0x4, 0, 0           	MOVF	r0x04, W
+001f58   6ee5     movwf	0xe5, 0            	MOVWF	POSTDEC1
+001f5a   5003     movf	0x3, 0, 0           	MOVF	r0x03, W
+001f5c   6ee5     movwf	0xe5, 0            	MOVWF	POSTDEC1
+001f5e   5002     movf	0x2, 0, 0           	MOVF	r0x02, W
+001f60   6ee5     movwf	0xe5, 0            	MOVWF	POSTDEC1
+001f62   5001     movf	0x1, 0, 0           	MOVF	r0x01, W
+001f64   6ee5     movwf	0xe5, 0            	MOVWF	POSTDEC1
+001f66   5000     movf	0, 0, 0             	MOVF	r0x00, W
+001f68   6ee5     movwf	0xe5, 0            	MOVWF	POSTDEC1
+001f6a   ec54     call	0x14a8, 0           	CALL	_set_time
+001f6c   f00a
+001f6e   0e06     movlw	0x6                	MOVLW	0x06
+001f70   26e1     addwf	0xe1, 0x1, 0       	ADDWF	FSR1L, F
+001f72   cfe4     movff	0xfe4, 0x5         	MOVFF	PREINC1, r0x05
+001f74   f005
+001f76   cfe4     movff	0xfe4, 0x4         	MOVFF	PREINC1, r0x04
+001f78   f004
+001f7a   cfe4     movff	0xfe4, 0x3         	MOVFF	PREINC1, r0x03
+001f7c   f003
+001f7e   cfe4     movff	0xfe4, 0x2         	MOVFF	PREINC1, r0x02
+001f80   f002
+001f82   cfe4     movff	0xfe4, 0x1         	MOVFF	PREINC1, r0x01
+001f84   f001
+001f86   cfe4     movff	0xfe4, 0           	MOVFF	PREINC1, r0x00
+001f88   f000
+001f8a   cfe4     movff	0xfe4, 0xfd9       	MOVFF	PREINC1, FSR2L
+001f8c   ffd9
+001f8e   0012     return	0                 	RETURN	
                                            
                                            ; ; Starting pCode block
                                            __str_0:
-002070   4f48     dcfsnz	0x48, 0x1, 0x1    	DB	0x48, 0x4f, 0x55, 0x52, 0x53, 0x3a, 0x00
-002072   5255     movf	0x55, 0x1, 0        
-002074   3a53     swapf	0x53, 0x1, 0       
-002076   0000     nop                      
+001f90   4f48     dcfsnz	0x48, 0x1, 0x1    	DB	0x48, 0x4f, 0x55, 0x52, 0x53, 0x3a, 0x00
+001f92   5255     movf	0x55, 0x1, 0        
+001f94   3a53     swapf	0x53, 0x1, 0       
+001f96   0000     nop                      
                                            ; ; Starting pCode block
                                            __str_1:
-002078   494d     infsnz	0x4d, 0, 0x1      	DB	0x4d, 0x49, 0x4e, 0x55, 0x54, 0x45, 0x53, 0x3a, 0x00
-00207a   554e     subfwb	0x4e, 0, 0x1      
-00207c   4554     rlncf	0x54, 0, 0x1       
-00207e   3a53     swapf	0x53, 0x1, 0       
-002080   0000     nop                      
+001f98   494d     infsnz	0x4d, 0, 0x1      	DB	0x4d, 0x49, 0x4e, 0x55, 0x54, 0x45, 0x53, 0x3a, 0x00
+001f9a   554e     subfwb	0x4e, 0, 0x1      
+001f9c   4554     rlncf	0x54, 0, 0x1       
+001f9e   3a53     swapf	0x53, 0x1, 0       
+001fa0   0000     nop                      
                                            ; ; Starting pCode block
                                            __str_2:
-002082   4553     rlncf	0x53, 0, 0x1       	DB	0x53, 0x45, 0x43, 0x4f, 0x4e, 0x44, 0x53, 0x3a, 0x00
-002084   4f43     dcfsnz	0x43, 0x1, 0x1    
-002086   444e     rlncf	0x4e, 0, 0         
-002088   3a53     swapf	0x53, 0x1, 0       
-00208a   0000     nop                      
+001fa2   4553     rlncf	0x53, 0, 0x1       	DB	0x53, 0x45, 0x43, 0x4f, 0x4e, 0x44, 0x53, 0x3a, 0x00
+001fa4   4f43     dcfsnz	0x43, 0x1, 0x1    
+001fa6   444e     rlncf	0x4e, 0, 0         
+001fa8   3a53     swapf	0x53, 0x1, 0       
+001faa   0000     nop                      
                                            
                                            
                                            ; Statistics:
-                                           ; code size:	  978 (0x03d2) bytes ( 0.75%)
-                                           ;           	  489 (0x01e9) words
+                                           ; code size:	  996 (0x03e4) bytes ( 0.76%)
+                                           ;           	  498 (0x01f2) words
                                            ; udata size:	    0 (0x0000) bytes ( 0.00%)
                                            ; access size:	   10 (0x000a) bytes
                                            
@@ -1575,98 +1592,98 @@ Address  Value    Disassembly              Source
                                            S_LCDBlocking__LCDErase	code
                                            _LCDErase:
                                            ;	.line	392; lib/LCDBlocking.c	void LCDErase(void)
-0023a2   cfd9     movff	0xfd9, 0xfe5       	MOVFF	FSR2L, POSTDEC1
-0023a4   ffe5
-0023a6   cfe1     movff	0xfe1, 0xfd9       	MOVFF	FSR1L, FSR2L
-0023a8   ffd9
-0023aa   c000     movff	0, 0xfe5           	MOVFF	r0x00, POSTDEC1
-0023ac   ffe5
-0023ae   c001     movff	0x1, 0xfe5         	MOVFF	r0x01, POSTDEC1
+0023a6   cfd9     movff	0xfd9, 0xfe5       	MOVFF	FSR2L, POSTDEC1
+0023a8   ffe5
+0023aa   cfe1     movff	0xfe1, 0xfd9       	MOVFF	FSR1L, FSR2L
+0023ac   ffd9
+0023ae   c000     movff	0, 0xfe5           	MOVFF	r0x00, POSTDEC1
 0023b0   ffe5
-0023b2   c002     movff	0x2, 0xfe5         	MOVFF	r0x02, POSTDEC1
+0023b2   c001     movff	0x1, 0xfe5         	MOVFF	r0x01, POSTDEC1
 0023b4   ffe5
-0023b6   c003     movff	0x3, 0xfe5         	MOVFF	r0x03, POSTDEC1
+0023b6   c002     movff	0x2, 0xfe5         	MOVFF	r0x02, POSTDEC1
 0023b8   ffe5
-0023ba   c004     movff	0x4, 0xfe5         	MOVFF	r0x04, POSTDEC1
+0023ba   c003     movff	0x3, 0xfe5         	MOVFF	r0x03, POSTDEC1
 0023bc   ffe5
-0023be   c005     movff	0x5, 0xfe5         	MOVFF	r0x05, POSTDEC1
+0023be   c004     movff	0x4, 0xfe5         	MOVFF	r0x04, POSTDEC1
 0023c0   ffe5
-0023c2   c006     movff	0x6, 0xfe5         	MOVFF	r0x06, POSTDEC1
+0023c2   c005     movff	0x5, 0xfe5         	MOVFF	r0x05, POSTDEC1
 0023c4   ffe5
-0023c6   c007     movff	0x7, 0xfe5         	MOVFF	r0x07, POSTDEC1
+0023c6   c006     movff	0x6, 0xfe5         	MOVFF	r0x06, POSTDEC1
 0023c8   ffe5
+0023ca   c007     movff	0x7, 0xfe5         	MOVFF	r0x07, POSTDEC1
+0023cc   ffe5
                                            ;	.line	395; lib/LCDBlocking.c	LCDWrite(0, 0x01);
-0023ca   0e01     movlw	0x1                	MOVLW	0x01
-0023cc   6ee5     movwf	0xe5, 0            	MOVWF	POSTDEC1
-0023ce   0e00     movlw	0                  	MOVLW	0x00
+0023ce   0e01     movlw	0x1                	MOVLW	0x01
 0023d0   6ee5     movwf	0xe5, 0            	MOVWF	POSTDEC1
-0023d2   eca2     call	0x2744, 0           	CALL	_LCDWrite
-0023d4   f013
-0023d6   0e02     movlw	0x2                	MOVLW	0x02
-0023d8   26e1     addwf	0xe1, 0x1, 0       	ADDWF	FSR1L, F
+0023d2   0e00     movlw	0                  	MOVLW	0x00
+0023d4   6ee5     movwf	0xe5, 0            	MOVWF	POSTDEC1
+0023d6   eca4     call	0x2748, 0           	CALL	_LCDWrite
+0023d8   f013
+0023da   0e02     movlw	0x2                	MOVLW	0x02
+0023dc   26e1     addwf	0xe1, 0x1, 0       	ADDWF	FSR1L, F
                                            ;	.line	396; lib/LCDBlocking.c	DelayMs(2);
-0023da   0e48     movlw	0x48               	MOVLW	0x48
-0023dc   6e00     movwf	0, 0               	MOVWF	r0x00
-0023de   0e0d     movlw	0xd                	MOVLW	0x0d
-0023e0   6e01     movwf	0x1, 0             	MOVWF	r0x01
-0023e2   6a02     clrf	0x2, 0              	CLRF	r0x02
-0023e4   6a03     clrf	0x3, 0              	CLRF	r0x03
+0023de   0e48     movlw	0x48               	MOVLW	0x48
+0023e0   6e00     movwf	0, 0               	MOVWF	r0x00
+0023e2   0e0d     movlw	0xd                	MOVLW	0x0d
+0023e4   6e01     movwf	0x1, 0             	MOVWF	r0x01
+0023e6   6a02     clrf	0x2, 0              	CLRF	r0x02
+0023e8   6a03     clrf	0x3, 0              	CLRF	r0x03
                                            _00305_DS_:
-0023e6   c000     movff	0, 0x4             	MOVFF	r0x00, r0x04
-0023e8   f004
-0023ea   c001     movff	0x1, 0x5           	MOVFF	r0x01, r0x05
-0023ec   f005
-0023ee   c002     movff	0x2, 0x6           	MOVFF	r0x02, r0x06
-0023f0   f006
-0023f2   c003     movff	0x3, 0x7           	MOVFF	r0x03, r0x07
-0023f4   f007
-0023f6   0eff     movlw	0xff               	MOVLW	0xff
-0023f8   2600     addwf	0, 0x1, 0          	ADDWF	r0x00, F
+0023ea   c000     movff	0, 0x4             	MOVFF	r0x00, r0x04
+0023ec   f004
+0023ee   c001     movff	0x1, 0x5           	MOVFF	r0x01, r0x05
+0023f0   f005
+0023f2   c002     movff	0x2, 0x6           	MOVFF	r0x02, r0x06
+0023f4   f006
+0023f6   c003     movff	0x3, 0x7           	MOVFF	r0x03, r0x07
+0023f8   f007
 0023fa   0eff     movlw	0xff               	MOVLW	0xff
-0023fc   2201     addwfc	0x1, 0x1, 0       	ADDWFC	r0x01, F
+0023fc   2600     addwf	0, 0x1, 0          	ADDWF	r0x00, F
 0023fe   0eff     movlw	0xff               	MOVLW	0xff
-002400   2202     addwfc	0x2, 0x1, 0       	ADDWFC	r0x02, F
+002400   2201     addwfc	0x1, 0x1, 0       	ADDWFC	r0x01, F
 002402   0eff     movlw	0xff               	MOVLW	0xff
-002404   2203     addwfc	0x3, 0x1, 0       	ADDWFC	r0x03, F
-002406   5004     movf	0x4, 0, 0           	MOVF	r0x04, W
-002408   1005     iorwf	0x5, 0, 0          	IORWF	r0x05, W
-00240a   1006     iorwf	0x6, 0, 0          	IORWF	r0x06, W
-00240c   1007     iorwf	0x7, 0, 0          	IORWF	r0x07, W
-00240e   e1eb     bnz	0x23e6               	BNZ	_00305_DS_
+002404   2202     addwfc	0x2, 0x1, 0       	ADDWFC	r0x02, F
+002406   0eff     movlw	0xff               	MOVLW	0xff
+002408   2203     addwfc	0x3, 0x1, 0       	ADDWFC	r0x03, F
+00240a   5004     movf	0x4, 0, 0           	MOVF	r0x04, W
+00240c   1005     iorwf	0x5, 0, 0          	IORWF	r0x05, W
+00240e   1006     iorwf	0x6, 0, 0          	IORWF	r0x06, W
+002410   1007     iorwf	0x7, 0, 0          	IORWF	r0x07, W
+002412   e1eb     bnz	0x23ea               	BNZ	_00305_DS_
                                            ;	.line	399; lib/LCDBlocking.c	memset(LCDText, ' ', 32);
-002410   0e00     movlw	0                  	MOVLW	0x00
-002412   6ee5     movwf	0xe5, 0            	MOVWF	POSTDEC1
-002414   0e20     movlw	0x20               	MOVLW	0x20
+002414   0e00     movlw	0                  	MOVLW	0x00
 002416   6ee5     movwf	0xe5, 0            	MOVWF	POSTDEC1
 002418   0e20     movlw	0x20               	MOVLW	0x20
 00241a   6ee5     movwf	0xe5, 0            	MOVWF	POSTDEC1
-00241c   0e0f     movlw	0xf                	MOVLW	HIGH(_LCDText)
+00241c   0e20     movlw	0x20               	MOVLW	0x20
 00241e   6ee5     movwf	0xe5, 0            	MOVWF	POSTDEC1
-002420   0e00     movlw	0                  	MOVLW	LOW(_LCDText)
+002420   0e0f     movlw	0xf                	MOVLW	HIGH(_LCDText)
 002422   6ee5     movwf	0xe5, 0            	MOVWF	POSTDEC1
-002424   ecac     call	0x2158, 0           	CALL	_memset
-002426   f010
-002428   0e05     movlw	0x5                	MOVLW	0x05
-00242a   26e1     addwf	0xe1, 0x1, 0       	ADDWF	FSR1L, F
-00242c   cfe4     movff	0xfe4, 0x7         	MOVFF	PREINC1, r0x07
-00242e   f007
-002430   cfe4     movff	0xfe4, 0x6         	MOVFF	PREINC1, r0x06
-002432   f006
-002434   cfe4     movff	0xfe4, 0x5         	MOVFF	PREINC1, r0x05
-002436   f005
-002438   cfe4     movff	0xfe4, 0x4         	MOVFF	PREINC1, r0x04
-00243a   f004
-00243c   cfe4     movff	0xfe4, 0x3         	MOVFF	PREINC1, r0x03
-00243e   f003
-002440   cfe4     movff	0xfe4, 0x2         	MOVFF	PREINC1, r0x02
-002442   f002
-002444   cfe4     movff	0xfe4, 0x1         	MOVFF	PREINC1, r0x01
-002446   f001
-002448   cfe4     movff	0xfe4, 0           	MOVFF	PREINC1, r0x00
-00244a   f000
-00244c   cfe4     movff	0xfe4, 0xfd9       	MOVFF	PREINC1, FSR2L
-00244e   ffd9
-002450   0012     return	0                 	RETURN	
+002424   0e00     movlw	0                  	MOVLW	LOW(_LCDText)
+002426   6ee5     movwf	0xe5, 0            	MOVWF	POSTDEC1
+002428   ecae     call	0x215c, 0           	CALL	_memset
+00242a   f010
+00242c   0e05     movlw	0x5                	MOVLW	0x05
+00242e   26e1     addwf	0xe1, 0x1, 0       	ADDWF	FSR1L, F
+002430   cfe4     movff	0xfe4, 0x7         	MOVFF	PREINC1, r0x07
+002432   f007
+002434   cfe4     movff	0xfe4, 0x6         	MOVFF	PREINC1, r0x06
+002436   f006
+002438   cfe4     movff	0xfe4, 0x5         	MOVFF	PREINC1, r0x05
+00243a   f005
+00243c   cfe4     movff	0xfe4, 0x4         	MOVFF	PREINC1, r0x04
+00243e   f004
+002440   cfe4     movff	0xfe4, 0x3         	MOVFF	PREINC1, r0x03
+002442   f003
+002444   cfe4     movff	0xfe4, 0x2         	MOVFF	PREINC1, r0x02
+002446   f002
+002448   cfe4     movff	0xfe4, 0x1         	MOVFF	PREINC1, r0x01
+00244a   f001
+00244c   cfe4     movff	0xfe4, 0           	MOVFF	PREINC1, r0x00
+00244e   f000
+002450   cfe4     movff	0xfe4, 0xfd9       	MOVFF	PREINC1, FSR2L
+002452   ffd9
+002454   0012     return	0                 	RETURN	
                                            
                                            ; ; Starting pCode block
                                            S_LCDBlocking__LCDUpdate	code
@@ -1699,7 +1716,7 @@ Address  Value    Disassembly              Source
 000868   6ee5     movwf	0xe5, 0            	MOVWF	POSTDEC1
 00086a   0e00     movlw	0                  	MOVLW	0x00
 00086c   6ee5     movwf	0xe5, 0            	MOVWF	POSTDEC1
-00086e   eca2     call	0x2744, 0           	CALL	_LCDWrite
+00086e   eca4     call	0x2748, 0           	CALL	_LCDWrite
 000870   f013
 000872   0e02     movlw	0x2                	MOVLW	0x02
 000874   26e1     addwf	0xe1, 0x1, 0       	ADDWF	FSR1L, F
@@ -1809,7 +1826,7 @@ Address  Value    Disassembly              Source
 00092a   6ee5     movwf	0xe5, 0            	MOVWF	POSTDEC1
 00092c   0e01     movlw	0x1                	MOVLW	0x01
 00092e   6ee5     movwf	0xe5, 0            	MOVWF	POSTDEC1
-000930   eca2     call	0x2744, 0           	CALL	_LCDWrite
+000930   eca4     call	0x2748, 0           	CALL	_LCDWrite
 000932   f013
 000934   0e02     movlw	0x2                	MOVLW	0x02
 000936   26e1     addwf	0xe1, 0x1, 0       	ADDWF	FSR1L, F
@@ -1850,7 +1867,7 @@ Address  Value    Disassembly              Source
 000972   6ee5     movwf	0xe5, 0            	MOVWF	POSTDEC1
 000974   0e00     movlw	0                  	MOVLW	0x00
 000976   6ee5     movwf	0xe5, 0            	MOVWF	POSTDEC1
-000978   eca2     call	0x2744, 0           	CALL	_LCDWrite
+000978   eca4     call	0x2748, 0           	CALL	_LCDWrite
 00097a   f013
 00097c   0e02     movlw	0x2                	MOVLW	0x02
 00097e   26e1     addwf	0xe1, 0x1, 0       	ADDWF	FSR1L, F
@@ -1960,7 +1977,7 @@ Address  Value    Disassembly              Source
 000a34   6ee5     movwf	0xe5, 0            	MOVWF	POSTDEC1
 000a36   0e01     movlw	0x1                	MOVLW	0x01
 000a38   6ee5     movwf	0xe5, 0            	MOVWF	POSTDEC1
-000a3a   eca2     call	0x2744, 0           	CALL	_LCDWrite
+000a3a   eca4     call	0x2748, 0           	CALL	_LCDWrite
 000a3c   f013
 000a3e   0e02     movlw	0x2                	MOVLW	0x02
 000a40   26e1     addwf	0xe1, 0x1, 0       	ADDWF	FSR1L, F
@@ -2055,7 +2072,7 @@ Address  Value    Disassembly              Source
 000ade   6ee5     movwf	0xe5, 0            	MOVWF	POSTDEC1
 000ae0   0e00     movlw	0                  	MOVLW	LOW(_LCDText)
 000ae2   6ee5     movwf	0xe5, 0            	MOVWF	POSTDEC1
-000ae4   ecac     call	0x2158, 0           	CALL	_memset
+000ae4   ecae     call	0x215c, 0           	CALL	_memset
 000ae6   f010
 000ae8   0e05     movlw	0x5                	MOVLW	0x05
 000aea   26e1     addwf	0xe1, 0x1, 0       	ADDWF	FSR1L, F
@@ -2194,7 +2211,7 @@ Address  Value    Disassembly              Source
 000bc6   6ee5     movwf	0xe5, 0            	MOVWF	POSTDEC1
 000bc8   0e00     movlw	0                  	MOVLW	0x00
 000bca   6ee5     movwf	0xe5, 0            	MOVWF	POSTDEC1
-000bcc   eca2     call	0x2744, 0           	CALL	_LCDWrite
+000bcc   eca4     call	0x2748, 0           	CALL	_LCDWrite
 000bce   f013
 000bd0   0e02     movlw	0x2                	MOVLW	0x02
 000bd2   26e1     addwf	0xe1, 0x1, 0       	ADDWF	FSR1L, F
@@ -2231,7 +2248,7 @@ Address  Value    Disassembly              Source
 000c0a   6ee5     movwf	0xe5, 0            	MOVWF	POSTDEC1
 000c0c   0e00     movlw	0                  	MOVLW	0x00
 000c0e   6ee5     movwf	0xe5, 0            	MOVWF	POSTDEC1
-000c10   eca2     call	0x2744, 0           	CALL	_LCDWrite
+000c10   eca4     call	0x2748, 0           	CALL	_LCDWrite
 000c12   f013
 000c14   0e02     movlw	0x2                	MOVLW	0x02
 000c16   26e1     addwf	0xe1, 0x1, 0       	ADDWF	FSR1L, F
@@ -2268,7 +2285,7 @@ Address  Value    Disassembly              Source
 000c4e   6ee5     movwf	0xe5, 0            	MOVWF	POSTDEC1
 000c50   0e00     movlw	0                  	MOVLW	0x00
 000c52   6ee5     movwf	0xe5, 0            	MOVWF	POSTDEC1
-000c54   eca2     call	0x2744, 0           	CALL	_LCDWrite
+000c54   eca4     call	0x2748, 0           	CALL	_LCDWrite
 000c56   f013
 000c58   0e02     movlw	0x2                	MOVLW	0x02
 000c5a   26e1     addwf	0xe1, 0x1, 0       	ADDWF	FSR1L, F
@@ -2305,7 +2322,7 @@ Address  Value    Disassembly              Source
 000c92   6ee5     movwf	0xe5, 0            	MOVWF	POSTDEC1
 000c94   0e00     movlw	0                  	MOVLW	0x00
 000c96   6ee5     movwf	0xe5, 0            	MOVWF	POSTDEC1
-000c98   eca2     call	0x2744, 0           	CALL	_LCDWrite
+000c98   eca4     call	0x2748, 0           	CALL	_LCDWrite
 000c9a   f013
 000c9c   0e02     movlw	0x2                	MOVLW	0x02
 000c9e   26e1     addwf	0xe1, 0x1, 0       	ADDWF	FSR1L, F
@@ -2364,47 +2381,45 @@ Address  Value    Disassembly              Source
                                            S_LCDBlocking__LCDWrite	code
                                            _LCDWrite:
                                            ;	.line	94; lib/LCDBlocking.c	static void LCDWrite(BYTE RS, BYTE Data)
-002744   cfd9     movff	0xfd9, 0xfe5       	MOVFF	FSR2L, POSTDEC1
-002746   ffe5
-002748   cfe1     movff	0xfe1, 0xfd9       	MOVFF	FSR1L, FSR2L
-00274a   ffd9
-00274c   c000     movff	0, 0xfe5           	MOVFF	r0x00, POSTDEC1
-00274e   ffe5
-002750   c001     movff	0x1, 0xfe5         	MOVFF	r0x01, POSTDEC1
+002748   cfd9     movff	0xfd9, 0xfe5       	MOVFF	FSR2L, POSTDEC1
+00274a   ffe5
+00274c   cfe1     movff	0xfe1, 0xfd9       	MOVFF	FSR1L, FSR2L
+00274e   ffd9
+002750   c000     movff	0, 0xfe5           	MOVFF	r0x00, POSTDEC1
 002752   ffe5
-002754   0e02     movlw	0x2                	MOVLW	0x02
-002756   cfdb     movff	0xfdb, 0           	MOVFF	PLUSW2, r0x00
-002758   f000
-00275a   0e03     movlw	0x3                	MOVLW	0x03
-00275c   cfdb     movff	0xfdb, 0x1         	MOVFF	PLUSW2, r0x01
-00275e   f001
+002754   c001     movff	0x1, 0xfe5         	MOVFF	r0x01, POSTDEC1
+002756   ffe5
+002758   0e02     movlw	0x2                	MOVLW	0x02
+00275a   cfdb     movff	0xfdb, 0           	MOVFF	PLUSW2, r0x00
+00275c   f000
+00275e   0e03     movlw	0x3                	MOVLW	0x03
+002760   cfdb     movff	0xfdb, 0x1         	MOVFF	PLUSW2, r0x01
+002762   f001
                                            ;	.line	97; lib/LCDBlocking.c	LCD_DATA_TRIS = 0x00;
-002760   6a96     clrf	0x96, 0             	CLRF	_TRISE
+002764   6a96     clrf	0x96, 0             	CLRF	_TRISE
                                            ;	.line	110; lib/LCDBlocking.c	LCD_RS_TRIS = 0;
-002762   9499     bcf	0x99, 0x2, 0         	BCF	_TRISHbits, 2
+002766   9499     bcf	0x99, 0x2, 0         	BCF	_TRISHbits, 2
                                            ;	.line	111; lib/LCDBlocking.c	LCD_RD_WR_TRIS = 0;
-002764   9299     bcf	0x99, 0x1, 0         	BCF	_TRISHbits, 1
+002768   9299     bcf	0x99, 0x1, 0         	BCF	_TRISHbits, 1
                                            ;	.line	112; lib/LCDBlocking.c	LCD_RD_WR_IO = 0;
-002766   9290     bcf	0x90, 0x1, 0         	BCF	_LATHbits, 1
+00276a   9290     bcf	0x90, 0x1, 0         	BCF	_LATHbits, 1
                                            ;	.line	113; lib/LCDBlocking.c	LCD_RS_IO = RS;
-002768   5000     movf	0, 0, 0             	MOVF	r0x00, W
-00276a   0b01     andlw	0x1                	ANDLW	0x01
-00276c   44e8     rlncf	0xe8, 0, 0         	RLNCF	WREG, W
-00276e   44e8     rlncf	0xe8, 0, 0         	RLNCF	WREG, W
-002770   6ef4     movwf	0xf4, 0            	MOVWF	PRODH
-002772   5090     movf	0x90, 0, 0          	MOVF	_LATHbits, W
-002774   0bfb     andlw	0xfb               	ANDLW	0xfb
-002776   10f4     iorwf	0xf4, 0, 0         	IORWF	PRODH, W
-002778   6e90     movwf	0x90, 0            	MOVWF	_LATHbits
+00276c   5000     movf	0, 0, 0             	MOVF	r0x00, W
+00276e   0b01     andlw	0x1                	ANDLW	0x01
+002770   44e8     rlncf	0xe8, 0, 0         	RLNCF	WREG, W
+002772   44e8     rlncf	0xe8, 0, 0         	RLNCF	WREG, W
+002774   6ef4     movwf	0xf4, 0            	MOVWF	PRODH
+002776   5090     movf	0x90, 0, 0          	MOVF	_LATHbits, W
+002778   0bfb     andlw	0xfb               	ANDLW	0xfb
+00277a   10f4     iorwf	0xf4, 0, 0         	IORWF	PRODH, W
+00277c   6e90     movwf	0x90, 0            	MOVWF	_LATHbits
                                            ;	.line	140; lib/LCDBlocking.c	LCD_DATA_IO = Data;
-00277a   c001     movff	0x1, 0xf8d         	MOVFF	r0x01, _LATE
-00277c   ff8d
-00277e   0000     nop                      	nop 
-002780   0000     nop                      	nop 
-                                           ;	.line	155; lib/LCDBlocking.c	LCD_E_IO = 1;
-002782   8090     bsf	0x90, 0, 0           	BSF	_LATHbits, 0
+00277e   c001     movff	0x1, 0xf8d         	MOVFF	r0x01, _LATE
+002780   ff8d
+002782   0000     nop                      	nop 
 002784   0000     nop                      	nop 
-002786   0000     nop                      	nop 
+                                           ;	.line	155; lib/LCDBlocking.c	LCD_E_IO = 1;
+002786   8090     bsf	0x90, 0, 0           	BSF	_LATHbits, 0
 002788   0000     nop                      	nop 
 00278a   0000     nop                      	nop 
 00278c   0000     nop                      	nop 
@@ -2412,15 +2427,17 @@ Address  Value    Disassembly              Source
 002790   0000     nop                      	nop 
 002792   0000     nop                      	nop 
 002794   0000     nop                      	nop 
+002796   0000     nop                      	nop 
+002798   0000     nop                      	nop 
                                            ;	.line	165; lib/LCDBlocking.c	LCD_E_IO = 0;
-002796   9090     bcf	0x90, 0, 0           	BCF	_LATHbits, 0
-002798   cfe4     movff	0xfe4, 0x1         	MOVFF	PREINC1, r0x01
-00279a   f001
-00279c   cfe4     movff	0xfe4, 0           	MOVFF	PREINC1, r0x00
-00279e   f000
-0027a0   cfe4     movff	0xfe4, 0xfd9       	MOVFF	PREINC1, FSR2L
-0027a2   ffd9
-0027a4   0012     return	0                 	RETURN	
+00279a   9090     bcf	0x90, 0, 0           	BCF	_LATHbits, 0
+00279c   cfe4     movff	0xfe4, 0x1         	MOVFF	PREINC1, r0x01
+00279e   f001
+0027a0   cfe4     movff	0xfe4, 0           	MOVFF	PREINC1, r0x00
+0027a2   f000
+0027a4   cfe4     movff	0xfe4, 0xfd9       	MOVFF	PREINC1, FSR2L
+0027a6   ffd9
+0027a8   0012     return	0                 	RETURN	
                                            
                                            
                                            
@@ -2735,96 +2752,96 @@ Address  Value    Disassembly              Source
                                            S_time__to_double_digits	code
                                            _to_double_digits:
                                            ;	.line	43; src/time.c	char* to_double_digits(long value){
-002452   cfd9     movff	0xfd9, 0xfe5       	MOVFF	FSR2L, POSTDEC1
-002454   ffe5
-002456   cfe1     movff	0xfe1, 0xfd9       	MOVFF	FSR1L, FSR2L
-002458   ffd9
-00245a   c000     movff	0, 0xfe5           	MOVFF	r0x00, POSTDEC1
-00245c   ffe5
-00245e   c001     movff	0x1, 0xfe5         	MOVFF	r0x01, POSTDEC1
+002456   cfd9     movff	0xfd9, 0xfe5       	MOVFF	FSR2L, POSTDEC1
+002458   ffe5
+00245a   cfe1     movff	0xfe1, 0xfd9       	MOVFF	FSR1L, FSR2L
+00245c   ffd9
+00245e   c000     movff	0, 0xfe5           	MOVFF	r0x00, POSTDEC1
 002460   ffe5
-002462   c002     movff	0x2, 0xfe5         	MOVFF	r0x02, POSTDEC1
+002462   c001     movff	0x1, 0xfe5         	MOVFF	r0x01, POSTDEC1
 002464   ffe5
-002466   c003     movff	0x3, 0xfe5         	MOVFF	r0x03, POSTDEC1
+002466   c002     movff	0x2, 0xfe5         	MOVFF	r0x02, POSTDEC1
 002468   ffe5
-00246a   c004     movff	0x4, 0xfe5         	MOVFF	r0x04, POSTDEC1
+00246a   c003     movff	0x3, 0xfe5         	MOVFF	r0x03, POSTDEC1
 00246c   ffe5
-00246e   c005     movff	0x5, 0xfe5         	MOVFF	r0x05, POSTDEC1
+00246e   c004     movff	0x4, 0xfe5         	MOVFF	r0x04, POSTDEC1
 002470   ffe5
-002472   c006     movff	0x6, 0xfe5         	MOVFF	r0x06, POSTDEC1
+002472   c005     movff	0x5, 0xfe5         	MOVFF	r0x05, POSTDEC1
 002474   ffe5
-002476   0e02     movlw	0x2                	MOVLW	0x02
-002478   cfdb     movff	0xfdb, 0           	MOVFF	PLUSW2, r0x00
-00247a   f000
-00247c   0e03     movlw	0x3                	MOVLW	0x03
-00247e   cfdb     movff	0xfdb, 0x1         	MOVFF	PLUSW2, r0x01
-002480   f001
-002482   0e04     movlw	0x4                	MOVLW	0x04
-002484   cfdb     movff	0xfdb, 0x2         	MOVFF	PLUSW2, r0x02
-002486   f002
-002488   0e05     movlw	0x5                	MOVLW	0x05
-00248a   cfdb     movff	0xfdb, 0x3         	MOVFF	PLUSW2, r0x03
-00248c   f003
+002476   c006     movff	0x6, 0xfe5         	MOVFF	r0x06, POSTDEC1
+002478   ffe5
+00247a   0e02     movlw	0x2                	MOVLW	0x02
+00247c   cfdb     movff	0xfdb, 0           	MOVFF	PLUSW2, r0x00
+00247e   f000
+002480   0e03     movlw	0x3                	MOVLW	0x03
+002482   cfdb     movff	0xfdb, 0x1         	MOVFF	PLUSW2, r0x01
+002484   f001
+002486   0e04     movlw	0x4                	MOVLW	0x04
+002488   cfdb     movff	0xfdb, 0x2         	MOVFF	PLUSW2, r0x02
+00248a   f002
+00248c   0e05     movlw	0x5                	MOVLW	0x05
+00248e   cfdb     movff	0xfdb, 0x3         	MOVFF	PLUSW2, r0x03
+002490   f003
                                            ;	.line	45; src/time.c	sprintf(buffer, "%02lu", value);
-00248e   0e0e     movlw	0xe                	MOVLW	HIGH(_to_double_digits_buffer_1_1)
-002490   6e05     movwf	0x5, 0             	MOVWF	r0x05
-002492   0e10     movlw	0x10               	MOVLW	LOW(_to_double_digits_buffer_1_1)
-002494   6e04     movwf	0x4, 0             	MOVWF	r0x04
-002496   0e80     movlw	0x80               	MOVLW	0x80
-002498   6e06     movwf	0x6, 0             	MOVWF	r0x06
-00249a   5003     movf	0x3, 0, 0           	MOVF	r0x03, W
-00249c   6ee5     movwf	0xe5, 0            	MOVWF	POSTDEC1
-00249e   5002     movf	0x2, 0, 0           	MOVF	r0x02, W
+002492   0e0e     movlw	0xe                	MOVLW	HIGH(_to_double_digits_buffer_1_1)
+002494   6e05     movwf	0x5, 0             	MOVWF	r0x05
+002496   0e10     movlw	0x10               	MOVLW	LOW(_to_double_digits_buffer_1_1)
+002498   6e04     movwf	0x4, 0             	MOVWF	r0x04
+00249a   0e80     movlw	0x80               	MOVLW	0x80
+00249c   6e06     movwf	0x6, 0             	MOVWF	r0x06
+00249e   5003     movf	0x3, 0, 0           	MOVF	r0x03, W
 0024a0   6ee5     movwf	0xe5, 0            	MOVWF	POSTDEC1
-0024a2   5001     movf	0x1, 0, 0           	MOVF	r0x01, W
+0024a2   5002     movf	0x2, 0, 0           	MOVF	r0x02, W
 0024a4   6ee5     movwf	0xe5, 0            	MOVWF	POSTDEC1
-0024a6   5000     movf	0, 0, 0             	MOVF	r0x00, W
+0024a6   5001     movf	0x1, 0, 0           	MOVF	r0x01, W
 0024a8   6ee5     movwf	0xe5, 0            	MOVWF	POSTDEC1
-0024aa   0e00     movlw	0                  	MOVLW	UPPER(__str_0)
+0024aa   5000     movf	0, 0, 0             	MOVF	r0x00, W
 0024ac   6ee5     movwf	0xe5, 0            	MOVWF	POSTDEC1
-0024ae   0e26     movlw	0x26               	MOVLW	HIGH(__str_0)
+0024ae   0e00     movlw	0                  	MOVLW	UPPER(__str_0)
 0024b0   6ee5     movwf	0xe5, 0            	MOVWF	POSTDEC1
-0024b2   0ebe     movlw	0xbe               	MOVLW	LOW(__str_0)
+0024b2   0e26     movlw	0x26               	MOVLW	HIGH(__str_0)
 0024b4   6ee5     movwf	0xe5, 0            	MOVWF	POSTDEC1
-0024b6   5006     movf	0x6, 0, 0           	MOVF	r0x06, W
+0024b6   0ec2     movlw	0xc2               	MOVLW	LOW(__str_0)
 0024b8   6ee5     movwf	0xe5, 0            	MOVWF	POSTDEC1
-0024ba   5005     movf	0x5, 0, 0           	MOVF	r0x05, W
+0024ba   5006     movf	0x6, 0, 0           	MOVF	r0x06, W
 0024bc   6ee5     movwf	0xe5, 0            	MOVWF	POSTDEC1
-0024be   5004     movf	0x4, 0, 0           	MOVF	r0x04, W
+0024be   5005     movf	0x5, 0, 0           	MOVF	r0x05, W
 0024c0   6ee5     movwf	0xe5, 0            	MOVWF	POSTDEC1
-0024c2   ecef     call	0x1dde, 0           	CALL	_sprintf
-0024c4   f00e
-0024c6   0e0a     movlw	0xa                	MOVLW	0x0a
-0024c8   26e1     addwf	0xe1, 0x1, 0       	ADDWF	FSR1L, F
+0024c2   5004     movf	0x4, 0, 0           	MOVF	r0x04, W
+0024c4   6ee5     movwf	0xe5, 0            	MOVWF	POSTDEC1
+0024c6   ecef     call	0x1dde, 0           	CALL	_sprintf
+0024c8   f00e
+0024ca   0e0a     movlw	0xa                	MOVLW	0x0a
+0024cc   26e1     addwf	0xe1, 0x1, 0       	ADDWF	FSR1L, F
                                            ;	.line	46; src/time.c	return buffer;
-0024ca   0e0e     movlw	0xe                	MOVLW	HIGH(_to_double_digits_buffer_1_1)
-0024cc   6e01     movwf	0x1, 0             	MOVWF	r0x01
-0024ce   0e10     movlw	0x10               	MOVLW	LOW(_to_double_digits_buffer_1_1)
-0024d0   6e00     movwf	0, 0               	MOVWF	r0x00
-0024d2   0e80     movlw	0x80               	MOVLW	0x80
-0024d4   6e02     movwf	0x2, 0             	MOVWF	r0x02
-0024d6   c002     movff	0x2, 0xff4         	MOVFF	r0x02, PRODH
-0024d8   fff4
-0024da   c001     movff	0x1, 0xff3         	MOVFF	r0x01, PRODL
-0024dc   fff3
-0024de   5000     movf	0, 0, 0             	MOVF	r0x00, W
-0024e0   cfe4     movff	0xfe4, 0x6         	MOVFF	PREINC1, r0x06
-0024e2   f006
-0024e4   cfe4     movff	0xfe4, 0x5         	MOVFF	PREINC1, r0x05
-0024e6   f005
-0024e8   cfe4     movff	0xfe4, 0x4         	MOVFF	PREINC1, r0x04
-0024ea   f004
-0024ec   cfe4     movff	0xfe4, 0x3         	MOVFF	PREINC1, r0x03
-0024ee   f003
-0024f0   cfe4     movff	0xfe4, 0x2         	MOVFF	PREINC1, r0x02
-0024f2   f002
-0024f4   cfe4     movff	0xfe4, 0x1         	MOVFF	PREINC1, r0x01
-0024f6   f001
-0024f8   cfe4     movff	0xfe4, 0           	MOVFF	PREINC1, r0x00
-0024fa   f000
-0024fc   cfe4     movff	0xfe4, 0xfd9       	MOVFF	PREINC1, FSR2L
-0024fe   ffd9
-002500   0012     return	0                 	RETURN	
+0024ce   0e0e     movlw	0xe                	MOVLW	HIGH(_to_double_digits_buffer_1_1)
+0024d0   6e01     movwf	0x1, 0             	MOVWF	r0x01
+0024d2   0e10     movlw	0x10               	MOVLW	LOW(_to_double_digits_buffer_1_1)
+0024d4   6e00     movwf	0, 0               	MOVWF	r0x00
+0024d6   0e80     movlw	0x80               	MOVLW	0x80
+0024d8   6e02     movwf	0x2, 0             	MOVWF	r0x02
+0024da   c002     movff	0x2, 0xff4         	MOVFF	r0x02, PRODH
+0024dc   fff4
+0024de   c001     movff	0x1, 0xff3         	MOVFF	r0x01, PRODL
+0024e0   fff3
+0024e2   5000     movf	0, 0, 0             	MOVF	r0x00, W
+0024e4   cfe4     movff	0xfe4, 0x6         	MOVFF	PREINC1, r0x06
+0024e6   f006
+0024e8   cfe4     movff	0xfe4, 0x5         	MOVFF	PREINC1, r0x05
+0024ea   f005
+0024ec   cfe4     movff	0xfe4, 0x4         	MOVFF	PREINC1, r0x04
+0024ee   f004
+0024f0   cfe4     movff	0xfe4, 0x3         	MOVFF	PREINC1, r0x03
+0024f2   f003
+0024f4   cfe4     movff	0xfe4, 0x2         	MOVFF	PREINC1, r0x02
+0024f6   f002
+0024f8   cfe4     movff	0xfe4, 0x1         	MOVFF	PREINC1, r0x01
+0024fa   f001
+0024fc   cfe4     movff	0xfe4, 0           	MOVFF	PREINC1, r0x00
+0024fe   f000
+002500   cfe4     movff	0xfe4, 0xfd9       	MOVFF	PREINC1, FSR2L
+002502   ffd9
+002504   0012     return	0                 	RETURN	
                                            
                                            ; ; Starting pCode block
                                            S_time__time2string	code
@@ -2843,7 +2860,7 @@ Address  Value    Disassembly              Source
 000d14   c003     movff	0x3, 0xfe5         	MOVFF	r0x03, POSTDEC1
 000d16   ffe5
                                            ;	.line	28; src/time.c	string[0] = to_double_digits(get_hours())[0];
-000d18   ec22     call	0x2644, 0           	CALL	_get_hours
+000d18   ec24     call	0x2648, 0           	CALL	_get_hours
 000d1a   f013
 000d1c   6e00     movwf	0, 0               	MOVWF	r0x00
 000d1e   cff3     movff	0xff3, 0x1         	MOVFF	PRODL, r0x01
@@ -2860,7 +2877,7 @@ Address  Value    Disassembly              Source
 000d34   6ee5     movwf	0xe5, 0            	MOVWF	POSTDEC1
 000d36   5000     movf	0, 0, 0             	MOVF	r0x00, W
 000d38   6ee5     movwf	0xe5, 0            	MOVWF	POSTDEC1
-000d3a   ec29     call	0x2452, 0           	CALL	_to_double_digits
+000d3a   ec2b     call	0x2456, 0           	CALL	_to_double_digits
 000d3c   f012
 000d3e   6e00     movwf	0, 0               	MOVWF	r0x00
 000d40   cff3     movff	0xff3, 0x1         	MOVFF	PRODL, r0x01
@@ -2874,14 +2891,14 @@ Address  Value    Disassembly              Source
 000d50   c001     movff	0x1, 0xff3         	MOVFF	r0x01, PRODL
 000d52   fff3
 000d54   5002     movf	0x2, 0, 0           	MOVF	r0x02, W
-000d56   ec95     call	0x292a, 0           	CALL	__gptrget1
+000d56   ec9e     call	0x293c, 0           	CALL	__gptrget1
 000d58   f014
 000d5a   6e00     movwf	0, 0               	MOVWF	r0x00
 000d5c   5000     movf	0, 0, 0             	MOVF	r0x00, W
 000d5e   010f     movlb	0xf                	BANKSEL	_time2string_string_1_1
 000d60   6f4e     movwf	0x4e, 0x1          	MOVWF	_time2string_string_1_1, B
                                            ;	.line	29; src/time.c	string[1] = to_double_digits(get_hours())[1];
-000d62   ec22     call	0x2644, 0           	CALL	_get_hours
+000d62   ec24     call	0x2648, 0           	CALL	_get_hours
 000d64   f013
 000d66   6e00     movwf	0, 0               	MOVWF	r0x00
 000d68   cff3     movff	0xff3, 0x1         	MOVFF	PRODL, r0x01
@@ -2898,7 +2915,7 @@ Address  Value    Disassembly              Source
 000d7e   6ee5     movwf	0xe5, 0            	MOVWF	POSTDEC1
 000d80   5000     movf	0, 0, 0             	MOVF	r0x00, W
 000d82   6ee5     movwf	0xe5, 0            	MOVWF	POSTDEC1
-000d84   ec29     call	0x2452, 0           	CALL	_to_double_digits
+000d84   ec2b     call	0x2456, 0           	CALL	_to_double_digits
 000d86   f012
 000d88   6e00     movwf	0, 0               	MOVWF	r0x00
 000d8a   cff3     movff	0xff3, 0x1         	MOVFF	PRODL, r0x01
@@ -2917,7 +2934,7 @@ Address  Value    Disassembly              Source
 000da4   c001     movff	0x1, 0xff3         	MOVFF	r0x01, PRODL
 000da6   fff3
 000da8   5002     movf	0x2, 0, 0           	MOVF	r0x02, W
-000daa   ec95     call	0x292a, 0           	CALL	__gptrget1
+000daa   ec9e     call	0x293c, 0           	CALL	__gptrget1
 000dac   f014
 000dae   6e00     movwf	0, 0               	MOVWF	r0x00
 000db0   5000     movf	0, 0, 0             	MOVF	r0x00, W
@@ -2928,7 +2945,7 @@ Address  Value    Disassembly              Source
 000db8   010f     movlb	0xf                	BANKSEL	(_time2string_string_1_1 + 2)
 000dba   6f50     movwf	0x50, 0x1          	MOVWF	(_time2string_string_1_1 + 2), B
                                            ;	.line	31; src/time.c	string[3] = to_double_digits(get_minutes())[0];
-000dbc   ec46     call	0x208c, 0           	CALL	_get_minutes
+000dbc   ec48     call	0x2090, 0           	CALL	_get_minutes
 000dbe   f010
 000dc0   6e00     movwf	0, 0               	MOVWF	r0x00
 000dc2   cff3     movff	0xff3, 0x1         	MOVFF	PRODL, r0x01
@@ -2945,7 +2962,7 @@ Address  Value    Disassembly              Source
 000dd8   6ee5     movwf	0xe5, 0            	MOVWF	POSTDEC1
 000dda   5000     movf	0, 0, 0             	MOVF	r0x00, W
 000ddc   6ee5     movwf	0xe5, 0            	MOVWF	POSTDEC1
-000dde   ec29     call	0x2452, 0           	CALL	_to_double_digits
+000dde   ec2b     call	0x2456, 0           	CALL	_to_double_digits
 000de0   f012
 000de2   6e00     movwf	0, 0               	MOVWF	r0x00
 000de4   cff3     movff	0xff3, 0x1         	MOVFF	PRODL, r0x01
@@ -2959,14 +2976,14 @@ Address  Value    Disassembly              Source
 000df4   c001     movff	0x1, 0xff3         	MOVFF	r0x01, PRODL
 000df6   fff3
 000df8   5002     movf	0x2, 0, 0           	MOVF	r0x02, W
-000dfa   ec95     call	0x292a, 0           	CALL	__gptrget1
+000dfa   ec9e     call	0x293c, 0           	CALL	__gptrget1
 000dfc   f014
 000dfe   6e00     movwf	0, 0               	MOVWF	r0x00
 000e00   5000     movf	0, 0, 0             	MOVF	r0x00, W
 000e02   010f     movlb	0xf                	BANKSEL	(_time2string_string_1_1 + 3)
 000e04   6f51     movwf	0x51, 0x1          	MOVWF	(_time2string_string_1_1 + 3), B
                                            ;	.line	32; src/time.c	string[4] = to_double_digits(get_minutes())[1];
-000e06   ec46     call	0x208c, 0           	CALL	_get_minutes
+000e06   ec48     call	0x2090, 0           	CALL	_get_minutes
 000e08   f010
 000e0a   6e00     movwf	0, 0               	MOVWF	r0x00
 000e0c   cff3     movff	0xff3, 0x1         	MOVFF	PRODL, r0x01
@@ -2983,7 +3000,7 @@ Address  Value    Disassembly              Source
 000e22   6ee5     movwf	0xe5, 0            	MOVWF	POSTDEC1
 000e24   5000     movf	0, 0, 0             	MOVF	r0x00, W
 000e26   6ee5     movwf	0xe5, 0            	MOVWF	POSTDEC1
-000e28   ec29     call	0x2452, 0           	CALL	_to_double_digits
+000e28   ec2b     call	0x2456, 0           	CALL	_to_double_digits
 000e2a   f012
 000e2c   6e00     movwf	0, 0               	MOVWF	r0x00
 000e2e   cff3     movff	0xff3, 0x1         	MOVFF	PRODL, r0x01
@@ -3002,7 +3019,7 @@ Address  Value    Disassembly              Source
 000e48   c001     movff	0x1, 0xff3         	MOVFF	r0x01, PRODL
 000e4a   fff3
 000e4c   5002     movf	0x2, 0, 0           	MOVF	r0x02, W
-000e4e   ec95     call	0x292a, 0           	CALL	__gptrget1
+000e4e   ec9e     call	0x293c, 0           	CALL	__gptrget1
 000e50   f014
 000e52   6e00     movwf	0, 0               	MOVWF	r0x00
 000e54   5000     movf	0, 0, 0             	MOVF	r0x00, W
@@ -3030,7 +3047,7 @@ Address  Value    Disassembly              Source
 000e7c   6ee5     movwf	0xe5, 0            	MOVWF	POSTDEC1
 000e7e   5000     movf	0, 0, 0             	MOVF	r0x00, W
 000e80   6ee5     movwf	0xe5, 0            	MOVWF	POSTDEC1
-000e82   ec29     call	0x2452, 0           	CALL	_to_double_digits
+000e82   ec2b     call	0x2456, 0           	CALL	_to_double_digits
 000e84   f012
 000e86   6e00     movwf	0, 0               	MOVWF	r0x00
 000e88   cff3     movff	0xff3, 0x1         	MOVFF	PRODL, r0x01
@@ -3044,7 +3061,7 @@ Address  Value    Disassembly              Source
 000e98   c001     movff	0x1, 0xff3         	MOVFF	r0x01, PRODL
 000e9a   fff3
 000e9c   5002     movf	0x2, 0, 0           	MOVF	r0x02, W
-000e9e   ec95     call	0x292a, 0           	CALL	__gptrget1
+000e9e   ec9e     call	0x293c, 0           	CALL	__gptrget1
 000ea0   f014
 000ea2   6e00     movwf	0, 0               	MOVWF	r0x00
 000ea4   5000     movf	0, 0, 0             	MOVF	r0x00, W
@@ -3068,7 +3085,7 @@ Address  Value    Disassembly              Source
 000ec6   6ee5     movwf	0xe5, 0            	MOVWF	POSTDEC1
 000ec8   5000     movf	0, 0, 0             	MOVF	r0x00, W
 000eca   6ee5     movwf	0xe5, 0            	MOVWF	POSTDEC1
-000ecc   ec29     call	0x2452, 0           	CALL	_to_double_digits
+000ecc   ec2b     call	0x2456, 0           	CALL	_to_double_digits
 000ece   f012
 000ed0   6e00     movwf	0, 0               	MOVWF	r0x00
 000ed2   cff3     movff	0xff3, 0x1         	MOVFF	PRODL, r0x01
@@ -3087,7 +3104,7 @@ Address  Value    Disassembly              Source
 000eec   c001     movff	0x1, 0xff3         	MOVFF	r0x01, PRODL
 000eee   fff3
 000ef0   5002     movf	0x2, 0, 0           	MOVF	r0x02, W
-000ef2   ec95     call	0x292a, 0           	CALL	__gptrget1
+000ef2   ec9e     call	0x293c, 0           	CALL	__gptrget1
 000ef4   f014
 000ef6   6e00     movwf	0, 0               	MOVWF	r0x00
 000ef8   5000     movf	0, 0, 0             	MOVF	r0x00, W
@@ -3145,7 +3162,7 @@ Address  Value    Disassembly              Source
 0018c8   c007     movff	0x7, 0xfe5         	MOVFF	r0x07, POSTDEC1
 0018ca   ffe5
                                            ;	.line	18; src/time.c	long remaining_seconds = seconds_since_midnight - (get_hours() * SEC_IN_HOUR + get_minutes() * SEC_IN_MIN);
-0018cc   ec22     call	0x2644, 0           	CALL	_get_hours
+0018cc   ec24     call	0x2648, 0           	CALL	_get_hours
 0018ce   f013
 0018d0   6e00     movwf	0, 0               	MOVWF	r0x00
 0018d2   cff3     movff	0xff3, 0x1         	MOVFF	PRODL, r0x01
@@ -3181,7 +3198,7 @@ Address  Value    Disassembly              Source
 00190e   f003
 001910   0e08     movlw	0x8                	MOVLW	0x08
 001912   26e1     addwf	0xe1, 0x1, 0       	ADDWF	FSR1L, F
-001914   ec46     call	0x208c, 0           	CALL	_get_minutes
+001914   ec48     call	0x2090, 0           	CALL	_get_minutes
 001916   f010
 001918   6e04     movwf	0x4, 0             	MOVWF	r0x04
 00191a   cff3     movff	0xff3, 0x5         	MOVFF	PRODL, r0x05
@@ -3273,183 +3290,183 @@ Address  Value    Disassembly              Source
                                            S_time__get_minutes	code
                                            _get_minutes:
                                            ;	.line	12; src/time.c	long get_minutes(void){
-00208c   cfd9     movff	0xfd9, 0xfe5       	MOVFF	FSR2L, POSTDEC1
-00208e   ffe5
-002090   cfe1     movff	0xfe1, 0xfd9       	MOVFF	FSR1L, FSR2L
-002092   ffd9
-002094   c000     movff	0, 0xfe5           	MOVFF	r0x00, POSTDEC1
-002096   ffe5
-002098   c001     movff	0x1, 0xfe5         	MOVFF	r0x01, POSTDEC1
+002090   cfd9     movff	0xfd9, 0xfe5       	MOVFF	FSR2L, POSTDEC1
+002092   ffe5
+002094   cfe1     movff	0xfe1, 0xfd9       	MOVFF	FSR1L, FSR2L
+002096   ffd9
+002098   c000     movff	0, 0xfe5           	MOVFF	r0x00, POSTDEC1
 00209a   ffe5
-00209c   c002     movff	0x2, 0xfe5         	MOVFF	r0x02, POSTDEC1
+00209c   c001     movff	0x1, 0xfe5         	MOVFF	r0x01, POSTDEC1
 00209e   ffe5
-0020a0   c003     movff	0x3, 0xfe5         	MOVFF	r0x03, POSTDEC1
+0020a0   c002     movff	0x2, 0xfe5         	MOVFF	r0x02, POSTDEC1
 0020a2   ffe5
+0020a4   c003     movff	0x3, 0xfe5         	MOVFF	r0x03, POSTDEC1
+0020a6   ffe5
                                            ;	.line	13; src/time.c	int remaining_seconds = seconds_since_midnight - (get_hours() * SEC_IN_HOUR);
-0020a4   ec22     call	0x2644, 0           	CALL	_get_hours
-0020a6   f013
-0020a8   6e00     movwf	0, 0               	MOVWF	r0x00
-0020aa   cff3     movff	0xff3, 0x1         	MOVFF	PRODL, r0x01
-0020ac   f001
-0020ae   cff4     movff	0xff4, 0x2         	MOVFF	PRODH, r0x02
-0020b0   f002
-0020b2   cfe9     movff	0xfe9, 0x3         	MOVFF	FSR0L, r0x03
-0020b4   f003
-0020b6   5003     movf	0x3, 0, 0           	MOVF	r0x03, W
-0020b8   6ee5     movwf	0xe5, 0            	MOVWF	POSTDEC1
-0020ba   5002     movf	0x2, 0, 0           	MOVF	r0x02, W
+0020a8   ec24     call	0x2648, 0           	CALL	_get_hours
+0020aa   f013
+0020ac   6e00     movwf	0, 0               	MOVWF	r0x00
+0020ae   cff3     movff	0xff3, 0x1         	MOVFF	PRODL, r0x01
+0020b0   f001
+0020b2   cff4     movff	0xff4, 0x2         	MOVFF	PRODH, r0x02
+0020b4   f002
+0020b6   cfe9     movff	0xfe9, 0x3         	MOVFF	FSR0L, r0x03
+0020b8   f003
+0020ba   5003     movf	0x3, 0, 0           	MOVF	r0x03, W
 0020bc   6ee5     movwf	0xe5, 0            	MOVWF	POSTDEC1
-0020be   5001     movf	0x1, 0, 0           	MOVF	r0x01, W
+0020be   5002     movf	0x2, 0, 0           	MOVF	r0x02, W
 0020c0   6ee5     movwf	0xe5, 0            	MOVWF	POSTDEC1
-0020c2   5000     movf	0, 0, 0             	MOVF	r0x00, W
+0020c2   5001     movf	0x1, 0, 0           	MOVF	r0x01, W
 0020c4   6ee5     movwf	0xe5, 0            	MOVWF	POSTDEC1
-0020c6   0e00     movlw	0                  	MOVLW	0x00
+0020c6   5000     movf	0, 0, 0             	MOVF	r0x00, W
 0020c8   6ee5     movwf	0xe5, 0            	MOVWF	POSTDEC1
 0020ca   0e00     movlw	0                  	MOVLW	0x00
 0020cc   6ee5     movwf	0xe5, 0            	MOVWF	POSTDEC1
-0020ce   0e0e     movlw	0xe                	MOVLW	0x0e
+0020ce   0e00     movlw	0                  	MOVLW	0x00
 0020d0   6ee5     movwf	0xe5, 0            	MOVWF	POSTDEC1
-0020d2   0e10     movlw	0x10               	MOVLW	0x10
+0020d2   0e0e     movlw	0xe                	MOVLW	0x0e
 0020d4   6ee5     movwf	0xe5, 0            	MOVWF	POSTDEC1
-0020d6   ec97     call	0xf2e, 0            	CALL	__mullong
-0020d8   f007
-0020da   6e00     movwf	0, 0               	MOVWF	r0x00
-0020dc   cff3     movff	0xff3, 0x1         	MOVFF	PRODL, r0x01
-0020de   f001
-0020e0   cff4     movff	0xff4, 0x2         	MOVFF	PRODH, r0x02
-0020e2   f002
-0020e4   cfe9     movff	0xfe9, 0x3         	MOVFF	FSR0L, r0x03
-0020e6   f003
-0020e8   0e08     movlw	0x8                	MOVLW	0x08
-0020ea   26e1     addwf	0xe1, 0x1, 0       	ADDWF	FSR1L, F
-0020ec   5000     movf	0, 0, 0             	MOVF	r0x00, W
-0020ee   010f     movlb	0xf                	BANKSEL	_seconds_since_midnight
-0020f0   5d57     subwf	0x57, 0, 0x1       	SUBWF	_seconds_since_midnight, W, B
-0020f2   6e00     movwf	0, 0               	MOVWF	r0x00
-0020f4   5001     movf	0x1, 0, 0           	MOVF	r0x01, W
-0020f6   010f     movlb	0xf                	BANKSEL	(_seconds_since_midnight + 1)
-0020f8   5958     subwfb	0x58, 0, 0x1      	SUBWFB	(_seconds_since_midnight + 1), W, B
-0020fa   6e01     movwf	0x1, 0             	MOVWF	r0x01
-0020fc   5002     movf	0x2, 0, 0           	MOVF	r0x02, W
-0020fe   010f     movlb	0xf                	BANKSEL	(_seconds_since_midnight + 2)
-002100   5959     subwfb	0x59, 0, 0x1      	SUBWFB	(_seconds_since_midnight + 2), W, B
-002102   6e02     movwf	0x2, 0             	MOVWF	r0x02
-002104   5003     movf	0x3, 0, 0           	MOVF	r0x03, W
-002106   010f     movlb	0xf                	BANKSEL	(_seconds_since_midnight + 3)
-002108   595a     subwfb	0x5a, 0, 0x1      	SUBWFB	(_seconds_since_midnight + 3), W, B
-00210a   6e03     movwf	0x3, 0             	MOVWF	r0x03
+0020d6   0e10     movlw	0x10               	MOVLW	0x10
+0020d8   6ee5     movwf	0xe5, 0            	MOVWF	POSTDEC1
+0020da   ec97     call	0xf2e, 0            	CALL	__mullong
+0020dc   f007
+0020de   6e00     movwf	0, 0               	MOVWF	r0x00
+0020e0   cff3     movff	0xff3, 0x1         	MOVFF	PRODL, r0x01
+0020e2   f001
+0020e4   cff4     movff	0xff4, 0x2         	MOVFF	PRODH, r0x02
+0020e6   f002
+0020e8   cfe9     movff	0xfe9, 0x3         	MOVFF	FSR0L, r0x03
+0020ea   f003
+0020ec   0e08     movlw	0x8                	MOVLW	0x08
+0020ee   26e1     addwf	0xe1, 0x1, 0       	ADDWF	FSR1L, F
+0020f0   5000     movf	0, 0, 0             	MOVF	r0x00, W
+0020f2   010f     movlb	0xf                	BANKSEL	_seconds_since_midnight
+0020f4   5d57     subwf	0x57, 0, 0x1       	SUBWF	_seconds_since_midnight, W, B
+0020f6   6e00     movwf	0, 0               	MOVWF	r0x00
+0020f8   5001     movf	0x1, 0, 0           	MOVF	r0x01, W
+0020fa   010f     movlb	0xf                	BANKSEL	(_seconds_since_midnight + 1)
+0020fc   5958     subwfb	0x58, 0, 0x1      	SUBWFB	(_seconds_since_midnight + 1), W, B
+0020fe   6e01     movwf	0x1, 0             	MOVWF	r0x01
+002100   5002     movf	0x2, 0, 0           	MOVF	r0x02, W
+002102   010f     movlb	0xf                	BANKSEL	(_seconds_since_midnight + 2)
+002104   5959     subwfb	0x59, 0, 0x1      	SUBWFB	(_seconds_since_midnight + 2), W, B
+002106   6e02     movwf	0x2, 0             	MOVWF	r0x02
+002108   5003     movf	0x3, 0, 0           	MOVF	r0x03, W
+00210a   010f     movlb	0xf                	BANKSEL	(_seconds_since_midnight + 3)
+00210c   595a     subwfb	0x5a, 0, 0x1      	SUBWFB	(_seconds_since_midnight + 3), W, B
+00210e   6e03     movwf	0x3, 0             	MOVWF	r0x03
                                            ;	.line	14; src/time.c	return (remaining_seconds / SEC_IN_MIN);
-00210c   0e00     movlw	0                  	MOVLW	0x00
-00210e   6ee5     movwf	0xe5, 0            	MOVWF	POSTDEC1
-002110   0e3c     movlw	0x3c               	MOVLW	0x3c
+002110   0e00     movlw	0                  	MOVLW	0x00
 002112   6ee5     movwf	0xe5, 0            	MOVWF	POSTDEC1
-002114   5001     movf	0x1, 0, 0           	MOVF	r0x01, W
+002114   0e3c     movlw	0x3c               	MOVLW	0x3c
 002116   6ee5     movwf	0xe5, 0            	MOVWF	POSTDEC1
-002118   5000     movf	0, 0, 0             	MOVF	r0x00, W
+002118   5001     movf	0x1, 0, 0           	MOVF	r0x01, W
 00211a   6ee5     movwf	0xe5, 0            	MOVWF	POSTDEC1
-00211c   ec74     call	0x1ce8, 0           	CALL	__divsint
-00211e   f00e
-002120   6e00     movwf	0, 0               	MOVWF	r0x00
-002122   cff3     movff	0xff3, 0x1         	MOVFF	PRODL, r0x01
-002124   f001
-002126   0e04     movlw	0x4                	MOVLW	0x04
-002128   26e1     addwf	0xe1, 0x1, 0       	ADDWF	FSR1L, F
-00212a   6ae8     clrf	0xe8, 0             	CLRF	WREG
-00212c   be01     btfsc	0x1, 0x7, 0        	BTFSC	r0x01, 7
-00212e   0eff     movlw	0xff               	MOVLW	0xff
-002130   6e02     movwf	0x2, 0             	MOVWF	r0x02
-002132   6e03     movwf	0x3, 0             	MOVWF	r0x03
-002134   c003     movff	0x3, 0xfe9         	MOVFF	r0x03, FSR0L
-002136   ffe9
-002138   c002     movff	0x2, 0xff4         	MOVFF	r0x02, PRODH
-00213a   fff4
-00213c   c001     movff	0x1, 0xff3         	MOVFF	r0x01, PRODL
-00213e   fff3
-002140   5000     movf	0, 0, 0             	MOVF	r0x00, W
-002142   cfe4     movff	0xfe4, 0x3         	MOVFF	PREINC1, r0x03
-002144   f003
-002146   cfe4     movff	0xfe4, 0x2         	MOVFF	PREINC1, r0x02
-002148   f002
-00214a   cfe4     movff	0xfe4, 0x1         	MOVFF	PREINC1, r0x01
-00214c   f001
-00214e   cfe4     movff	0xfe4, 0           	MOVFF	PREINC1, r0x00
-002150   f000
-002152   cfe4     movff	0xfe4, 0xfd9       	MOVFF	PREINC1, FSR2L
-002154   ffd9
-002156   0012     return	0                 	RETURN	
+00211c   5000     movf	0, 0, 0             	MOVF	r0x00, W
+00211e   6ee5     movwf	0xe5, 0            	MOVWF	POSTDEC1
+002120   ec74     call	0x1ce8, 0           	CALL	__divsint
+002122   f00e
+002124   6e00     movwf	0, 0               	MOVWF	r0x00
+002126   cff3     movff	0xff3, 0x1         	MOVFF	PRODL, r0x01
+002128   f001
+00212a   0e04     movlw	0x4                	MOVLW	0x04
+00212c   26e1     addwf	0xe1, 0x1, 0       	ADDWF	FSR1L, F
+00212e   6ae8     clrf	0xe8, 0             	CLRF	WREG
+002130   be01     btfsc	0x1, 0x7, 0        	BTFSC	r0x01, 7
+002132   0eff     movlw	0xff               	MOVLW	0xff
+002134   6e02     movwf	0x2, 0             	MOVWF	r0x02
+002136   6e03     movwf	0x3, 0             	MOVWF	r0x03
+002138   c003     movff	0x3, 0xfe9         	MOVFF	r0x03, FSR0L
+00213a   ffe9
+00213c   c002     movff	0x2, 0xff4         	MOVFF	r0x02, PRODH
+00213e   fff4
+002140   c001     movff	0x1, 0xff3         	MOVFF	r0x01, PRODL
+002142   fff3
+002144   5000     movf	0, 0, 0             	MOVF	r0x00, W
+002146   cfe4     movff	0xfe4, 0x3         	MOVFF	PREINC1, r0x03
+002148   f003
+00214a   cfe4     movff	0xfe4, 0x2         	MOVFF	PREINC1, r0x02
+00214c   f002
+00214e   cfe4     movff	0xfe4, 0x1         	MOVFF	PREINC1, r0x01
+002150   f001
+002152   cfe4     movff	0xfe4, 0           	MOVFF	PREINC1, r0x00
+002154   f000
+002156   cfe4     movff	0xfe4, 0xfd9       	MOVFF	PREINC1, FSR2L
+002158   ffd9
+00215a   0012     return	0                 	RETURN	
                                            
                                            ; ; Starting pCode block
                                            S_time__get_hours	code
                                            _get_hours:
                                            ;	.line	8; src/time.c	long get_hours(void){
-002644   cfd9     movff	0xfd9, 0xfe5       	MOVFF	FSR2L, POSTDEC1
-002646   ffe5
-002648   cfe1     movff	0xfe1, 0xfd9       	MOVFF	FSR1L, FSR2L
-00264a   ffd9
-00264c   c000     movff	0, 0xfe5           	MOVFF	r0x00, POSTDEC1
-00264e   ffe5
-002650   c001     movff	0x1, 0xfe5         	MOVFF	r0x01, POSTDEC1
+002648   cfd9     movff	0xfd9, 0xfe5       	MOVFF	FSR2L, POSTDEC1
+00264a   ffe5
+00264c   cfe1     movff	0xfe1, 0xfd9       	MOVFF	FSR1L, FSR2L
+00264e   ffd9
+002650   c000     movff	0, 0xfe5           	MOVFF	r0x00, POSTDEC1
 002652   ffe5
-002654   c002     movff	0x2, 0xfe5         	MOVFF	r0x02, POSTDEC1
+002654   c001     movff	0x1, 0xfe5         	MOVFF	r0x01, POSTDEC1
 002656   ffe5
-002658   c003     movff	0x3, 0xfe5         	MOVFF	r0x03, POSTDEC1
+002658   c002     movff	0x2, 0xfe5         	MOVFF	r0x02, POSTDEC1
 00265a   ffe5
+00265c   c003     movff	0x3, 0xfe5         	MOVFF	r0x03, POSTDEC1
+00265e   ffe5
                                            ;	.line	9; src/time.c	return (seconds_since_midnight / SEC_IN_HOUR);
-00265c   0e00     movlw	0                  	MOVLW	0x00
-00265e   6ee5     movwf	0xe5, 0            	MOVWF	POSTDEC1
 002660   0e00     movlw	0                  	MOVLW	0x00
 002662   6ee5     movwf	0xe5, 0            	MOVWF	POSTDEC1
-002664   0e0e     movlw	0xe                	MOVLW	0x0e
+002664   0e00     movlw	0                  	MOVLW	0x00
 002666   6ee5     movwf	0xe5, 0            	MOVWF	POSTDEC1
-002668   0e10     movlw	0x10               	MOVLW	0x10
+002668   0e0e     movlw	0xe                	MOVLW	0x0e
 00266a   6ee5     movwf	0xe5, 0            	MOVWF	POSTDEC1
-00266c   010f     movlb	0xf                	BANKSEL	(_seconds_since_midnight + 3)
-00266e   515a     movf	0x5a, 0, 0x1        	MOVF	(_seconds_since_midnight + 3), W, B
-002670   6ee5     movwf	0xe5, 0            	MOVWF	POSTDEC1
-002672   010f     movlb	0xf                	BANKSEL	(_seconds_since_midnight + 2)
-002674   5159     movf	0x59, 0, 0x1        	MOVF	(_seconds_since_midnight + 2), W, B
-002676   6ee5     movwf	0xe5, 0            	MOVWF	POSTDEC1
-002678   010f     movlb	0xf                	BANKSEL	(_seconds_since_midnight + 1)
-00267a   5158     movf	0x58, 0, 0x1        	MOVF	(_seconds_since_midnight + 1), W, B
-00267c   6ee5     movwf	0xe5, 0            	MOVWF	POSTDEC1
-00267e   010f     movlb	0xf                	BANKSEL	_seconds_since_midnight
-002680   5157     movf	0x57, 0, 0x1        	MOVF	_seconds_since_midnight, W, B
-002682   6ee5     movwf	0xe5, 0            	MOVWF	POSTDEC1
-002684   ec7d     call	0x12fa, 0           	CALL	__divslong
-002686   f009
-002688   6e00     movwf	0, 0               	MOVWF	r0x00
-00268a   cff3     movff	0xff3, 0x1         	MOVFF	PRODL, r0x01
-00268c   f001
-00268e   cff4     movff	0xff4, 0x2         	MOVFF	PRODH, r0x02
-002690   f002
-002692   cfe9     movff	0xfe9, 0x3         	MOVFF	FSR0L, r0x03
-002694   f003
-002696   0e08     movlw	0x8                	MOVLW	0x08
-002698   26e1     addwf	0xe1, 0x1, 0       	ADDWF	FSR1L, F
-00269a   c003     movff	0x3, 0xfe9         	MOVFF	r0x03, FSR0L
-00269c   ffe9
-00269e   c002     movff	0x2, 0xff4         	MOVFF	r0x02, PRODH
-0026a0   fff4
-0026a2   c001     movff	0x1, 0xff3         	MOVFF	r0x01, PRODL
-0026a4   fff3
-0026a6   5000     movf	0, 0, 0             	MOVF	r0x00, W
-0026a8   cfe4     movff	0xfe4, 0x3         	MOVFF	PREINC1, r0x03
-0026aa   f003
-0026ac   cfe4     movff	0xfe4, 0x2         	MOVFF	PREINC1, r0x02
-0026ae   f002
-0026b0   cfe4     movff	0xfe4, 0x1         	MOVFF	PREINC1, r0x01
-0026b2   f001
-0026b4   cfe4     movff	0xfe4, 0           	MOVFF	PREINC1, r0x00
-0026b6   f000
-0026b8   cfe4     movff	0xfe4, 0xfd9       	MOVFF	PREINC1, FSR2L
-0026ba   ffd9
-0026bc   0012     return	0                 	RETURN	
+00266c   0e10     movlw	0x10               	MOVLW	0x10
+00266e   6ee5     movwf	0xe5, 0            	MOVWF	POSTDEC1
+002670   010f     movlb	0xf                	BANKSEL	(_seconds_since_midnight + 3)
+002672   515a     movf	0x5a, 0, 0x1        	MOVF	(_seconds_since_midnight + 3), W, B
+002674   6ee5     movwf	0xe5, 0            	MOVWF	POSTDEC1
+002676   010f     movlb	0xf                	BANKSEL	(_seconds_since_midnight + 2)
+002678   5159     movf	0x59, 0, 0x1        	MOVF	(_seconds_since_midnight + 2), W, B
+00267a   6ee5     movwf	0xe5, 0            	MOVWF	POSTDEC1
+00267c   010f     movlb	0xf                	BANKSEL	(_seconds_since_midnight + 1)
+00267e   5158     movf	0x58, 0, 0x1        	MOVF	(_seconds_since_midnight + 1), W, B
+002680   6ee5     movwf	0xe5, 0            	MOVWF	POSTDEC1
+002682   010f     movlb	0xf                	BANKSEL	_seconds_since_midnight
+002684   5157     movf	0x57, 0, 0x1        	MOVF	_seconds_since_midnight, W, B
+002686   6ee5     movwf	0xe5, 0            	MOVWF	POSTDEC1
+002688   ec7d     call	0x12fa, 0           	CALL	__divslong
+00268a   f009
+00268c   6e00     movwf	0, 0               	MOVWF	r0x00
+00268e   cff3     movff	0xff3, 0x1         	MOVFF	PRODL, r0x01
+002690   f001
+002692   cff4     movff	0xff4, 0x2         	MOVFF	PRODH, r0x02
+002694   f002
+002696   cfe9     movff	0xfe9, 0x3         	MOVFF	FSR0L, r0x03
+002698   f003
+00269a   0e08     movlw	0x8                	MOVLW	0x08
+00269c   26e1     addwf	0xe1, 0x1, 0       	ADDWF	FSR1L, F
+00269e   c003     movff	0x3, 0xfe9         	MOVFF	r0x03, FSR0L
+0026a0   ffe9
+0026a2   c002     movff	0x2, 0xff4         	MOVFF	r0x02, PRODH
+0026a4   fff4
+0026a6   c001     movff	0x1, 0xff3         	MOVFF	r0x01, PRODL
+0026a8   fff3
+0026aa   5000     movf	0, 0, 0             	MOVF	r0x00, W
+0026ac   cfe4     movff	0xfe4, 0x3         	MOVFF	PREINC1, r0x03
+0026ae   f003
+0026b0   cfe4     movff	0xfe4, 0x2         	MOVFF	PREINC1, r0x02
+0026b2   f002
+0026b4   cfe4     movff	0xfe4, 0x1         	MOVFF	PREINC1, r0x01
+0026b6   f001
+0026b8   cfe4     movff	0xfe4, 0           	MOVFF	PREINC1, r0x00
+0026ba   f000
+0026bc   cfe4     movff	0xfe4, 0xfd9       	MOVFF	PREINC1, FSR2L
+0026be   ffd9
+0026c0   0012     return	0                 	RETURN	
                                            
                                            ; ; Starting pCode block
                                            __str_0:
-0026be   3025     rrcf	0x25, 0, 0          	DB	0x25, 0x30, 0x32, 0x6c, 0x75, 0x00
-0026c0   6c32     negf	0x32, 0             
-0026c2   0075     dw	0x75  ;unknown opcode 
+0026c2   3025     rrcf	0x25, 0, 0          	DB	0x25, 0x30, 0x32, 0x6c, 0x75, 0x00
+0026c4   6c32     negf	0x32, 0             
+0026c6   0075     dw	0x75  ;unknown opcode 
                                            
                                            
                                            ; Statistics:
