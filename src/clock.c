@@ -4,7 +4,7 @@
 
 #define CLOCK_FREQ  40000000      
 #define EXEC_FREQ   CLOCK_FREQ/4 	
-#define CYCLES 		90
+#define CYCLES 		96
 
 #include <stdlib.h>
 #include <stdio.h>
