@@ -22,19 +22,29 @@ void delay_ms(unsigned int ms);
 void init_clock(time t);
 char* to_double_digits(int value);
 void init(void);
+void update_display(void);
+void toggle_led(void);
 
 time _time;
 char display_line[32];
-int counter = 0;
+int overflow_counter = 0;
 
 int main(void){
 		_time = time_create();
 
 		init();
         init_clock(_time);
-        time_print(_time, display_line);
-        display_string(0, display_line);
+		update_display();
         return 0;
+}
+
+void update_display(void){
+	time_print(_time, display_line);
+	display_string(0, display_line);
+}
+
+void toggle_led(void){
+	LED0_IO^=1;
 }
 
 void init_clock(time t){
@@ -43,6 +53,8 @@ void init_clock(time t){
     m = get_input(60, "MINUTES:");
     s = get_input(60, "SECONDS:");
     time_set(t,h,m,s);
+    // Start timer
+    T0CONbits.TMR0ON = 1;
 }
 
 int get_input(int maxvalue, char *text){
@@ -81,6 +93,15 @@ char* to_double_digits(int value){
 
 void lowPriorityInterruptHandler (void) __interrupt(1){
 	if (INTCONbits.TMR0IF == 1) {
+		overflow_counter++;
+		if(overflow_counter == 50){
+			toggle_led();
+		}else if(overflow_counter == 100){
+			overflow_counter = 0;
+			toggle_led();
+			add_second(_time);
+			update_display();
+		}
         INTCONbits.TMR0IF = 0;
     }
 }
@@ -111,7 +132,6 @@ void init(void){
 
     // Enable timer and interrupts
 	INTCONbits.TMR0IE = 1;
-	T0CONbits.TMR0ON = 1;
 
 	// // Enable button interrupts
  //    INTCON3bits.INT1P  = 1;   //connect INT1 interrupt (button 2) to high priority
@@ -119,7 +139,15 @@ void init(void){
  //    INTCON3bits.INT1E  = 1;   //enable INT1 interrupt (button 2)
  //    INTCON3bits.INT1F  = 0;   //clear INT1 flag
 
-	// Enable backlight
-	LED3_TRIS = 0;
+	// Enable leds
+	LED0_TRIS = 0;
+   	LED1_TRIS = 0;   
+   	LED2_TRIS = 0;
+   	LED3_TRIS = 0;
+
+   	// Disable all LED but backlight
+   	LED0_IO = 0; 
+   	LED1_IO = 0;
+   	LED2_IO = 0;
     LED3_IO = 1;
 }

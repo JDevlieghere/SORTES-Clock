@@ -1,4 +1,4 @@
-gpasm-0.13.7 beta               objects/clock.asm11-15-2013  20:28:45         PAGE  1
+gpasm-0.13.7 beta               objects/clock.asm11-15-2013  20:41:57         PAGE  1
 
 
 LOC  OBJECT CODE     LINE SOURCE TEXT
@@ -7,7 +7,7 @@ LOC  OBJECT CODE     LINE SOURCE TEXT
                00001 ;--------------------------------------------------------
                00002 ; File Created by SDCC : free open source ANSI-C Compiler
                00003 ; Version 2.9.4 #5595 (Nov 14 2013) (UNIX)
-               00004 ; This file was generated Fri Nov 15 20:28:45 2013
+               00004 ; This file was generated Fri Nov 15 20:41:57 2013
                00005 ;--------------------------------------------------------
                00006 ; PIC16 port for the Microchip 16-bit core micros
                00007 ;--------------------------------------------------------
@@ -18,1235 +18,1356 @@ LOC  OBJECT CODE     LINE SOURCE TEXT
                00012 ;--------------------------------------------------------
                00013 ; public variables in this module
                00014 ;--------------------------------------------------------
-               00015         global _counter
-               00016         global _init_clock
-               00017         global _get_input
-               00018         global _display_string
-               00019         global _to_double_digits
-               00020         global _init
-               00021         global __time
-               00022         global _display_line
-               00023         global _main
-               00024         global _lowPriorityInterruptHandler
-               00025 
-               00026 ;--------------------------------------------------------
-               00027 ; extern variables in this module
+               00015         global _update_display
+               00016         global _toggle_led
+               00017         global _init_clock
+               00018         global _get_input
+               00019         global _display_string
+               00020         global _to_double_digits
+               00021         global _init
+               00022         global __time
+               00023         global _display_line
+               00024         global _overflow_counter
+               00025         global _main
+               00026         global _lowPriorityInterruptHandler
+               00027 
                00028 ;--------------------------------------------------------
-               00029         extern __gptrget1
-               00030         extern __gptrput1
-               00031         extern _stdin
-               00032         extern _stdout
-               00033         extern _EBSTCONbits
-               00034         extern _MISTATbits
-               00035         extern _EFLOCONbits
-               00036         extern _MACON1bits
-               00037         extern _MACON2bits
-               00038         extern _MACON3bits
-               00039         extern _MACON4bits
-               00040         extern _MACLCON1bits
-               00041         extern _MACLCON2bits
-               00042         extern _MICONbits
-               00043         extern _MICMDbits
-               00044         extern _EWOLIEbits
-               00045         extern _EWOLIRbits
-               00046         extern _ERXFCONbits
-               00047         extern _EIEbits
-               00048         extern _ESTATbits
-               00049         extern _ECON2bits
-               00050         extern _EIRbits
-               00051         extern _EDATAbits
-               00052         extern _SSP2CON2bits
-               00053         extern _SSP2CON1bits
-               00054         extern _SSP2STATbits
-gpasm-0.13.7 beta               objects/clock.asm11-15-2013  20:28:45         PAGE  2
+               00029 ; extern variables in this module
+               00030 ;--------------------------------------------------------
+               00031         extern __gptrget1
+               00032         extern __gptrput1
+               00033         extern _stdin
+               00034         extern _stdout
+               00035         extern _EBSTCONbits
+               00036         extern _MISTATbits
+               00037         extern _EFLOCONbits
+               00038         extern _MACON1bits
+               00039         extern _MACON2bits
+               00040         extern _MACON3bits
+               00041         extern _MACON4bits
+               00042         extern _MACLCON1bits
+               00043         extern _MACLCON2bits
+               00044         extern _MICONbits
+               00045         extern _MICMDbits
+               00046         extern _EWOLIEbits
+               00047         extern _EWOLIRbits
+               00048         extern _ERXFCONbits
+               00049         extern _EIEbits
+               00050         extern _ESTATbits
+               00051         extern _ECON2bits
+               00052         extern _EIRbits
+               00053         extern _EDATAbits
+               00054         extern _SSP2CON2bits
+gpasm-0.13.7 beta               objects/clock.asm11-15-2013  20:41:57         PAGE  2
 
 
 LOC  OBJECT CODE     LINE SOURCE TEXT
   VALUE
  
-               00055         extern _ECCP2DELbits
-               00056         extern _ECCP2ASbits
-               00057         extern _ECCP3DELbits
-               00058         extern _ECCP3ASbits
-               00059         extern _RCSTA2bits
-               00060         extern _TXSTA2bits
-               00061         extern _CCP5CONbits
-               00062         extern _CCP4CONbits
-               00063         extern _T4CONbits
-               00064         extern _ECCP1DELbits
-               00065         extern _BAUDCON2bits
-               00066         extern _BAUDCTL2bits
-               00067         extern _BAUDCONbits
-               00068         extern _BAUDCON1bits
-               00069         extern _BAUDCTLbits
-               00070         extern _BAUDCTL1bits
-               00071         extern _PORTAbits
-               00072         extern _PORTBbits
-               00073         extern _PORTCbits
-               00074         extern _PORTDbits
-               00075         extern _PORTEbits
-               00076         extern _PORTFbits
-               00077         extern _PORTGbits
-               00078         extern _PORTHbits
-               00079         extern _PORTJbits
-               00080         extern _LATAbits
-               00081         extern _LATBbits
-               00082         extern _LATCbits
-               00083         extern _LATDbits
-               00084         extern _LATEbits
-               00085         extern _LATFbits
-               00086         extern _LATGbits
-               00087         extern _LATHbits
-               00088         extern _LATJbits
-               00089         extern _DDRAbits
-               00090         extern _TRISAbits
-               00091         extern _DDRBbits
-               00092         extern _TRISBbits
-               00093         extern _DDRCbits
-               00094         extern _TRISCbits
-               00095         extern _DDRDbits
-               00096         extern _TRISDbits
-               00097         extern _DDREbits
-               00098         extern _TRISEbits
-               00099         extern _DDRFbits
-               00100         extern _TRISFbits
-               00101         extern _DDRGbits
-               00102         extern _TRISGbits
-               00103         extern _DDRHbits
-               00104         extern _TRISHbits
-               00105         extern _DDRJbits
-               00106         extern _TRISJbits
-               00107         extern _OSCTUNEbits
-               00108         extern _MEMCONbits
-gpasm-0.13.7 beta               objects/clock.asm11-15-2013  20:28:45         PAGE  3
+               00055         extern _SSP2CON1bits
+               00056         extern _SSP2STATbits
+               00057         extern _ECCP2DELbits
+               00058         extern _ECCP2ASbits
+               00059         extern _ECCP3DELbits
+               00060         extern _ECCP3ASbits
+               00061         extern _RCSTA2bits
+               00062         extern _TXSTA2bits
+               00063         extern _CCP5CONbits
+               00064         extern _CCP4CONbits
+               00065         extern _T4CONbits
+               00066         extern _ECCP1DELbits
+               00067         extern _BAUDCON2bits
+               00068         extern _BAUDCTL2bits
+               00069         extern _BAUDCONbits
+               00070         extern _BAUDCON1bits
+               00071         extern _BAUDCTLbits
+               00072         extern _BAUDCTL1bits
+               00073         extern _PORTAbits
+               00074         extern _PORTBbits
+               00075         extern _PORTCbits
+               00076         extern _PORTDbits
+               00077         extern _PORTEbits
+               00078         extern _PORTFbits
+               00079         extern _PORTGbits
+               00080         extern _PORTHbits
+               00081         extern _PORTJbits
+               00082         extern _LATAbits
+               00083         extern _LATBbits
+               00084         extern _LATCbits
+               00085         extern _LATDbits
+               00086         extern _LATEbits
+               00087         extern _LATFbits
+               00088         extern _LATGbits
+               00089         extern _LATHbits
+               00090         extern _LATJbits
+               00091         extern _DDRAbits
+               00092         extern _TRISAbits
+               00093         extern _DDRBbits
+               00094         extern _TRISBbits
+               00095         extern _DDRCbits
+               00096         extern _TRISCbits
+               00097         extern _DDRDbits
+               00098         extern _TRISDbits
+               00099         extern _DDREbits
+               00100         extern _TRISEbits
+               00101         extern _DDRFbits
+               00102         extern _TRISFbits
+               00103         extern _DDRGbits
+               00104         extern _TRISGbits
+               00105         extern _DDRHbits
+               00106         extern _TRISHbits
+               00107         extern _DDRJbits
+               00108         extern _TRISJbits
+gpasm-0.13.7 beta               objects/clock.asm11-15-2013  20:41:57         PAGE  3
 
 
 LOC  OBJECT CODE     LINE SOURCE TEXT
   VALUE
  
-               00109         extern _PIE1bits
-               00110         extern _PIR1bits
-               00111         extern _IPR1bits
-               00112         extern _PIE2bits
-               00113         extern _PIR2bits
-               00114         extern _IPR2bits
-               00115         extern _PIE3bits
-               00116         extern _PIR3bits
-               00117         extern _IPR3bits
-               00118         extern _EECON1bits
-               00119         extern _RCSTAbits
-               00120         extern _RCSTA1bits
-               00121         extern _TXSTAbits
-               00122         extern _TXSTA1bits
-               00123         extern _PSPCONbits
-               00124         extern _T3CONbits
-               00125         extern _CMCONbits
-               00126         extern _CVRCONbits
-               00127         extern _ECCP1ASbits
-               00128         extern _CCP3CONbits
-               00129         extern _ECCP3CONbits
-               00130         extern _CCP2CONbits
-               00131         extern _ECCP2CONbits
-               00132         extern _CCP1CONbits
-               00133         extern _ECCP1CONbits
-               00134         extern _ADCON2bits
-               00135         extern _ADCON1bits
-               00136         extern _ADCON0bits
-               00137         extern _SSP1CON2bits
-               00138         extern _SSPCON2bits
-               00139         extern _SSP1CON1bits
-               00140         extern _SSPCON1bits
-               00141         extern _SSP1STATbits
-               00142         extern _SSPSTATbits
-               00143         extern _T2CONbits
-               00144         extern _T1CONbits
-               00145         extern _RCONbits
-               00146         extern _WDTCONbits
-               00147         extern _ECON1bits
-               00148         extern _OSCCONbits
-               00149         extern _T0CONbits
-               00150         extern _STATUSbits
-               00151         extern _INTCON3bits
-               00152         extern _INTCON2bits
-               00153         extern _INTCONbits
-               00154         extern _STKPTRbits
-               00155         extern _LCDText
-               00156         extern _MAADR5
-               00157         extern _MAADR6
-               00158         extern _MAADR3
-               00159         extern _MAADR4
-               00160         extern _MAADR1
-               00161         extern _MAADR2
-               00162         extern _EBSTSD
-gpasm-0.13.7 beta               objects/clock.asm11-15-2013  20:28:45         PAGE  4
+               00109         extern _OSCTUNEbits
+               00110         extern _MEMCONbits
+               00111         extern _PIE1bits
+               00112         extern _PIR1bits
+               00113         extern _IPR1bits
+               00114         extern _PIE2bits
+               00115         extern _PIR2bits
+               00116         extern _IPR2bits
+               00117         extern _PIE3bits
+               00118         extern _PIR3bits
+               00119         extern _IPR3bits
+               00120         extern _EECON1bits
+               00121         extern _RCSTAbits
+               00122         extern _RCSTA1bits
+               00123         extern _TXSTAbits
+               00124         extern _TXSTA1bits
+               00125         extern _PSPCONbits
+               00126         extern _T3CONbits
+               00127         extern _CMCONbits
+               00128         extern _CVRCONbits
+               00129         extern _ECCP1ASbits
+               00130         extern _CCP3CONbits
+               00131         extern _ECCP3CONbits
+               00132         extern _CCP2CONbits
+               00133         extern _ECCP2CONbits
+               00134         extern _CCP1CONbits
+               00135         extern _ECCP1CONbits
+               00136         extern _ADCON2bits
+               00137         extern _ADCON1bits
+               00138         extern _ADCON0bits
+               00139         extern _SSP1CON2bits
+               00140         extern _SSPCON2bits
+               00141         extern _SSP1CON1bits
+               00142         extern _SSPCON1bits
+               00143         extern _SSP1STATbits
+               00144         extern _SSPSTATbits
+               00145         extern _T2CONbits
+               00146         extern _T1CONbits
+               00147         extern _RCONbits
+               00148         extern _WDTCONbits
+               00149         extern _ECON1bits
+               00150         extern _OSCCONbits
+               00151         extern _T0CONbits
+               00152         extern _STATUSbits
+               00153         extern _INTCON3bits
+               00154         extern _INTCON2bits
+               00155         extern _INTCONbits
+               00156         extern _STKPTRbits
+               00157         extern _LCDText
+               00158         extern _MAADR5
+               00159         extern _MAADR6
+               00160         extern _MAADR3
+               00161         extern _MAADR4
+               00162         extern _MAADR1
+gpasm-0.13.7 beta               objects/clock.asm11-15-2013  20:41:57         PAGE  4
 
 
 LOC  OBJECT CODE     LINE SOURCE TEXT
   VALUE
  
-               00163         extern _EBSTCON
-               00164         extern _EBSTCS
-               00165         extern _EBSTCSL
-               00166         extern _EBSTCSH
-               00167         extern _MISTAT
-               00168         extern _EFLOCON
-               00169         extern _EPAUS
-               00170         extern _EPAUSL
-               00171         extern _EPAUSH
-               00172         extern _MACON1
-               00173         extern _MACON2
-               00174         extern _MACON3
-               00175         extern _MACON4
-               00176         extern _MABBIPG
-               00177         extern _MAIPG
-               00178         extern _MAIPGL
-               00179         extern _MAIPGH
-               00180         extern _MACLCON1
-               00181         extern _MACLCON2
-               00182         extern _MAMXFL
-               00183         extern _MAMXFLL
-               00184         extern _MAMXFLH
-               00185         extern _MICON
-               00186         extern _MICMD
-               00187         extern _MIREGADR
-               00188         extern _MIWR
-               00189         extern _MIWRL
-               00190         extern _MIWRH
-               00191         extern _MIRD
-               00192         extern _MIRDL
-               00193         extern _MIRDH
-               00194         extern _EHT0
-               00195         extern _EHT1
-               00196         extern _EHT2
-               00197         extern _EHT3
-               00198         extern _EHT4
-               00199         extern _EHT5
-               00200         extern _EHT6
-               00201         extern _EHT7
-               00202         extern _EPMM0
-               00203         extern _EPMM1
-               00204         extern _EPMM2
-               00205         extern _EPMM3
-               00206         extern _EPMM4
-               00207         extern _EPMM5
-               00208         extern _EPMM6
-               00209         extern _EPMM7
-               00210         extern _EPMCS
-               00211         extern _EPMCSL
-               00212         extern _EPMCSH
-               00213         extern _EPMO
-               00214         extern _EPMOL
-               00215         extern _EPMOH
-               00216         extern _EWOLIE
-gpasm-0.13.7 beta               objects/clock.asm11-15-2013  20:28:45         PAGE  5
+               00163         extern _MAADR2
+               00164         extern _EBSTSD
+               00165         extern _EBSTCON
+               00166         extern _EBSTCS
+               00167         extern _EBSTCSL
+               00168         extern _EBSTCSH
+               00169         extern _MISTAT
+               00170         extern _EFLOCON
+               00171         extern _EPAUS
+               00172         extern _EPAUSL
+               00173         extern _EPAUSH
+               00174         extern _MACON1
+               00175         extern _MACON2
+               00176         extern _MACON3
+               00177         extern _MACON4
+               00178         extern _MABBIPG
+               00179         extern _MAIPG
+               00180         extern _MAIPGL
+               00181         extern _MAIPGH
+               00182         extern _MACLCON1
+               00183         extern _MACLCON2
+               00184         extern _MAMXFL
+               00185         extern _MAMXFLL
+               00186         extern _MAMXFLH
+               00187         extern _MICON
+               00188         extern _MICMD
+               00189         extern _MIREGADR
+               00190         extern _MIWR
+               00191         extern _MIWRL
+               00192         extern _MIWRH
+               00193         extern _MIRD
+               00194         extern _MIRDL
+               00195         extern _MIRDH
+               00196         extern _EHT0
+               00197         extern _EHT1
+               00198         extern _EHT2
+               00199         extern _EHT3
+               00200         extern _EHT4
+               00201         extern _EHT5
+               00202         extern _EHT6
+               00203         extern _EHT7
+               00204         extern _EPMM0
+               00205         extern _EPMM1
+               00206         extern _EPMM2
+               00207         extern _EPMM3
+               00208         extern _EPMM4
+               00209         extern _EPMM5
+               00210         extern _EPMM6
+               00211         extern _EPMM7
+               00212         extern _EPMCS
+               00213         extern _EPMCSL
+               00214         extern _EPMCSH
+               00215         extern _EPMO
+               00216         extern _EPMOL
+gpasm-0.13.7 beta               objects/clock.asm11-15-2013  20:41:57         PAGE  5
 
 
 LOC  OBJECT CODE     LINE SOURCE TEXT
   VALUE
  
-               00217         extern _EWOLIR
-               00218         extern _ERXFCON
-               00219         extern _EPKTCNT
-               00220         extern _EWRPT
-               00221         extern _EWRPTL
-               00222         extern _EWRPTH
-               00223         extern _ETXST
-               00224         extern _ETXSTL
-               00225         extern _ETXSTH
-               00226         extern _ETXND
-               00227         extern _ETXNDL
-               00228         extern _ETXNDH
-               00229         extern _ERXST
-               00230         extern _ERXSTL
-               00231         extern _ERXSTH
-               00232         extern _ERXND
-               00233         extern _ERXNDL
-               00234         extern _ERXNDH
-               00235         extern _ERXRDPT
-               00236         extern _ERXRDPTL
-               00237         extern _ERXRDPTH
-               00238         extern _ERXWRPT
-               00239         extern _ERXWRPTL
-               00240         extern _ERXWRPTH
-               00241         extern _EDMAST
-               00242         extern _EDMASTL
-               00243         extern _EDMASTH
-               00244         extern _EDMAND
-               00245         extern _EDMANDL
-               00246         extern _EDMANDH
-               00247         extern _EDMADST
-               00248         extern _EDMADSTL
-               00249         extern _EDMADSTH
-               00250         extern _EDMACS
-               00251         extern _EDMACSL
-               00252         extern _EDMACSH
-               00253         extern _EIE
-               00254         extern _ESTAT
-               00255         extern _ECON2
-               00256         extern _EIR
-               00257         extern _EDATA
-               00258         extern _SSP2CON2
-               00259         extern _SSP2CON1
-               00260         extern _SSP2STAT
-               00261         extern _SSP2ADD
-               00262         extern _SSP2BUF
-               00263         extern _ECCP2DEL
-               00264         extern _ECCP2AS
-               00265         extern _ECCP3DEL
-               00266         extern _ECCP3AS
-               00267         extern _RCSTA2
-               00268         extern _TXSTA2
-               00269         extern _TXREG2
-               00270         extern _RCREG2
-gpasm-0.13.7 beta               objects/clock.asm11-15-2013  20:28:45         PAGE  6
+               00217         extern _EPMOH
+               00218         extern _EWOLIE
+               00219         extern _EWOLIR
+               00220         extern _ERXFCON
+               00221         extern _EPKTCNT
+               00222         extern _EWRPT
+               00223         extern _EWRPTL
+               00224         extern _EWRPTH
+               00225         extern _ETXST
+               00226         extern _ETXSTL
+               00227         extern _ETXSTH
+               00228         extern _ETXND
+               00229         extern _ETXNDL
+               00230         extern _ETXNDH
+               00231         extern _ERXST
+               00232         extern _ERXSTL
+               00233         extern _ERXSTH
+               00234         extern _ERXND
+               00235         extern _ERXNDL
+               00236         extern _ERXNDH
+               00237         extern _ERXRDPT
+               00238         extern _ERXRDPTL
+               00239         extern _ERXRDPTH
+               00240         extern _ERXWRPT
+               00241         extern _ERXWRPTL
+               00242         extern _ERXWRPTH
+               00243         extern _EDMAST
+               00244         extern _EDMASTL
+               00245         extern _EDMASTH
+               00246         extern _EDMAND
+               00247         extern _EDMANDL
+               00248         extern _EDMANDH
+               00249         extern _EDMADST
+               00250         extern _EDMADSTL
+               00251         extern _EDMADSTH
+               00252         extern _EDMACS
+               00253         extern _EDMACSL
+               00254         extern _EDMACSH
+               00255         extern _EIE
+               00256         extern _ESTAT
+               00257         extern _ECON2
+               00258         extern _EIR
+               00259         extern _EDATA
+               00260         extern _SSP2CON2
+               00261         extern _SSP2CON1
+               00262         extern _SSP2STAT
+               00263         extern _SSP2ADD
+               00264         extern _SSP2BUF
+               00265         extern _ECCP2DEL
+               00266         extern _ECCP2AS
+               00267         extern _ECCP3DEL
+               00268         extern _ECCP3AS
+               00269         extern _RCSTA2
+               00270         extern _TXSTA2
+gpasm-0.13.7 beta               objects/clock.asm11-15-2013  20:41:57         PAGE  6
 
 
 LOC  OBJECT CODE     LINE SOURCE TEXT
   VALUE
  
-               00271         extern _SPBRG2
-               00272         extern _CCP5CON
-               00273         extern _CCPR5
-               00274         extern _CCPR5L
-               00275         extern _CCPR5H
-               00276         extern _CCP4CON
-               00277         extern _CCPR4
-               00278         extern _CCPR4L
-               00279         extern _CCPR4H
-               00280         extern _T4CON
-               00281         extern _PR4
-               00282         extern _TMR4
-               00283         extern _ECCP1DEL
-               00284         extern _ERDPT
-               00285         extern _ERDPTL
-               00286         extern _ERDPTH
-               00287         extern _BAUDCON2
-               00288         extern _BAUDCTL2
-               00289         extern _SPBRGH2
-               00290         extern _BAUDCON
-               00291         extern _BAUDCON1
-               00292         extern _BAUDCTL
-               00293         extern _BAUDCTL1
-               00294         extern _SPBRGH
-               00295         extern _SPBRGH1
-               00296         extern _PORTA
-               00297         extern _PORTB
-               00298         extern _PORTC
-               00299         extern _PORTD
-               00300         extern _PORTE
-               00301         extern _PORTF
-               00302         extern _PORTG
-               00303         extern _PORTH
-               00304         extern _PORTJ
-               00305         extern _LATA
-               00306         extern _LATB
-               00307         extern _LATC
-               00308         extern _LATD
-               00309         extern _LATE
-               00310         extern _LATF
-               00311         extern _LATG
-               00312         extern _LATH
-               00313         extern _LATJ
-               00314         extern _DDRA
-               00315         extern _TRISA
-               00316         extern _DDRB
-               00317         extern _TRISB
-               00318         extern _DDRC
-               00319         extern _TRISC
-               00320         extern _DDRD
-               00321         extern _TRISD
-               00322         extern _DDRE
-               00323         extern _TRISE
-               00324         extern _DDRF
-gpasm-0.13.7 beta               objects/clock.asm11-15-2013  20:28:45         PAGE  7
+               00271         extern _TXREG2
+               00272         extern _RCREG2
+               00273         extern _SPBRG2
+               00274         extern _CCP5CON
+               00275         extern _CCPR5
+               00276         extern _CCPR5L
+               00277         extern _CCPR5H
+               00278         extern _CCP4CON
+               00279         extern _CCPR4
+               00280         extern _CCPR4L
+               00281         extern _CCPR4H
+               00282         extern _T4CON
+               00283         extern _PR4
+               00284         extern _TMR4
+               00285         extern _ECCP1DEL
+               00286         extern _ERDPT
+               00287         extern _ERDPTL
+               00288         extern _ERDPTH
+               00289         extern _BAUDCON2
+               00290         extern _BAUDCTL2
+               00291         extern _SPBRGH2
+               00292         extern _BAUDCON
+               00293         extern _BAUDCON1
+               00294         extern _BAUDCTL
+               00295         extern _BAUDCTL1
+               00296         extern _SPBRGH
+               00297         extern _SPBRGH1
+               00298         extern _PORTA
+               00299         extern _PORTB
+               00300         extern _PORTC
+               00301         extern _PORTD
+               00302         extern _PORTE
+               00303         extern _PORTF
+               00304         extern _PORTG
+               00305         extern _PORTH
+               00306         extern _PORTJ
+               00307         extern _LATA
+               00308         extern _LATB
+               00309         extern _LATC
+               00310         extern _LATD
+               00311         extern _LATE
+               00312         extern _LATF
+               00313         extern _LATG
+               00314         extern _LATH
+               00315         extern _LATJ
+               00316         extern _DDRA
+               00317         extern _TRISA
+               00318         extern _DDRB
+               00319         extern _TRISB
+               00320         extern _DDRC
+               00321         extern _TRISC
+               00322         extern _DDRD
+               00323         extern _TRISD
+               00324         extern _DDRE
+gpasm-0.13.7 beta               objects/clock.asm11-15-2013  20:41:57         PAGE  7
 
 
 LOC  OBJECT CODE     LINE SOURCE TEXT
   VALUE
  
-               00325         extern _TRISF
-               00326         extern _DDRG
-               00327         extern _TRISG
-               00328         extern _DDRH
-               00329         extern _TRISH
-               00330         extern _DDRJ
-               00331         extern _TRISJ
-               00332         extern _OSCTUNE
-               00333         extern _MEMCON
-               00334         extern _PIE1
-               00335         extern _PIR1
-               00336         extern _IPR1
-               00337         extern _PIE2
-               00338         extern _PIR2
-               00339         extern _IPR2
-               00340         extern _PIE3
-               00341         extern _PIR3
-               00342         extern _IPR3
-               00343         extern _EECON1
-               00344         extern _EECON2
-               00345         extern _RCSTA
-               00346         extern _RCSTA1
-               00347         extern _TXSTA
-               00348         extern _TXSTA1
-               00349         extern _TXREG
-               00350         extern _TXREG1
-               00351         extern _RCREG
-               00352         extern _RCREG1
-               00353         extern _SPBRG
-               00354         extern _SPBRG1
-               00355         extern _PSPCON
-               00356         extern _T3CON
-               00357         extern _TMR3L
-               00358         extern _TMR3H
-               00359         extern _CMCON
-               00360         extern _CVRCON
-               00361         extern _ECCP1AS
-               00362         extern _CCP3CON
-               00363         extern _ECCP3CON
-               00364         extern _CCPR3
-               00365         extern _CCPR3L
-               00366         extern _CCPR3H
-               00367         extern _CCP2CON
-               00368         extern _ECCP2CON
-               00369         extern _CCPR2
-               00370         extern _CCPR2L
-               00371         extern _CCPR2H
-               00372         extern _CCP1CON
-               00373         extern _ECCP1CON
-               00374         extern _CCPR1
-               00375         extern _CCPR1L
-               00376         extern _CCPR1H
-               00377         extern _ADCON2
-               00378         extern _ADCON1
-gpasm-0.13.7 beta               objects/clock.asm11-15-2013  20:28:45         PAGE  8
+               00325         extern _TRISE
+               00326         extern _DDRF
+               00327         extern _TRISF
+               00328         extern _DDRG
+               00329         extern _TRISG
+               00330         extern _DDRH
+               00331         extern _TRISH
+               00332         extern _DDRJ
+               00333         extern _TRISJ
+               00334         extern _OSCTUNE
+               00335         extern _MEMCON
+               00336         extern _PIE1
+               00337         extern _PIR1
+               00338         extern _IPR1
+               00339         extern _PIE2
+               00340         extern _PIR2
+               00341         extern _IPR2
+               00342         extern _PIE3
+               00343         extern _PIR3
+               00344         extern _IPR3
+               00345         extern _EECON1
+               00346         extern _EECON2
+               00347         extern _RCSTA
+               00348         extern _RCSTA1
+               00349         extern _TXSTA
+               00350         extern _TXSTA1
+               00351         extern _TXREG
+               00352         extern _TXREG1
+               00353         extern _RCREG
+               00354         extern _RCREG1
+               00355         extern _SPBRG
+               00356         extern _SPBRG1
+               00357         extern _PSPCON
+               00358         extern _T3CON
+               00359         extern _TMR3L
+               00360         extern _TMR3H
+               00361         extern _CMCON
+               00362         extern _CVRCON
+               00363         extern _ECCP1AS
+               00364         extern _CCP3CON
+               00365         extern _ECCP3CON
+               00366         extern _CCPR3
+               00367         extern _CCPR3L
+               00368         extern _CCPR3H
+               00369         extern _CCP2CON
+               00370         extern _ECCP2CON
+               00371         extern _CCPR2
+               00372         extern _CCPR2L
+               00373         extern _CCPR2H
+               00374         extern _CCP1CON
+               00375         extern _ECCP1CON
+               00376         extern _CCPR1
+               00377         extern _CCPR1L
+               00378         extern _CCPR1H
+gpasm-0.13.7 beta               objects/clock.asm11-15-2013  20:41:57         PAGE  8
 
 
 LOC  OBJECT CODE     LINE SOURCE TEXT
   VALUE
  
-               00379         extern _ADCON0
-               00380         extern _ADRES
-               00381         extern _ADRESL
-               00382         extern _ADRESH
-               00383         extern _SSP1CON2
-               00384         extern _SSPCON2
-               00385         extern _SSP1CON1
-               00386         extern _SSPCON1
-               00387         extern _SSP1STAT
-               00388         extern _SSPSTAT
-               00389         extern _SSP1ADD
-               00390         extern _SSPADD
-               00391         extern _SSP1BUF
-               00392         extern _SSPBUF
-               00393         extern _T2CON
-               00394         extern _PR2
-               00395         extern _TMR2
-               00396         extern _T1CON
-               00397         extern _TMR1L
-               00398         extern _TMR1H
-               00399         extern _RCON
-               00400         extern _WDTCON
-               00401         extern _ECON1
-               00402         extern _OSCCON
-               00403         extern _T0CON
-               00404         extern _TMR0L
-               00405         extern _TMR0H
-               00406         extern _STATUS
-               00407         extern _FSR2L
-               00408         extern _FSR2H
-               00409         extern _PLUSW2
-               00410         extern _PREINC2
-               00411         extern _POSTDEC2
-               00412         extern _POSTINC2
-               00413         extern _INDF2
-               00414         extern _BSR
-               00415         extern _FSR1L
-               00416         extern _FSR1H
-               00417         extern _PLUSW1
-               00418         extern _PREINC1
-               00419         extern _POSTDEC1
-               00420         extern _POSTINC1
-               00421         extern _INDF1
-               00422         extern _WREG
-               00423         extern _FSR0L
-               00424         extern _FSR0H
-               00425         extern _PLUSW0
-               00426         extern _PREINC0
-               00427         extern _POSTDEC0
-               00428         extern _POSTINC0
-               00429         extern _INDF0
-               00430         extern _INTCON3
-               00431         extern _INTCON2
-               00432         extern _INTCON
-gpasm-0.13.7 beta               objects/clock.asm11-15-2013  20:28:45         PAGE  9
+               00379         extern _ADCON2
+               00380         extern _ADCON1
+               00381         extern _ADCON0
+               00382         extern _ADRES
+               00383         extern _ADRESL
+               00384         extern _ADRESH
+               00385         extern _SSP1CON2
+               00386         extern _SSPCON2
+               00387         extern _SSP1CON1
+               00388         extern _SSPCON1
+               00389         extern _SSP1STAT
+               00390         extern _SSPSTAT
+               00391         extern _SSP1ADD
+               00392         extern _SSPADD
+               00393         extern _SSP1BUF
+               00394         extern _SSPBUF
+               00395         extern _T2CON
+               00396         extern _PR2
+               00397         extern _TMR2
+               00398         extern _T1CON
+               00399         extern _TMR1L
+               00400         extern _TMR1H
+               00401         extern _RCON
+               00402         extern _WDTCON
+               00403         extern _ECON1
+               00404         extern _OSCCON
+               00405         extern _T0CON
+               00406         extern _TMR0L
+               00407         extern _TMR0H
+               00408         extern _STATUS
+               00409         extern _FSR2L
+               00410         extern _FSR2H
+               00411         extern _PLUSW2
+               00412         extern _PREINC2
+               00413         extern _POSTDEC2
+               00414         extern _POSTINC2
+               00415         extern _INDF2
+               00416         extern _BSR
+               00417         extern _FSR1L
+               00418         extern _FSR1H
+               00419         extern _PLUSW1
+               00420         extern _PREINC1
+               00421         extern _POSTDEC1
+               00422         extern _POSTINC1
+               00423         extern _INDF1
+               00424         extern _WREG
+               00425         extern _FSR0L
+               00426         extern _FSR0H
+               00427         extern _PLUSW0
+               00428         extern _PREINC0
+               00429         extern _POSTDEC0
+               00430         extern _POSTINC0
+               00431         extern _INDF0
+               00432         extern _INTCON3
+gpasm-0.13.7 beta               objects/clock.asm11-15-2013  20:41:57         PAGE  9
 
 
 LOC  OBJECT CODE     LINE SOURCE TEXT
   VALUE
  
-               00433         extern _PROD
-               00434         extern _PRODL
-               00435         extern _PRODH
-               00436         extern _TABLAT
-               00437         extern _TBLPTR
-               00438         extern _TBLPTRL
-               00439         extern _TBLPTRH
-               00440         extern _TBLPTRU
-               00441         extern _PC
-               00442         extern _PCL
-               00443         extern _PCLATH
-               00444         extern _PCLATU
-               00445         extern _STKPTR
-               00446         extern _TOS
-               00447         extern _TOSL
-               00448         extern _TOSH
-               00449         extern _TOSU
-               00450         extern _sprintf
-               00451         extern _strlen
-               00452         extern _LCDInit
-               00453         extern _LCDUpdate
-               00454         extern _LCDErase
-               00455         extern _time_create
-               00456         extern _time_set
-               00457         extern _time_print
-               00458         extern __modsint
-               00459 ;--------------------------------------------------------
-               00460 ;       Equates to used internal registers
-               00461 ;--------------------------------------------------------
-  00000FD8     00462 STATUS  equ     0xfd8
-  00000FFA     00463 PCLATH  equ     0xffa
-  00000FFB     00464 PCLATU  equ     0xffb
-  00000FE8     00465 WREG    equ     0xfe8
-  00000FE0     00466 BSR     equ     0xfe0
-  00000FE9     00467 FSR0L   equ     0xfe9
-  00000FEA     00468 FSR0H   equ     0xfea
-  00000FE1     00469 FSR1L   equ     0xfe1
-  00000FD9     00470 FSR2L   equ     0xfd9
-  00000FE5     00471 POSTDEC1        equ     0xfe5
-  00000FE4     00472 PREINC1 equ     0xfe4
-  00000FDB     00473 PLUSW2  equ     0xfdb
-  00000FF3     00474 PRODL   equ     0xff3
-  00000FF4     00475 PRODH   equ     0xff4
-               00476 
-               00477 
-               00478         idata
-               00479 _counter        db      0x00, 0x00
+               00433         extern _INTCON2
+               00434         extern _INTCON
+               00435         extern _PROD
+               00436         extern _PRODL
+               00437         extern _PRODH
+               00438         extern _TABLAT
+               00439         extern _TBLPTR
+               00440         extern _TBLPTRL
+               00441         extern _TBLPTRH
+               00442         extern _TBLPTRU
+               00443         extern _PC
+               00444         extern _PCL
+               00445         extern _PCLATH
+               00446         extern _PCLATU
+               00447         extern _STKPTR
+               00448         extern _TOS
+               00449         extern _TOSL
+               00450         extern _TOSH
+               00451         extern _TOSU
+               00452         extern _sprintf
+               00453         extern _strlen
+               00454         extern _LCDInit
+               00455         extern _LCDUpdate
+               00456         extern _LCDErase
+               00457         extern _time_create
+               00458         extern _time_set
+               00459         extern _add_second
+               00460         extern _time_print
+               00461         extern __modsint
+               00462 ;--------------------------------------------------------
+               00463 ;       Equates to used internal registers
+               00464 ;--------------------------------------------------------
+  00000FD8     00465 STATUS  equ     0xfd8
+  00000FFA     00466 PCLATH  equ     0xffa
+  00000FFB     00467 PCLATU  equ     0xffb
+  00000FE8     00468 WREG    equ     0xfe8
+  00000FE0     00469 BSR     equ     0xfe0
+  00000FE9     00470 FSR0L   equ     0xfe9
+  00000FEA     00471 FSR0H   equ     0xfea
+  00000FE1     00472 FSR1L   equ     0xfe1
+  00000FD9     00473 FSR2L   equ     0xfd9
+  00000FE5     00474 POSTDEC1        equ     0xfe5
+  00000FE4     00475 PREINC1 equ     0xfe4
+  00000FDB     00476 PLUSW2  equ     0xfdb
+  00000FF3     00477 PRODL   equ     0xff3
+  00000FF4     00478 PRODH   equ     0xff4
+               00479 
                00480 
-               00481 
-               00482 ; Internal registers
-               00483 .registers      udata_ovr       0x0000
-               00484 r0x00   res     1
-               00485 r0x01   res     1
-               00486 r0x02   res     1
-gpasm-0.13.7 beta               objects/clock.asm11-15-2013  20:28:45         PAGE 10
+               00481         idata
+               00482 _overflow_counter       db      0x00, 0x00
+               00483 
+               00484 
+               00485 ; Internal registers
+               00486 .registers      udata_ovr       0x0000
+gpasm-0.13.7 beta               objects/clock.asm11-15-2013  20:41:57         PAGE 10
 
 
 LOC  OBJECT CODE     LINE SOURCE TEXT
   VALUE
  
-               00487 r0x03   res     1
-               00488 r0x04   res     1
-               00489 r0x05   res     1
-               00490 r0x06   res     1
-               00491 r0x07   res     1
-               00492 r0x08   res     1
-               00493 r0x09   res     1
-               00494 r0x0a   res     1
-               00495 r0x0b   res     1
-               00496 r0x0c   res     1
-               00497 
-               00498 udata_clock_0   udata
-               00499 __time  res     3
+               00487 r0x00   res     1
+               00488 r0x01   res     1
+               00489 r0x02   res     1
+               00490 r0x03   res     1
+               00491 r0x04   res     1
+               00492 r0x05   res     1
+               00493 r0x06   res     1
+               00494 r0x07   res     1
+               00495 r0x08   res     1
+               00496 r0x09   res     1
+               00497 r0x0a   res     1
+               00498 r0x0b   res     1
+               00499 r0x0c   res     1
                00500 
-               00501 udata_clock_1   udata
-               00502 _display_line   res     32
+               00501 udata_clock_0   udata
+               00502 __time  res     3
                00503 
-               00504 udata_clock_2   udata
-               00505 _to_double_digits_buffer_1_1    res     3
+               00504 udata_clock_1   udata
+               00505 _display_line   res     32
                00506 
-               00507 ;--------------------------------------------------------
-               00508 ; interrupt vector 
-               00509 ;--------------------------------------------------------
-               00510 
-               00511 ;--------------------------------------------------------
-               00512 ; global & static initialisations
-               00513 ;--------------------------------------------------------
-               00514 ; ; Starting pCode block for absolute section
-               00515 ; ;-----------------------------------------
-               00516 S_clock_ivec_0x1_lowPriorityInterruptHandler    code    0X000008
-0008 00517 ivec_0x1_lowPriorityInterruptHandler:
-0008 EF00 F000 00518         GOTO    _lowPriorityInterruptHandler
-               00519 
-               00520 ; I code from now on!
-               00521 ; ; Starting pCode block
-               00522 S_clock__main   code
-0000 00523 _main:
-               00524 ;       .line   31; src/clock.c _time = time_create();
-0000 EC00 F000 00525         CALL    _time_create
-0004 0000      00526         BANKSEL __time
-0006 6F00      00527         MOVWF   __time, B
-0008 CFF3 F000 00528         MOVFF   PRODL, (__time + 1)
-000C CFF4 F000 00529         MOVFF   PRODH, (__time + 2)
-               00530 ;       .line   33; src/clock.c init();
-0010 EC00 F000 00531         CALL    _init
-0014 0000      00532         BANKSEL (__time + 2)
-               00533 ;       .line   34; src/clock.c init_clock(_time);
-0016 5100      00534         MOVF    (__time + 2), W, B
-0018 6EE5      00535         MOVWF   POSTDEC1
-001A 0000      00536         BANKSEL (__time + 1)
-001C 5100      00537         MOVF    (__time + 1), W, B
-001E 6EE5      00538         MOVWF   POSTDEC1
-0020 0000      00539         BANKSEL __time
-0022 5100      00540         MOVF    __time, W, B
-gpasm-0.13.7 beta               objects/clock.asm11-15-2013  20:28:45         PAGE 11
+               00507 udata_clock_2   udata
+               00508 _to_double_digits_buffer_1_1    res     3
+               00509 
+               00510 ;--------------------------------------------------------
+               00511 ; interrupt vector 
+               00512 ;--------------------------------------------------------
+               00513 
+               00514 ;--------------------------------------------------------
+               00515 ; global & static initialisations
+               00516 ;--------------------------------------------------------
+               00517 ; ; Starting pCode block for absolute section
+               00518 ; ;-----------------------------------------
+               00519 S_clock_ivec_0x1_lowPriorityInterruptHandler    code    0X000008
+0008 00520 ivec_0x1_lowPriorityInterruptHandler:
+0008 EF00 F000 00521         GOTO    _lowPriorityInterruptHandler
+               00522 
+               00523 ; I code from now on!
+               00524 ; ; Starting pCode block
+               00525 S_clock__main   code
+0000 00526 _main:
+               00527 ;       .line   33; src/clock.c _time = time_create();
+0000 EC00 F000 00528         CALL    _time_create
+0004 0000      00529         BANKSEL __time
+0006 6F00      00530         MOVWF   __time, B
+0008 CFF3 F000 00531         MOVFF   PRODL, (__time + 1)
+000C CFF4 F000 00532         MOVFF   PRODH, (__time + 2)
+               00533 ;       .line   35; src/clock.c init();
+0010 EC00 F000 00534         CALL    _init
+0014 0000      00535         BANKSEL (__time + 2)
+               00536 ;       .line   36; src/clock.c init_clock(_time);
+0016 5100      00537         MOVF    (__time + 2), W, B
+0018 6EE5      00538         MOVWF   POSTDEC1
+001A 0000      00539         BANKSEL (__time + 1)
+001C 5100      00540         MOVF    (__time + 1), W, B
+gpasm-0.13.7 beta               objects/clock.asm11-15-2013  20:41:57         PAGE 11
 
 
 LOC  OBJECT CODE     LINE SOURCE TEXT
   VALUE
  
-0024 6EE5      00541         MOVWF   POSTDEC1
-0026 EC00 F000 00542         CALL    _init_clock
-002A 0E03      00543         MOVLW   0x03
-002C 26E1      00544         ADDWF   FSR1L, F
-               00545 ;       .line   35; src/clock.c time_print(_time, display_line);
-002E 0E00      00546         MOVLW   HIGH(_display_line)
-0030 6E00      00547         MOVWF   r0x01
-0032 0E00      00548         MOVLW   LOW(_display_line)
-0034 6E00      00549         MOVWF   r0x00
-0036 0E80      00550         MOVLW   0x80
-0038 6E00      00551         MOVWF   r0x02
-003A 5000      00552         MOVF    r0x02, W
-003C 6EE5      00553         MOVWF   POSTDEC1
-003E 5000      00554         MOVF    r0x01, W
-0040 6EE5      00555         MOVWF   POSTDEC1
-0042 5000      00556         MOVF    r0x00, W
-0044 6EE5      00557         MOVWF   POSTDEC1
-0046 0000      00558         BANKSEL (__time + 2)
-0048 5100      00559         MOVF    (__time + 2), W, B
-004A 6EE5      00560         MOVWF   POSTDEC1
-004C 0000      00561         BANKSEL (__time + 1)
-004E 5100      00562         MOVF    (__time + 1), W, B
-0050 6EE5      00563         MOVWF   POSTDEC1
-0052 0000      00564         BANKSEL __time
-0054 5100      00565         MOVF    __time, W, B
-0056 6EE5      00566         MOVWF   POSTDEC1
-0058 EC00 F000 00567         CALL    _time_print
-005C 0E06      00568         MOVLW   0x06
-005E 26E1      00569         ADDWF   FSR1L, F
-               00570 ;       .line   36; src/clock.c display_string(0, display_line);
-0060 0E00      00571         MOVLW   HIGH(_display_line)
-0062 6E00      00572         MOVWF   r0x01
-0064 0E00      00573         MOVLW   LOW(_display_line)
-0066 6E00      00574         MOVWF   r0x00
-0068 0E80      00575         MOVLW   0x80
-006A 6E00      00576         MOVWF   r0x02
-006C 5000      00577         MOVF    r0x02, W
-006E 6EE5      00578         MOVWF   POSTDEC1
-0070 5000      00579         MOVF    r0x01, W
-0072 6EE5      00580         MOVWF   POSTDEC1
-0074 5000      00581         MOVF    r0x00, W
-0076 6EE5      00582         MOVWF   POSTDEC1
-0078 0E00      00583         MOVLW   0x00
-007A 6EE5      00584         MOVWF   POSTDEC1
-007C EC00 F000 00585         CALL    _display_string
-0080 0E04      00586         MOVLW   0x04
-0082 26E1      00587         ADDWF   FSR1L, F
-               00588 ;       .line   37; src/clock.c return 0;
-0084 6AF3      00589         CLRF    PRODL
-0086 6AE8      00590         CLRF    WREG
-0088 0012      00591         RETURN  
-               00592 
-               00593 ; ; Starting pCode block
-               00594 S_clock__init   code
-gpasm-0.13.7 beta               objects/clock.asm11-15-2013  20:28:45         PAGE 12
+001E 6EE5      00541         MOVWF   POSTDEC1
+0020 0000      00542         BANKSEL __time
+0022 5100      00543         MOVF    __time, W, B
+0024 6EE5      00544         MOVWF   POSTDEC1
+0026 EC00 F000 00545         CALL    _init_clock
+002A 0E03      00546         MOVLW   0x03
+002C 26E1      00547         ADDWF   FSR1L, F
+               00548 ;       .line   37; src/clock.c update_display();
+002E EC00 F000 00549         CALL    _update_display
+               00550 ;       .line   38; src/clock.c return 0;
+0032 6AF3      00551         CLRF    PRODL
+0034 6AE8      00552         CLRF    WREG
+0036 0012      00553         RETURN  
+               00554 
+               00555 ; ; Starting pCode block
+               00556 S_clock__init   code
+0000 00557 _init:
+               00558 ;       .line   109; src/clock.c        void init(void){
+0000 CFD9 FFE5 00559         MOVFF   FSR2L, POSTDEC1
+0004 CFE1 FFD9 00560         MOVFF   FSR1L, FSR2L
+               00561 ;       .line   111; src/clock.c        LCDInit();
+0008 EC00 F000 00562         CALL    _LCDInit
+               00563 ;       .line   114; src/clock.c        INTCONbits.GIE = 1;
+000C 8E00      00564         BSF     _INTCONbits, 7
+               00565 ;       .line   115; src/clock.c        INTCONbits.PEIE = 1;
+000E 8C00      00566         BSF     _INTCONbits, 6
+               00567 ;       .line   118; src/clock.c        T0CONbits.TMR0ON = 0;
+0010 9E00      00568         BCF     _T0CONbits, 7
+               00569 ;       .line   121; src/clock.c        TMR0H = 0x00000000;
+0012 6A00      00570         CLRF    _TMR0H
+               00571 ;       .line   122; src/clock.c        TMR0L = 0x00000000;
+0014 6A00      00572         CLRF    _TMR0L
+               00573 ;       .line   125; src/clock.c        T0CONbits.T08BIT = 0;
+0016 9C00      00574         BCF     _T0CONbits, 6
+               00575 ;       .line   128; src/clock.c        T0CONbits.T0CS = 0;
+0018 9A00      00576         BCF     _T0CONbits, 5
+               00577 ;       .line   131; src/clock.c        T0CONbits.PSA = 1;
+001A 8600      00578         BSF     _T0CONbits, 3
+               00579 ;       .line   134; src/clock.c        INTCONbits.TMR0IE = 1;
+001C 8A00      00580         BSF     _INTCONbits, 5
+               00581 ;       .line   143; src/clock.c        LED0_TRIS = 0;
+001E 9000      00582         BCF     _TRISJbits, 0
+               00583 ;       .line   144; src/clock.c        LED1_TRIS = 0;   
+0020 9200      00584         BCF     _TRISJbits, 1
+               00585 ;       .line   145; src/clock.c        LED2_TRIS = 0;
+0022 9400      00586         BCF     _TRISJbits, 2
+               00587 ;       .line   146; src/clock.c        LED3_TRIS = 0;
+0024 9A00      00588         BCF     _TRISGbits, 5
+               00589 ;       .line   149; src/clock.c        LED0_IO = 0;    
+0026 9000      00590         BCF     _LATJbits, 0
+               00591 ;       .line   150; src/clock.c        LED3_IO = 1;
+0028 8A00      00592         BSF     _PORTGbits, 5
+002A CFE4 FFD9 00593         MOVFF   PREINC1, FSR2L
+002E 0012      00594         RETURN  
+gpasm-0.13.7 beta               objects/clock.asm11-15-2013  20:41:57         PAGE 12
 
 
 LOC  OBJECT CODE     LINE SOURCE TEXT
   VALUE
  
-0000 00595 _init:
-               00596 ;       .line   97; src/clock.c void init(void){
-0000 CFD9 FFE5 00597         MOVFF   FSR2L, POSTDEC1
-0004 CFE1 FFD9 00598         MOVFF   FSR1L, FSR2L
-               00599 ;       .line   99; src/clock.c LCDInit();
-0008 EC00 F000 00600         CALL    _LCDInit
-               00601 ;       .line   102; src/clock.c        INTCONbits.GIE = 1;
-000C 8E00      00602         BSF     _INTCONbits, 7
-               00603 ;       .line   103; src/clock.c        INTCONbits.PEIE = 1;
-000E 8C00      00604         BSF     _INTCONbits, 6
-               00605 ;       .line   106; src/clock.c        T0CONbits.TMR0ON = 0;
-0010 9E00      00606         BCF     _T0CONbits, 7
-               00607 ;       .line   109; src/clock.c        TMR0H = 0x00000000;
-0012 6A00      00608         CLRF    _TMR0H
-               00609 ;       .line   110; src/clock.c        TMR0L = 0x00000000;
-0014 6A00      00610         CLRF    _TMR0L
-               00611 ;       .line   113; src/clock.c        T0CONbits.T08BIT = 0;
-0016 9C00      00612         BCF     _T0CONbits, 6
-               00613 ;       .line   116; src/clock.c        T0CONbits.T0CS = 0;
-0018 9A00      00614         BCF     _T0CONbits, 5
-               00615 ;       .line   119; src/clock.c        T0CONbits.PSA = 1;
-001A 8600      00616         BSF     _T0CONbits, 3
-               00617 ;       .line   122; src/clock.c        INTCONbits.TMR0IE = 1;
-001C 8A00      00618         BSF     _INTCONbits, 5
-               00619 ;       .line   123; src/clock.c        T0CONbits.TMR0ON = 1;
-001E 8E00      00620         BSF     _T0CONbits, 7
-               00621 ;       .line   132; src/clock.c        LED3_TRIS = 0;
-0020 9A00      00622         BCF     _TRISGbits, 5
-               00623 ;       .line   133; src/clock.c        LED3_IO = 1;
-0022 8A00      00624         BSF     _PORTGbits, 5
-0024 CFE4 FFD9 00625         MOVFF   PREINC1, FSR2L
-0028 0012      00626         RETURN  
-               00627 
-               00628 ; ; Starting pCode block
-               00629 S_clock__lowPriorityInterruptHandler    code
-0000 00630 _lowPriorityInterruptHandler:
-               00631 ;       .line   91; src/clock.c void lowPriorityInterruptHandler (void) __interrupt(1){
-0000 CFE8 FFE5 00632         MOVFF   WREG, POSTDEC1
-0004 CFD8 FFE5 00633         MOVFF   STATUS, POSTDEC1
-0008 CFE0 FFE5 00634         MOVFF   BSR, POSTDEC1
-000C CFF3 FFE5 00635         MOVFF   PRODL, POSTDEC1
-0010 CFF4 FFE5 00636         MOVFF   PRODH, POSTDEC1
-0014 CFE9 FFE5 00637         MOVFF   FSR0L, POSTDEC1
-0018 CFEA FFE5 00638         MOVFF   FSR0H, POSTDEC1
-001C CFFA FFE5 00639         MOVFF   PCLATH, POSTDEC1
-0020 CFFB FFE5 00640         MOVFF   PCLATU, POSTDEC1
-0024 CFD9 FFE5 00641         MOVFF   FSR2L, POSTDEC1
-0028 CFE1 FFD9 00642         MOVFF   FSR1L, FSR2L
-002C C000 FFE5 00643         MOVFF   r0x00, POSTDEC1
-               00644 ;       .line   92; src/clock.c if (INTCONbits.TMR0IF == 1) {
-0030 6A00      00645         CLRF    r0x00
-0032 B400      00646         BTFSC   _INTCONbits, 2
-0034 2A00      00647         INCF    r0x00, F
-0036 5000      00648         MOVF    r0x00, W
-gpasm-0.13.7 beta               objects/clock.asm11-15-2013  20:28:45         PAGE 13
+               00595 
+               00596 ; ; Starting pCode block
+               00597 S_clock__lowPriorityInterruptHandler    code
+0000 00598 _lowPriorityInterruptHandler:
+               00599 ;       .line   94; src/clock.c void lowPriorityInterruptHandler (void) __interrupt(1){
+0000 CFE8 FFE5 00600         MOVFF   WREG, POSTDEC1
+0004 CFD8 FFE5 00601         MOVFF   STATUS, POSTDEC1
+0008 CFE0 FFE5 00602         MOVFF   BSR, POSTDEC1
+000C CFF3 FFE5 00603         MOVFF   PRODL, POSTDEC1
+0010 CFF4 FFE5 00604         MOVFF   PRODH, POSTDEC1
+0014 CFE9 FFE5 00605         MOVFF   FSR0L, POSTDEC1
+0018 CFEA FFE5 00606         MOVFF   FSR0H, POSTDEC1
+001C CFFA FFE5 00607         MOVFF   PCLATH, POSTDEC1
+0020 CFFB FFE5 00608         MOVFF   PCLATU, POSTDEC1
+0024 CFD9 FFE5 00609         MOVFF   FSR2L, POSTDEC1
+0028 CFE1 FFD9 00610         MOVFF   FSR1L, FSR2L
+002C C000 FFE5 00611         MOVFF   r0x00, POSTDEC1
+               00612 ;       .line   95; src/clock.c if (INTCONbits.TMR0IF == 1) {
+0030 6A00      00613         CLRF    r0x00
+0032 B400      00614         BTFSC   _INTCONbits, 2
+0034 2A00      00615         INCF    r0x00, F
+0036 5000      00616         MOVF    r0x00, W
+0038 0A01      00617         XORLW   0x01
+003A E100      00618         BNZ     _00175_DS_
+003C 00619 _00181_DS_:
+003C 0000      00620         BANKSEL _overflow_counter
+               00621 ;       .line   96; src/clock.c overflow_counter++;
+003E 2B00      00622         INCF    _overflow_counter, F, B
+0040 E300      00623         BNC     _10190_DS_
+0042 0000      00624         BANKSEL (_overflow_counter + 1)
+0044 2B00      00625         INCF    (_overflow_counter + 1), F, B
+0046 00626 _10190_DS_:
+0046 0000      00627         BANKSEL _overflow_counter
+               00628 ;       .line   97; src/clock.c if(overflow_counter == 50){
+0048 5100      00629         MOVF    _overflow_counter, W, B
+004A 0A32      00630         XORLW   0x32
+004C E100      00631         BNZ     _00182_DS_
+004E 0000      00632         BANKSEL (_overflow_counter + 1)
+0050 5100      00633         MOVF    (_overflow_counter + 1), W, B
+0052 E000      00634         BZ      _00183_DS_
+0054 00635 _00182_DS_:
+0054 D000      00636         BRA     _00171_DS_
+0056 00637 _00183_DS_:
+               00638 ;       .line   98; src/clock.c toggle_led();
+0056 EC00 F000 00639         CALL    _toggle_led
+005A D000      00640         BRA     _00172_DS_
+005C 00641 _00171_DS_:
+005C 0000      00642         BANKSEL _overflow_counter
+               00643 ;       .line   99; src/clock.c }else if(overflow_counter == 100){
+005E 5100      00644         MOVF    _overflow_counter, W, B
+0060 0A64      00645         XORLW   0x64
+0062 E100      00646         BNZ     _00184_DS_
+0064 0000      00647         BANKSEL (_overflow_counter + 1)
+0066 5100      00648         MOVF    (_overflow_counter + 1), W, B
+gpasm-0.13.7 beta               objects/clock.asm11-15-2013  20:41:57         PAGE 13
 
 
 LOC  OBJECT CODE     LINE SOURCE TEXT
   VALUE
  
-0038 0A01      00649         XORLW   0x01
-003A E100      00650         BNZ     _00160_DS_
-               00651 ;       .line   93; src/clock.c INTCONbits.TMR0IF = 0;
-003C 9400      00652         BCF     _INTCONbits, 2
-003E 00653 _00160_DS_:
-003E CFE4 F000 00654         MOVFF   PREINC1, r0x00
-0042 CFE4 FFD9 00655         MOVFF   PREINC1, FSR2L
-0046 CFE4 FFFB 00656         MOVFF   PREINC1, PCLATU
-004A CFE4 FFFA 00657         MOVFF   PREINC1, PCLATH
-004E CFE4 FFEA 00658         MOVFF   PREINC1, FSR0H
-0052 CFE4 FFE9 00659         MOVFF   PREINC1, FSR0L
-0056 CFE4 FFF4 00660         MOVFF   PREINC1, PRODH
-005A CFE4 FFF3 00661         MOVFF   PREINC1, PRODL
-005E CFE4 FFE0 00662         MOVFF   PREINC1, BSR
-0062 CFE4 FFD8 00663         MOVFF   PREINC1, STATUS
-0066 CFE4 FFE8 00664         MOVFF   PREINC1, WREG
-006A 0010      00665         RETFIE  
-               00666 
-               00667 ; ; Starting pCode block
-               00668 S_clock__to_double_digits       code
-0000 00669 _to_double_digits:
-               00670 ;       .line   76; src/clock.c char* to_double_digits(int value){
-0000 CFD9 FFE5 00671         MOVFF   FSR2L, POSTDEC1
-0004 CFE1 FFD9 00672         MOVFF   FSR1L, FSR2L
-0008 C000 FFE5 00673         MOVFF   r0x00, POSTDEC1
-000C C000 FFE5 00674         MOVFF   r0x01, POSTDEC1
-0010 C000 FFE5 00675         MOVFF   r0x02, POSTDEC1
-0014 C000 FFE5 00676         MOVFF   r0x03, POSTDEC1
-0018 C000 FFE5 00677         MOVFF   r0x04, POSTDEC1
-001C 0E02      00678         MOVLW   0x02
-001E CFDB F000 00679         MOVFF   PLUSW2, r0x00
-0022 0E03      00680         MOVLW   0x03
-0024 CFDB F000 00681         MOVFF   PLUSW2, r0x01
-               00682 ;       .line   78; src/clock.c sprintf(buffer, "%02d", value);
-0028 0E00      00683         MOVLW   HIGH(_to_double_digits_buffer_1_1)
-002A 6E00      00684         MOVWF   r0x03
-002C 0E00      00685         MOVLW   LOW(_to_double_digits_buffer_1_1)
-002E 6E00      00686         MOVWF   r0x02
-0030 0E80      00687         MOVLW   0x80
-0032 6E00      00688         MOVWF   r0x04
-0034 5000      00689         MOVF    r0x01, W
-0036 6EE5      00690         MOVWF   POSTDEC1
-0038 5000      00691         MOVF    r0x00, W
-003A 6EE5      00692         MOVWF   POSTDEC1
-003C 0E00      00693         MOVLW   UPPER(__str_3)
-003E 6EE5      00694         MOVWF   POSTDEC1
-0040 0E00      00695         MOVLW   HIGH(__str_3)
-0042 6EE5      00696         MOVWF   POSTDEC1
-0044 0E00      00697         MOVLW   LOW(__str_3)
-0046 6EE5      00698         MOVWF   POSTDEC1
-0048 5000      00699         MOVF    r0x04, W
-004A 6EE5      00700         MOVWF   POSTDEC1
-004C 5000      00701         MOVF    r0x03, W
-004E 6EE5      00702         MOVWF   POSTDEC1
-gpasm-0.13.7 beta               objects/clock.asm11-15-2013  20:28:45         PAGE 14
+0068 E000      00649         BZ      _00185_DS_
+006A 00650 _00184_DS_:
+006A D000      00651         BRA     _00172_DS_
+006C 00652 _00185_DS_:
+006C 0000      00653         BANKSEL _overflow_counter
+               00654 ;       .line   100; src/clock.c        overflow_counter = 0;
+006E 6B00      00655         CLRF    _overflow_counter, B
+0070 0000      00656         BANKSEL (_overflow_counter + 1)
+0072 6B00      00657         CLRF    (_overflow_counter + 1), B
+               00658 ;       .line   101; src/clock.c        toggle_led();
+0074 EC00 F000 00659         CALL    _toggle_led
+0078 0000      00660         BANKSEL (__time + 2)
+               00661 ;       .line   102; src/clock.c        add_second(_time);
+007A 5100      00662         MOVF    (__time + 2), W, B
+007C 6EE5      00663         MOVWF   POSTDEC1
+007E 0000      00664         BANKSEL (__time + 1)
+0080 5100      00665         MOVF    (__time + 1), W, B
+0082 6EE5      00666         MOVWF   POSTDEC1
+0084 0000      00667         BANKSEL __time
+0086 5100      00668         MOVF    __time, W, B
+0088 6EE5      00669         MOVWF   POSTDEC1
+008A EC00 F000 00670         CALL    _add_second
+008E 0E03      00671         MOVLW   0x03
+0090 26E1      00672         ADDWF   FSR1L, F
+               00673 ;       .line   103; src/clock.c        update_display();
+0092 EC00 F000 00674         CALL    _update_display
+0096 00675 _00172_DS_:
+               00676 ;       .line   105; src/clock.c        INTCONbits.TMR0IF = 0;
+0096 9400      00677         BCF     _INTCONbits, 2
+0098 00678 _00175_DS_:
+0098 CFE4 F000 00679         MOVFF   PREINC1, r0x00
+009C CFE4 FFD9 00680         MOVFF   PREINC1, FSR2L
+00A0 CFE4 FFFB 00681         MOVFF   PREINC1, PCLATU
+00A4 CFE4 FFFA 00682         MOVFF   PREINC1, PCLATH
+00A8 CFE4 FFEA 00683         MOVFF   PREINC1, FSR0H
+00AC CFE4 FFE9 00684         MOVFF   PREINC1, FSR0L
+00B0 CFE4 FFF4 00685         MOVFF   PREINC1, PRODH
+00B4 CFE4 FFF3 00686         MOVFF   PREINC1, PRODL
+00B8 CFE4 FFE0 00687         MOVFF   PREINC1, BSR
+00BC CFE4 FFD8 00688         MOVFF   PREINC1, STATUS
+00C0 CFE4 FFE8 00689         MOVFF   PREINC1, WREG
+00C4 0010      00690         RETFIE  
+               00691 
+               00692 ; ; Starting pCode block
+               00693 S_clock__to_double_digits       code
+0000 00694 _to_double_digits:
+               00695 ;       .line   88; src/clock.c char* to_double_digits(int value){
+0000 CFD9 FFE5 00696         MOVFF   FSR2L, POSTDEC1
+0004 CFE1 FFD9 00697         MOVFF   FSR1L, FSR2L
+0008 C000 FFE5 00698         MOVFF   r0x00, POSTDEC1
+000C C000 FFE5 00699         MOVFF   r0x01, POSTDEC1
+0010 C000 FFE5 00700         MOVFF   r0x02, POSTDEC1
+0014 C000 FFE5 00701         MOVFF   r0x03, POSTDEC1
+0018 C000 FFE5 00702         MOVFF   r0x04, POSTDEC1
+gpasm-0.13.7 beta               objects/clock.asm11-15-2013  20:41:57         PAGE 14
 
 
 LOC  OBJECT CODE     LINE SOURCE TEXT
   VALUE
  
-0050 5000      00703         MOVF    r0x02, W
-0052 6EE5      00704         MOVWF   POSTDEC1
-0054 EC00 F000 00705         CALL    _sprintf
-0058 0E08      00706         MOVLW   0x08
-005A 26E1      00707         ADDWF   FSR1L, F
-               00708 ;       .line   79; src/clock.c return buffer;
-005C 0E00      00709         MOVLW   HIGH(_to_double_digits_buffer_1_1)
-005E 6E00      00710         MOVWF   r0x01
-0060 0E00      00711         MOVLW   LOW(_to_double_digits_buffer_1_1)
-0062 6E00      00712         MOVWF   r0x00
-0064 0E80      00713         MOVLW   0x80
-0066 6E00      00714         MOVWF   r0x02
-0068 C000 FFF4 00715         MOVFF   r0x02, PRODH
-006C C000 FFF3 00716         MOVFF   r0x01, PRODL
-0070 5000      00717         MOVF    r0x00, W
-0072 CFE4 F000 00718         MOVFF   PREINC1, r0x04
-0076 CFE4 F000 00719         MOVFF   PREINC1, r0x03
-007A CFE4 F000 00720         MOVFF   PREINC1, r0x02
-007E CFE4 F000 00721         MOVFF   PREINC1, r0x01
-0082 CFE4 F000 00722         MOVFF   PREINC1, r0x00
-0086 CFE4 FFD9 00723         MOVFF   PREINC1, FSR2L
-008A 0012      00724         RETURN  
-               00725 
-               00726 ; ; Starting pCode block
-               00727 S_clock__display_string code
-0000 00728 _display_string:
-               00729 ;       .line   65; src/clock.c void display_string(BYTE pos, char* text){
-0000 CFD9 FFE5 00730         MOVFF   FSR2L, POSTDEC1
-0004 CFE1 FFD9 00731         MOVFF   FSR1L, FSR2L
-0008 C000 FFE5 00732         MOVFF   r0x00, POSTDEC1
-000C C000 FFE5 00733         MOVFF   r0x01, POSTDEC1
-0010 C000 FFE5 00734         MOVFF   r0x02, POSTDEC1
-0014 C000 FFE5 00735         MOVFF   r0x03, POSTDEC1
-0018 C000 FFE5 00736         MOVFF   r0x04, POSTDEC1
-001C C000 FFE5 00737         MOVFF   r0x05, POSTDEC1
-0020 C000 FFE5 00738         MOVFF   r0x06, POSTDEC1
-0024 C000 FFE5 00739         MOVFF   r0x07, POSTDEC1
-0028 C000 FFE5 00740         MOVFF   r0x08, POSTDEC1
-002C C000 FFE5 00741         MOVFF   r0x09, POSTDEC1
-0030 0E02      00742         MOVLW   0x02
-0032 CFDB F000 00743         MOVFF   PLUSW2, r0x00
-0036 0E03      00744         MOVLW   0x03
-0038 CFDB F000 00745         MOVFF   PLUSW2, r0x01
-003C 0E04      00746         MOVLW   0x04
-003E CFDB F000 00747         MOVFF   PLUSW2, r0x02
-0042 0E05      00748         MOVLW   0x05
-0044 CFDB F000 00749         MOVFF   PLUSW2, r0x03
-               00750 ;       .line   66; src/clock.c BYTE        l = strlen(text);
-0048 5000      00751         MOVF    r0x03, W
-004A 6EE5      00752         MOVWF   POSTDEC1
-004C 5000      00753         MOVF    r0x02, W
-004E 6EE5      00754         MOVWF   POSTDEC1
-0050 5000      00755         MOVF    r0x01, W
-0052 6EE5      00756         MOVWF   POSTDEC1
-gpasm-0.13.7 beta               objects/clock.asm11-15-2013  20:28:45         PAGE 15
+001C 0E02      00703         MOVLW   0x02
+001E CFDB F000 00704         MOVFF   PLUSW2, r0x00
+0022 0E03      00705         MOVLW   0x03
+0024 CFDB F000 00706         MOVFF   PLUSW2, r0x01
+               00707 ;       .line   90; src/clock.c sprintf(buffer, "%02d", value);
+0028 0E00      00708         MOVLW   HIGH(_to_double_digits_buffer_1_1)
+002A 6E00      00709         MOVWF   r0x03
+002C 0E00      00710         MOVLW   LOW(_to_double_digits_buffer_1_1)
+002E 6E00      00711         MOVWF   r0x02
+0030 0E80      00712         MOVLW   0x80
+0032 6E00      00713         MOVWF   r0x04
+0034 5000      00714         MOVF    r0x01, W
+0036 6EE5      00715         MOVWF   POSTDEC1
+0038 5000      00716         MOVF    r0x00, W
+003A 6EE5      00717         MOVWF   POSTDEC1
+003C 0E00      00718         MOVLW   UPPER(__str_3)
+003E 6EE5      00719         MOVWF   POSTDEC1
+0040 0E00      00720         MOVLW   HIGH(__str_3)
+0042 6EE5      00721         MOVWF   POSTDEC1
+0044 0E00      00722         MOVLW   LOW(__str_3)
+0046 6EE5      00723         MOVWF   POSTDEC1
+0048 5000      00724         MOVF    r0x04, W
+004A 6EE5      00725         MOVWF   POSTDEC1
+004C 5000      00726         MOVF    r0x03, W
+004E 6EE5      00727         MOVWF   POSTDEC1
+0050 5000      00728         MOVF    r0x02, W
+0052 6EE5      00729         MOVWF   POSTDEC1
+0054 EC00 F000 00730         CALL    _sprintf
+0058 0E08      00731         MOVLW   0x08
+005A 26E1      00732         ADDWF   FSR1L, F
+               00733 ;       .line   91; src/clock.c return buffer;
+005C 0E00      00734         MOVLW   HIGH(_to_double_digits_buffer_1_1)
+005E 6E00      00735         MOVWF   r0x01
+0060 0E00      00736         MOVLW   LOW(_to_double_digits_buffer_1_1)
+0062 6E00      00737         MOVWF   r0x00
+0064 0E80      00738         MOVLW   0x80
+0066 6E00      00739         MOVWF   r0x02
+0068 C000 FFF4 00740         MOVFF   r0x02, PRODH
+006C C000 FFF3 00741         MOVFF   r0x01, PRODL
+0070 5000      00742         MOVF    r0x00, W
+0072 CFE4 F000 00743         MOVFF   PREINC1, r0x04
+0076 CFE4 F000 00744         MOVFF   PREINC1, r0x03
+007A CFE4 F000 00745         MOVFF   PREINC1, r0x02
+007E CFE4 F000 00746         MOVFF   PREINC1, r0x01
+0082 CFE4 F000 00747         MOVFF   PREINC1, r0x00
+0086 CFE4 FFD9 00748         MOVFF   PREINC1, FSR2L
+008A 0012      00749         RETURN  
+               00750 
+               00751 ; ; Starting pCode block
+               00752 S_clock__display_string code
+0000 00753 _display_string:
+               00754 ;       .line   77; src/clock.c void display_string(BYTE pos, char* text){
+0000 CFD9 FFE5 00755         MOVFF   FSR2L, POSTDEC1
+0004 CFE1 FFD9 00756         MOVFF   FSR1L, FSR2L
+gpasm-0.13.7 beta               objects/clock.asm11-15-2013  20:41:57         PAGE 15
 
 
 LOC  OBJECT CODE     LINE SOURCE TEXT
   VALUE
  
-0054 EC00 F000 00757         CALL    _strlen
-0058 6E00      00758         MOVWF   r0x04
-005A CFF3 F000 00759         MOVFF   PRODL, r0x05
-005E 0E03      00760         MOVLW   0x03
-0060 26E1      00761         ADDWF   FSR1L, F
-               00762 ;       .line   67; src/clock.c BYTE      max = 32-pos;    
-0062 5000      00763         MOVF    r0x00, W
-0064 0820      00764         SUBLW   0x20
-0066 6E00      00765         MOVWF   r0x05
-               00766 ;       .line   68; src/clock.c char       *d = (char*)&LCDText[pos];
-0068 6A00      00767         CLRF    r0x06
-006A 0E00      00768         MOVLW   LOW(_LCDText)
-006C 2600      00769         ADDWF   r0x00, F
-006E 0E00      00770         MOVLW   HIGH(_LCDText)
-0070 2200      00771         ADDWFC  r0x06, F
-0072 5000      00772         MOVF    r0x06, W
-0074 6E00      00773         MOVWF   r0x06
-0076 5000      00774         MOVF    r0x00, W
-0078 6E00      00775         MOVWF   r0x00
-007A 0E80      00776         MOVLW   0x80
-007C 6E00      00777         MOVWF   r0x07
-               00778 ;       .line   70; src/clock.c size_t      n = (l<max)?l:max;
-007E 5000      00779         MOVF    r0x05, W
-0080 5C00      00780         SUBWF   r0x04, W
-0082 E300      00781         BNC     _00143_DS_
-0084 C000 F000 00782         MOVFF   r0x05, r0x04
-0088 00783 _00143_DS_:
-0088 6A00      00784         CLRF    r0x05
-               00785 ;       .line   71; src/clock.c if (n != 0)
-008A 5000      00786         MOVF    r0x04, W
-008C 1000      00787         IORWF   r0x05, W
-008E E000      00788         BZ      _00139_DS_
-0090 00789 _00135_DS_:
-               00790 ;       .line   72; src/clock.c while (n-- != 0)*d++ = *s++;
-0090 C000 F000 00791         MOVFF   r0x04, r0x08
-0094 C000 F000 00792         MOVFF   r0x05, r0x09
-0098 0EFF      00793         MOVLW   0xff
-009A 2600      00794         ADDWF   r0x04, F
-009C A0D8      00795         BTFSS   STATUS, 0
-009E 0600      00796         DECF    r0x05, F
-00A0 5000      00797         MOVF    r0x08, W
-00A2 1000      00798         IORWF   r0x09, W
-00A4 E000      00799         BZ      _00139_DS_
-00A6 C000 FFE9 00800         MOVFF   r0x01, FSR0L
-00AA C000 FFF3 00801         MOVFF   r0x02, PRODL
-00AE 5000      00802         MOVF    r0x03, W
-00B0 EC00 F000 00803         CALL    __gptrget1
-00B4 6E00      00804         MOVWF   r0x08
-00B6 2A00      00805         INCF    r0x01, F
-00B8 B0D8      00806         BTFSC   STATUS, 0
-00BA 2A00      00807         INCF    r0x02, F
-00BC B0D8      00808         BTFSC   STATUS, 0
-00BE 2A00      00809         INCF    r0x03, F
-00C0 C000 FFE5 00810         MOVFF   r0x08, POSTDEC1
-gpasm-0.13.7 beta               objects/clock.asm11-15-2013  20:28:45         PAGE 16
+0008 C000 FFE5 00757         MOVFF   r0x00, POSTDEC1
+000C C000 FFE5 00758         MOVFF   r0x01, POSTDEC1
+0010 C000 FFE5 00759         MOVFF   r0x02, POSTDEC1
+0014 C000 FFE5 00760         MOVFF   r0x03, POSTDEC1
+0018 C000 FFE5 00761         MOVFF   r0x04, POSTDEC1
+001C C000 FFE5 00762         MOVFF   r0x05, POSTDEC1
+0020 C000 FFE5 00763         MOVFF   r0x06, POSTDEC1
+0024 C000 FFE5 00764         MOVFF   r0x07, POSTDEC1
+0028 C000 FFE5 00765         MOVFF   r0x08, POSTDEC1
+002C C000 FFE5 00766         MOVFF   r0x09, POSTDEC1
+0030 0E02      00767         MOVLW   0x02
+0032 CFDB F000 00768         MOVFF   PLUSW2, r0x00
+0036 0E03      00769         MOVLW   0x03
+0038 CFDB F000 00770         MOVFF   PLUSW2, r0x01
+003C 0E04      00771         MOVLW   0x04
+003E CFDB F000 00772         MOVFF   PLUSW2, r0x02
+0042 0E05      00773         MOVLW   0x05
+0044 CFDB F000 00774         MOVFF   PLUSW2, r0x03
+               00775 ;       .line   78; src/clock.c BYTE        l = strlen(text);
+0048 5000      00776         MOVF    r0x03, W
+004A 6EE5      00777         MOVWF   POSTDEC1
+004C 5000      00778         MOVF    r0x02, W
+004E 6EE5      00779         MOVWF   POSTDEC1
+0050 5000      00780         MOVF    r0x01, W
+0052 6EE5      00781         MOVWF   POSTDEC1
+0054 EC00 F000 00782         CALL    _strlen
+0058 6E00      00783         MOVWF   r0x04
+005A CFF3 F000 00784         MOVFF   PRODL, r0x05
+005E 0E03      00785         MOVLW   0x03
+0060 26E1      00786         ADDWF   FSR1L, F
+               00787 ;       .line   79; src/clock.c BYTE      max = 32-pos;    
+0062 5000      00788         MOVF    r0x00, W
+0064 0820      00789         SUBLW   0x20
+0066 6E00      00790         MOVWF   r0x05
+               00791 ;       .line   80; src/clock.c char       *d = (char*)&LCDText[pos];
+0068 6A00      00792         CLRF    r0x06
+006A 0E00      00793         MOVLW   LOW(_LCDText)
+006C 2600      00794         ADDWF   r0x00, F
+006E 0E00      00795         MOVLW   HIGH(_LCDText)
+0070 2200      00796         ADDWFC  r0x06, F
+0072 5000      00797         MOVF    r0x06, W
+0074 6E00      00798         MOVWF   r0x06
+0076 5000      00799         MOVF    r0x00, W
+0078 6E00      00800         MOVWF   r0x00
+007A 0E80      00801         MOVLW   0x80
+007C 6E00      00802         MOVWF   r0x07
+               00803 ;       .line   82; src/clock.c size_t      n = (l<max)?l:max;
+007E 5000      00804         MOVF    r0x05, W
+0080 5C00      00805         SUBWF   r0x04, W
+0082 E300      00806         BNC     _00153_DS_
+0084 C000 F000 00807         MOVFF   r0x05, r0x04
+0088 00808 _00153_DS_:
+0088 6A00      00809         CLRF    r0x05
+               00810 ;       .line   83; src/clock.c if (n != 0)
+gpasm-0.13.7 beta               objects/clock.asm11-15-2013  20:41:57         PAGE 16
 
 
 LOC  OBJECT CODE     LINE SOURCE TEXT
   VALUE
  
-00C4 C000 FFE9 00811         MOVFF   r0x00, FSR0L
-00C8 C000 FFF3 00812         MOVFF   r0x06, PRODL
-00CC 5000      00813         MOVF    r0x07, W
-00CE EC00 F000 00814         CALL    __gptrput1
-00D2 2A00      00815         INCF    r0x00, F
-00D4 B0D8      00816         BTFSC   STATUS, 0
-00D6 2A00      00817         INCF    r0x06, F
-00D8 B0D8      00818         BTFSC   STATUS, 0
-00DA 2A00      00819         INCF    r0x07, F
-00DC D000      00820         BRA     _00135_DS_
-00DE 00821 _00139_DS_:
-               00822 ;       .line   73; src/clock.c LCDUpdate();
-00DE EC00 F000 00823         CALL    _LCDUpdate
-00E2 CFE4 F000 00824         MOVFF   PREINC1, r0x09
-00E6 CFE4 F000 00825         MOVFF   PREINC1, r0x08
-00EA CFE4 F000 00826         MOVFF   PREINC1, r0x07
-00EE CFE4 F000 00827         MOVFF   PREINC1, r0x06
-00F2 CFE4 F000 00828         MOVFF   PREINC1, r0x05
-00F6 CFE4 F000 00829         MOVFF   PREINC1, r0x04
-00FA CFE4 F000 00830         MOVFF   PREINC1, r0x03
-00FE CFE4 F000 00831         MOVFF   PREINC1, r0x02
-0102 CFE4 F000 00832         MOVFF   PREINC1, r0x01
-0106 CFE4 F000 00833         MOVFF   PREINC1, r0x00
-010A CFE4 FFD9 00834         MOVFF   PREINC1, FSR2L
-010E 0012      00835         RETURN  
-               00836 
-               00837 ; ; Starting pCode block
-               00838 S_clock__get_input      code
-0000 00839 _get_input:
-               00840 ;       .line   48; src/clock.c int get_input(int maxvalue, char *text){
-0000 CFD9 FFE5 00841         MOVFF   FSR2L, POSTDEC1
-0004 CFE1 FFD9 00842         MOVFF   FSR1L, FSR2L
-0008 C000 FFE5 00843         MOVFF   r0x00, POSTDEC1
-000C C000 FFE5 00844         MOVFF   r0x01, POSTDEC1
-0010 C000 FFE5 00845         MOVFF   r0x02, POSTDEC1
-0014 C000 FFE5 00846         MOVFF   r0x03, POSTDEC1
-0018 C000 FFE5 00847         MOVFF   r0x04, POSTDEC1
-001C C000 FFE5 00848         MOVFF   r0x05, POSTDEC1
-0020 C000 FFE5 00849         MOVFF   r0x06, POSTDEC1
-0024 C000 FFE5 00850         MOVFF   r0x07, POSTDEC1
-0028 C000 FFE5 00851         MOVFF   r0x08, POSTDEC1
-002C C000 FFE5 00852         MOVFF   r0x09, POSTDEC1
-0030 C000 FFE5 00853         MOVFF   r0x0a, POSTDEC1
-0034 C000 FFE5 00854         MOVFF   r0x0b, POSTDEC1
-0038 C000 FFE5 00855         MOVFF   r0x0c, POSTDEC1
-003C 0E02      00856         MOVLW   0x02
-003E CFDB F000 00857         MOVFF   PLUSW2, r0x00
-0042 0E03      00858         MOVLW   0x03
-0044 CFDB F000 00859         MOVFF   PLUSW2, r0x01
-0048 0E04      00860         MOVLW   0x04
-004A CFDB F000 00861         MOVFF   PLUSW2, r0x02
-004E 0E05      00862         MOVLW   0x05
-0050 CFDB F000 00863         MOVFF   PLUSW2, r0x03
-0054 0E06      00864         MOVLW   0x06
-gpasm-0.13.7 beta               objects/clock.asm11-15-2013  20:28:45         PAGE 17
+008A 5000      00811         MOVF    r0x04, W
+008C 1000      00812         IORWF   r0x05, W
+008E E000      00813         BZ      _00149_DS_
+0090 00814 _00145_DS_:
+               00815 ;       .line   84; src/clock.c while (n-- != 0)*d++ = *s++;
+0090 C000 F000 00816         MOVFF   r0x04, r0x08
+0094 C000 F000 00817         MOVFF   r0x05, r0x09
+0098 0EFF      00818         MOVLW   0xff
+009A 2600      00819         ADDWF   r0x04, F
+009C A0D8      00820         BTFSS   STATUS, 0
+009E 0600      00821         DECF    r0x05, F
+00A0 5000      00822         MOVF    r0x08, W
+00A2 1000      00823         IORWF   r0x09, W
+00A4 E000      00824         BZ      _00149_DS_
+00A6 C000 FFE9 00825         MOVFF   r0x01, FSR0L
+00AA C000 FFF3 00826         MOVFF   r0x02, PRODL
+00AE 5000      00827         MOVF    r0x03, W
+00B0 EC00 F000 00828         CALL    __gptrget1
+00B4 6E00      00829         MOVWF   r0x08
+00B6 2A00      00830         INCF    r0x01, F
+00B8 B0D8      00831         BTFSC   STATUS, 0
+00BA 2A00      00832         INCF    r0x02, F
+00BC B0D8      00833         BTFSC   STATUS, 0
+00BE 2A00      00834         INCF    r0x03, F
+00C0 C000 FFE5 00835         MOVFF   r0x08, POSTDEC1
+00C4 C000 FFE9 00836         MOVFF   r0x00, FSR0L
+00C8 C000 FFF3 00837         MOVFF   r0x06, PRODL
+00CC 5000      00838         MOVF    r0x07, W
+00CE EC00 F000 00839         CALL    __gptrput1
+00D2 2A00      00840         INCF    r0x00, F
+00D4 B0D8      00841         BTFSC   STATUS, 0
+00D6 2A00      00842         INCF    r0x06, F
+00D8 B0D8      00843         BTFSC   STATUS, 0
+00DA 2A00      00844         INCF    r0x07, F
+00DC D000      00845         BRA     _00145_DS_
+00DE 00846 _00149_DS_:
+               00847 ;       .line   85; src/clock.c LCDUpdate();
+00DE EC00 F000 00848         CALL    _LCDUpdate
+00E2 CFE4 F000 00849         MOVFF   PREINC1, r0x09
+00E6 CFE4 F000 00850         MOVFF   PREINC1, r0x08
+00EA CFE4 F000 00851         MOVFF   PREINC1, r0x07
+00EE CFE4 F000 00852         MOVFF   PREINC1, r0x06
+00F2 CFE4 F000 00853         MOVFF   PREINC1, r0x05
+00F6 CFE4 F000 00854         MOVFF   PREINC1, r0x04
+00FA CFE4 F000 00855         MOVFF   PREINC1, r0x03
+00FE CFE4 F000 00856         MOVFF   PREINC1, r0x02
+0102 CFE4 F000 00857         MOVFF   PREINC1, r0x01
+0106 CFE4 F000 00858         MOVFF   PREINC1, r0x00
+010A CFE4 FFD9 00859         MOVFF   PREINC1, FSR2L
+010E 0012      00860         RETURN  
+               00861 
+               00862 ; ; Starting pCode block
+               00863 S_clock__get_input      code
+0000 00864 _get_input:
+gpasm-0.13.7 beta               objects/clock.asm11-15-2013  20:41:57         PAGE 17
 
 
 LOC  OBJECT CODE     LINE SOURCE TEXT
   VALUE
  
-0056 CFDB F000 00865         MOVFF   PLUSW2, r0x04
-               00866 ;       .line   49; src/clock.c BYTE length = strlen(text);
-005A 5000      00867         MOVF    r0x04, W
-005C 6EE5      00868         MOVWF   POSTDEC1
-005E 5000      00869         MOVF    r0x03, W
-0060 6EE5      00870         MOVWF   POSTDEC1
-0062 5000      00871         MOVF    r0x02, W
-0064 6EE5      00872         MOVWF   POSTDEC1
-0066 EC00 F000 00873         CALL    _strlen
-006A 6E00      00874         MOVWF   r0x05
-006C CFF3 F000 00875         MOVFF   PRODL, r0x06
-0070 0E03      00876         MOVLW   0x03
-0072 26E1      00877         ADDWF   FSR1L, F
-               00878 ;       .line   50; src/clock.c int value = 0;
-0074 6A00      00879         CLRF    r0x06
-0076 6A00      00880         CLRF    r0x07
-               00881 ;       .line   51; src/clock.c display_string(0, text);
-0078 5000      00882         MOVF    r0x04, W
-007A 6EE5      00883         MOVWF   POSTDEC1
-007C 5000      00884         MOVF    r0x03, W
-007E 6EE5      00885         MOVWF   POSTDEC1
-0080 5000      00886         MOVF    r0x02, W
-0082 6EE5      00887         MOVWF   POSTDEC1
-0084 0E00      00888         MOVLW   0x00
-0086 6EE5      00889         MOVWF   POSTDEC1
-0088 EC00 F000 00890         CALL    _display_string
-008C 0E04      00891         MOVLW   0x04
-008E 26E1      00892         ADDWF   FSR1L, F
-               00893 ;       .line   52; src/clock.c while(1)
-0090 2800      00894         INCF    r0x05, W
-0092 6E00      00895         MOVWF   r0x02
-0094 00896 _00130_DS_:
-               00897 ;       .line   54; src/clock.c DelayMs(10);
-0094 0E68      00898         MOVLW   0x68
-0096 6E00      00899         MOVWF   r0x03
-0098 0E42      00900         MOVLW   0x42
-009A 6E00      00901         MOVWF   r0x04
-009C 6A00      00902         CLRF    r0x05
-009E 6A00      00903         CLRF    r0x08
-00A0 00904 _00115_DS_:
-00A0 C000 F000 00905         MOVFF   r0x03, r0x09
-00A4 C000 F000 00906         MOVFF   r0x04, r0x0a
-00A8 C000 F000 00907         MOVFF   r0x05, r0x0b
-00AC C000 F000 00908         MOVFF   r0x08, r0x0c
-00B0 0EFF      00909         MOVLW   0xff
-00B2 2600      00910         ADDWF   r0x03, F
-00B4 0EFF      00911         MOVLW   0xff
-00B6 2200      00912         ADDWFC  r0x04, F
-00B8 0EFF      00913         MOVLW   0xff
-00BA 2200      00914         ADDWFC  r0x05, F
-00BC 0EFF      00915         MOVLW   0xff
-00BE 2200      00916         ADDWFC  r0x08, F
-00C0 5000      00917         MOVF    r0x09, W
-00C2 1000      00918         IORWF   r0x0a, W
-gpasm-0.13.7 beta               objects/clock.asm11-15-2013  20:28:45         PAGE 18
+               00865 ;       .line   60; src/clock.c int get_input(int maxvalue, char *text){
+0000 CFD9 FFE5 00866         MOVFF   FSR2L, POSTDEC1
+0004 CFE1 FFD9 00867         MOVFF   FSR1L, FSR2L
+0008 C000 FFE5 00868         MOVFF   r0x00, POSTDEC1
+000C C000 FFE5 00869         MOVFF   r0x01, POSTDEC1
+0010 C000 FFE5 00870         MOVFF   r0x02, POSTDEC1
+0014 C000 FFE5 00871         MOVFF   r0x03, POSTDEC1
+0018 C000 FFE5 00872         MOVFF   r0x04, POSTDEC1
+001C C000 FFE5 00873         MOVFF   r0x05, POSTDEC1
+0020 C000 FFE5 00874         MOVFF   r0x06, POSTDEC1
+0024 C000 FFE5 00875         MOVFF   r0x07, POSTDEC1
+0028 C000 FFE5 00876         MOVFF   r0x08, POSTDEC1
+002C C000 FFE5 00877         MOVFF   r0x09, POSTDEC1
+0030 C000 FFE5 00878         MOVFF   r0x0a, POSTDEC1
+0034 C000 FFE5 00879         MOVFF   r0x0b, POSTDEC1
+0038 C000 FFE5 00880         MOVFF   r0x0c, POSTDEC1
+003C 0E02      00881         MOVLW   0x02
+003E CFDB F000 00882         MOVFF   PLUSW2, r0x00
+0042 0E03      00883         MOVLW   0x03
+0044 CFDB F000 00884         MOVFF   PLUSW2, r0x01
+0048 0E04      00885         MOVLW   0x04
+004A CFDB F000 00886         MOVFF   PLUSW2, r0x02
+004E 0E05      00887         MOVLW   0x05
+0050 CFDB F000 00888         MOVFF   PLUSW2, r0x03
+0054 0E06      00889         MOVLW   0x06
+0056 CFDB F000 00890         MOVFF   PLUSW2, r0x04
+               00891 ;       .line   61; src/clock.c BYTE length = strlen(text);
+005A 5000      00892         MOVF    r0x04, W
+005C 6EE5      00893         MOVWF   POSTDEC1
+005E 5000      00894         MOVF    r0x03, W
+0060 6EE5      00895         MOVWF   POSTDEC1
+0062 5000      00896         MOVF    r0x02, W
+0064 6EE5      00897         MOVWF   POSTDEC1
+0066 EC00 F000 00898         CALL    _strlen
+006A 6E00      00899         MOVWF   r0x05
+006C CFF3 F000 00900         MOVFF   PRODL, r0x06
+0070 0E03      00901         MOVLW   0x03
+0072 26E1      00902         ADDWF   FSR1L, F
+               00903 ;       .line   62; src/clock.c int value = 0;
+0074 6A00      00904         CLRF    r0x06
+0076 6A00      00905         CLRF    r0x07
+               00906 ;       .line   63; src/clock.c display_string(0, text);
+0078 5000      00907         MOVF    r0x04, W
+007A 6EE5      00908         MOVWF   POSTDEC1
+007C 5000      00909         MOVF    r0x03, W
+007E 6EE5      00910         MOVWF   POSTDEC1
+0080 5000      00911         MOVF    r0x02, W
+0082 6EE5      00912         MOVWF   POSTDEC1
+0084 0E00      00913         MOVLW   0x00
+0086 6EE5      00914         MOVWF   POSTDEC1
+0088 EC00 F000 00915         CALL    _display_string
+008C 0E04      00916         MOVLW   0x04
+008E 26E1      00917         ADDWF   FSR1L, F
+               00918 ;       .line   64; src/clock.c while(1)
+gpasm-0.13.7 beta               objects/clock.asm11-15-2013  20:41:57         PAGE 18
 
 
 LOC  OBJECT CODE     LINE SOURCE TEXT
   VALUE
  
-00C4 1000      00919         IORWF   r0x0b, W
-00C6 1000      00920         IORWF   r0x0c, W
-00C8 E100      00921         BNZ     _00115_DS_
-               00922 ;       .line   55; src/clock.c if(BUTTON1_IO == 0u){
-00CA B200      00923         BTFSC   _PORTBbits, 1
-00CC D000      00924         BRA     _00122_DS_
-               00925 ;       .line   56; src/clock.c LCDErase();
-00CE EC00 F000 00926         CALL    _LCDErase
-               00927 ;       .line   57; src/clock.c return value;
-00D2 C000 FFF3 00928         MOVFF   r0x07, PRODL
-00D6 5000      00929         MOVF    r0x06, W
-00D8 D000      00930         BRA     _00128_DS_
-00DA 00931 _00122_DS_:
-               00932 ;       .line   59; src/clock.c if(BUTTON0_IO == 0u) 
-00DA B600      00933         BTFSC   _PORTBbits, 3
-00DC D000      00934         BRA     _00124_DS_
-               00935 ;       .line   60; src/clock.c value = (++value)%maxvalue;
-00DE 2A00      00936         INCF    r0x06, F
-00E0 B0D8      00937         BTFSC   STATUS, 0
-00E2 2A00      00938         INCF    r0x07, F
-00E4 5000      00939         MOVF    r0x01, W
-00E6 6EE5      00940         MOVWF   POSTDEC1
-00E8 5000      00941         MOVF    r0x00, W
-00EA 6EE5      00942         MOVWF   POSTDEC1
-00EC 5000      00943         MOVF    r0x07, W
-00EE 6EE5      00944         MOVWF   POSTDEC1
-00F0 5000      00945         MOVF    r0x06, W
-00F2 6EE5      00946         MOVWF   POSTDEC1
-00F4 EC00 F000 00947         CALL    __modsint
-00F8 6E00      00948         MOVWF   r0x06
-00FA CFF3 F000 00949         MOVFF   PRODL, r0x07
-00FE 0E04      00950         MOVLW   0x04
-0100 26E1      00951         ADDWF   FSR1L, F
-0102 00952 _00124_DS_:
-               00953 ;       .line   61; src/clock.c display_string(length + 1, to_double_digits(value));
-0102 5000      00954         MOVF    r0x07, W
-0104 6EE5      00955         MOVWF   POSTDEC1
-0106 5000      00956         MOVF    r0x06, W
-0108 6EE5      00957         MOVWF   POSTDEC1
-010A EC00 F000 00958         CALL    _to_double_digits
-010E 6E00      00959         MOVWF   r0x03
-0110 CFF3 F000 00960         MOVFF   PRODL, r0x04
-0114 CFF4 F000 00961         MOVFF   PRODH, r0x05
-0118 0E02      00962         MOVLW   0x02
-011A 26E1      00963         ADDWF   FSR1L, F
-011C 5000      00964         MOVF    r0x05, W
-011E 6EE5      00965         MOVWF   POSTDEC1
-0120 5000      00966         MOVF    r0x04, W
-0122 6EE5      00967         MOVWF   POSTDEC1
-0124 5000      00968         MOVF    r0x03, W
-0126 6EE5      00969         MOVWF   POSTDEC1
-0128 5000      00970         MOVF    r0x02, W
-012A 6EE5      00971         MOVWF   POSTDEC1
-012C EC00 F000 00972         CALL    _display_string
-gpasm-0.13.7 beta               objects/clock.asm11-15-2013  20:28:45         PAGE 19
+0090 2800      00919         INCF    r0x05, W
+0092 6E00      00920         MOVWF   r0x02
+0094 00921 _00140_DS_:
+               00922 ;       .line   66; src/clock.c DelayMs(10);
+0094 0E68      00923         MOVLW   0x68
+0096 6E00      00924         MOVWF   r0x03
+0098 0E42      00925         MOVLW   0x42
+009A 6E00      00926         MOVWF   r0x04
+009C 6A00      00927         CLRF    r0x05
+009E 6A00      00928         CLRF    r0x08
+00A0 00929 _00125_DS_:
+00A0 C000 F000 00930         MOVFF   r0x03, r0x09
+00A4 C000 F000 00931         MOVFF   r0x04, r0x0a
+00A8 C000 F000 00932         MOVFF   r0x05, r0x0b
+00AC C000 F000 00933         MOVFF   r0x08, r0x0c
+00B0 0EFF      00934         MOVLW   0xff
+00B2 2600      00935         ADDWF   r0x03, F
+00B4 0EFF      00936         MOVLW   0xff
+00B6 2200      00937         ADDWFC  r0x04, F
+00B8 0EFF      00938         MOVLW   0xff
+00BA 2200      00939         ADDWFC  r0x05, F
+00BC 0EFF      00940         MOVLW   0xff
+00BE 2200      00941         ADDWFC  r0x08, F
+00C0 5000      00942         MOVF    r0x09, W
+00C2 1000      00943         IORWF   r0x0a, W
+00C4 1000      00944         IORWF   r0x0b, W
+00C6 1000      00945         IORWF   r0x0c, W
+00C8 E100      00946         BNZ     _00125_DS_
+               00947 ;       .line   67; src/clock.c if(BUTTON1_IO == 0u){
+00CA B200      00948         BTFSC   _PORTBbits, 1
+00CC D000      00949         BRA     _00132_DS_
+               00950 ;       .line   68; src/clock.c LCDErase();
+00CE EC00 F000 00951         CALL    _LCDErase
+               00952 ;       .line   69; src/clock.c return value;
+00D2 C000 FFF3 00953         MOVFF   r0x07, PRODL
+00D6 5000      00954         MOVF    r0x06, W
+00D8 D000      00955         BRA     _00138_DS_
+00DA 00956 _00132_DS_:
+               00957 ;       .line   71; src/clock.c if(BUTTON0_IO == 0u) 
+00DA B600      00958         BTFSC   _PORTBbits, 3
+00DC D000      00959         BRA     _00134_DS_
+               00960 ;       .line   72; src/clock.c value = (++value)%maxvalue;
+00DE 2A00      00961         INCF    r0x06, F
+00E0 B0D8      00962         BTFSC   STATUS, 0
+00E2 2A00      00963         INCF    r0x07, F
+00E4 5000      00964         MOVF    r0x01, W
+00E6 6EE5      00965         MOVWF   POSTDEC1
+00E8 5000      00966         MOVF    r0x00, W
+00EA 6EE5      00967         MOVWF   POSTDEC1
+00EC 5000      00968         MOVF    r0x07, W
+00EE 6EE5      00969         MOVWF   POSTDEC1
+00F0 5000      00970         MOVF    r0x06, W
+00F2 6EE5      00971         MOVWF   POSTDEC1
+00F4 EC00 F000 00972         CALL    __modsint
+gpasm-0.13.7 beta               objects/clock.asm11-15-2013  20:41:57         PAGE 19
 
 
 LOC  OBJECT CODE     LINE SOURCE TEXT
   VALUE
  
-0130 0E04      00973         MOVLW   0x04
-0132 26E1      00974         ADDWF   FSR1L, F
-0134 D000      00975         BRA     _00130_DS_
-0136 00976 _00128_DS_:
-0136 CFE4 F000 00977         MOVFF   PREINC1, r0x0c
-013A CFE4 F000 00978         MOVFF   PREINC1, r0x0b
-013E CFE4 F000 00979         MOVFF   PREINC1, r0x0a
-0142 CFE4 F000 00980         MOVFF   PREINC1, r0x09
-0146 CFE4 F000 00981         MOVFF   PREINC1, r0x08
-014A CFE4 F000 00982         MOVFF   PREINC1, r0x07
-014E CFE4 F000 00983         MOVFF   PREINC1, r0x06
-0152 CFE4 F000 00984         MOVFF   PREINC1, r0x05
-0156 CFE4 F000 00985         MOVFF   PREINC1, r0x04
-015A CFE4 F000 00986         MOVFF   PREINC1, r0x03
-015E CFE4 F000 00987         MOVFF   PREINC1, r0x02
-0162 CFE4 F000 00988         MOVFF   PREINC1, r0x01
-0166 CFE4 F000 00989         MOVFF   PREINC1, r0x00
-016A CFE4 FFD9 00990         MOVFF   PREINC1, FSR2L
-016E 0012      00991         RETURN  
-               00992 
-               00993 ; ; Starting pCode block
-               00994 S_clock__init_clock     code
-0000 00995 _init_clock:
-               00996 ;       .line   40; src/clock.c void init_clock(time t){
-0000 CFD9 FFE5 00997         MOVFF   FSR2L, POSTDEC1
-0004 CFE1 FFD9 00998         MOVFF   FSR1L, FSR2L
-0008 C000 FFE5 00999         MOVFF   r0x00, POSTDEC1
-000C C000 FFE5 01000         MOVFF   r0x01, POSTDEC1
-0010 C000 FFE5 01001         MOVFF   r0x02, POSTDEC1
-0014 C000 FFE5 01002         MOVFF   r0x03, POSTDEC1
-0018 C000 FFE5 01003         MOVFF   r0x04, POSTDEC1
-001C C000 FFE5 01004         MOVFF   r0x05, POSTDEC1
-0020 C000 FFE5 01005         MOVFF   r0x06, POSTDEC1
-0024 C000 FFE5 01006         MOVFF   r0x07, POSTDEC1
-0028 C000 FFE5 01007         MOVFF   r0x08, POSTDEC1
-002C 0E02      01008         MOVLW   0x02
-002E CFDB F000 01009         MOVFF   PLUSW2, r0x00
-0032 0E03      01010         MOVLW   0x03
-0034 CFDB F000 01011         MOVFF   PLUSW2, r0x01
-0038 0E04      01012         MOVLW   0x04
-003A CFDB F000 01013         MOVFF   PLUSW2, r0x02
-               01014 ;       .line   42; src/clock.c h = get_input(24, "HOURS:");
-003E 0E00      01015         MOVLW   UPPER(__str_0)
-0040 6EE5      01016         MOVWF   POSTDEC1
-0042 0E00      01017         MOVLW   HIGH(__str_0)
-0044 6EE5      01018         MOVWF   POSTDEC1
-0046 0E00      01019         MOVLW   LOW(__str_0)
-0048 6EE5      01020         MOVWF   POSTDEC1
-004A 0E00      01021         MOVLW   0x00
-004C 6EE5      01022         MOVWF   POSTDEC1
-004E 0E18      01023         MOVLW   0x18
-0050 6EE5      01024         MOVWF   POSTDEC1
-0052 EC00 F000 01025         CALL    _get_input
-0056 6E00      01026         MOVWF   r0x03
-gpasm-0.13.7 beta               objects/clock.asm11-15-2013  20:28:45         PAGE 20
+00F8 6E00      00973         MOVWF   r0x06
+00FA CFF3 F000 00974         MOVFF   PRODL, r0x07
+00FE 0E04      00975         MOVLW   0x04
+0100 26E1      00976         ADDWF   FSR1L, F
+0102 00977 _00134_DS_:
+               00978 ;       .line   73; src/clock.c display_string(length + 1, to_double_digits(value));
+0102 5000      00979         MOVF    r0x07, W
+0104 6EE5      00980         MOVWF   POSTDEC1
+0106 5000      00981         MOVF    r0x06, W
+0108 6EE5      00982         MOVWF   POSTDEC1
+010A EC00 F000 00983         CALL    _to_double_digits
+010E 6E00      00984         MOVWF   r0x03
+0110 CFF3 F000 00985         MOVFF   PRODL, r0x04
+0114 CFF4 F000 00986         MOVFF   PRODH, r0x05
+0118 0E02      00987         MOVLW   0x02
+011A 26E1      00988         ADDWF   FSR1L, F
+011C 5000      00989         MOVF    r0x05, W
+011E 6EE5      00990         MOVWF   POSTDEC1
+0120 5000      00991         MOVF    r0x04, W
+0122 6EE5      00992         MOVWF   POSTDEC1
+0124 5000      00993         MOVF    r0x03, W
+0126 6EE5      00994         MOVWF   POSTDEC1
+0128 5000      00995         MOVF    r0x02, W
+012A 6EE5      00996         MOVWF   POSTDEC1
+012C EC00 F000 00997         CALL    _display_string
+0130 0E04      00998         MOVLW   0x04
+0132 26E1      00999         ADDWF   FSR1L, F
+0134 D000      01000         BRA     _00140_DS_
+0136 01001 _00138_DS_:
+0136 CFE4 F000 01002         MOVFF   PREINC1, r0x0c
+013A CFE4 F000 01003         MOVFF   PREINC1, r0x0b
+013E CFE4 F000 01004         MOVFF   PREINC1, r0x0a
+0142 CFE4 F000 01005         MOVFF   PREINC1, r0x09
+0146 CFE4 F000 01006         MOVFF   PREINC1, r0x08
+014A CFE4 F000 01007         MOVFF   PREINC1, r0x07
+014E CFE4 F000 01008         MOVFF   PREINC1, r0x06
+0152 CFE4 F000 01009         MOVFF   PREINC1, r0x05
+0156 CFE4 F000 01010         MOVFF   PREINC1, r0x04
+015A CFE4 F000 01011         MOVFF   PREINC1, r0x03
+015E CFE4 F000 01012         MOVFF   PREINC1, r0x02
+0162 CFE4 F000 01013         MOVFF   PREINC1, r0x01
+0166 CFE4 F000 01014         MOVFF   PREINC1, r0x00
+016A CFE4 FFD9 01015         MOVFF   PREINC1, FSR2L
+016E 0012      01016         RETURN  
+               01017 
+               01018 ; ; Starting pCode block
+               01019 S_clock__init_clock     code
+0000 01020 _init_clock:
+               01021 ;       .line   50; src/clock.c void init_clock(time t){
+0000 CFD9 FFE5 01022         MOVFF   FSR2L, POSTDEC1
+0004 CFE1 FFD9 01023         MOVFF   FSR1L, FSR2L
+0008 C000 FFE5 01024         MOVFF   r0x00, POSTDEC1
+000C C000 FFE5 01025         MOVFF   r0x01, POSTDEC1
+0010 C000 FFE5 01026         MOVFF   r0x02, POSTDEC1
+gpasm-0.13.7 beta               objects/clock.asm11-15-2013  20:41:57         PAGE 20
 
 
 LOC  OBJECT CODE     LINE SOURCE TEXT
   VALUE
  
-0058 CFF3 F000 01027         MOVFF   PRODL, r0x04
-005C 0E05      01028         MOVLW   0x05
-005E 26E1      01029         ADDWF   FSR1L, F
-               01030 ;       .line   43; src/clock.c m = get_input(60, "MINUTES:");
-0060 0E00      01031         MOVLW   UPPER(__str_1)
-0062 6EE5      01032         MOVWF   POSTDEC1
-0064 0E00      01033         MOVLW   HIGH(__str_1)
-0066 6EE5      01034         MOVWF   POSTDEC1
-0068 0E00      01035         MOVLW   LOW(__str_1)
-006A 6EE5      01036         MOVWF   POSTDEC1
-006C 0E00      01037         MOVLW   0x00
-006E 6EE5      01038         MOVWF   POSTDEC1
-0070 0E3C      01039         MOVLW   0x3c
-0072 6EE5      01040         MOVWF   POSTDEC1
-0074 EC00 F000 01041         CALL    _get_input
-0078 6E00      01042         MOVWF   r0x05
-007A CFF3 F000 01043         MOVFF   PRODL, r0x06
-007E 0E05      01044         MOVLW   0x05
-0080 26E1      01045         ADDWF   FSR1L, F
-               01046 ;       .line   44; src/clock.c s = get_input(60, "SECONDS:");
-0082 0E00      01047         MOVLW   UPPER(__str_2)
-0084 6EE5      01048         MOVWF   POSTDEC1
-0086 0E00      01049         MOVLW   HIGH(__str_2)
-0088 6EE5      01050         MOVWF   POSTDEC1
-008A 0E00      01051         MOVLW   LOW(__str_2)
-008C 6EE5      01052         MOVWF   POSTDEC1
-008E 0E00      01053         MOVLW   0x00
-0090 6EE5      01054         MOVWF   POSTDEC1
-0092 0E3C      01055         MOVLW   0x3c
-0094 6EE5      01056         MOVWF   POSTDEC1
-0096 EC00 F000 01057         CALL    _get_input
-009A 6E00      01058         MOVWF   r0x07
-009C CFF3 F000 01059         MOVFF   PRODL, r0x08
-00A0 0E05      01060         MOVLW   0x05
-00A2 26E1      01061         ADDWF   FSR1L, F
-               01062 ;       .line   45; src/clock.c time_set(t,h,m,s);
-00A4 5000      01063         MOVF    r0x08, W
-00A6 6EE5      01064         MOVWF   POSTDEC1
-00A8 5000      01065         MOVF    r0x07, W
-00AA 6EE5      01066         MOVWF   POSTDEC1
-00AC 5000      01067         MOVF    r0x06, W
-00AE 6EE5      01068         MOVWF   POSTDEC1
-00B0 5000      01069         MOVF    r0x05, W
-00B2 6EE5      01070         MOVWF   POSTDEC1
-00B4 5000      01071         MOVF    r0x04, W
-00B6 6EE5      01072         MOVWF   POSTDEC1
-00B8 5000      01073         MOVF    r0x03, W
-00BA 6EE5      01074         MOVWF   POSTDEC1
-00BC 5000      01075         MOVF    r0x02, W
-00BE 6EE5      01076         MOVWF   POSTDEC1
-00C0 5000      01077         MOVF    r0x01, W
-00C2 6EE5      01078         MOVWF   POSTDEC1
-00C4 5000      01079         MOVF    r0x00, W
-00C6 6EE5      01080         MOVWF   POSTDEC1
-gpasm-0.13.7 beta               objects/clock.asm11-15-2013  20:28:45         PAGE 21
+0014 C000 FFE5 01027         MOVFF   r0x03, POSTDEC1
+0018 C000 FFE5 01028         MOVFF   r0x04, POSTDEC1
+001C C000 FFE5 01029         MOVFF   r0x05, POSTDEC1
+0020 C000 FFE5 01030         MOVFF   r0x06, POSTDEC1
+0024 C000 FFE5 01031         MOVFF   r0x07, POSTDEC1
+0028 C000 FFE5 01032         MOVFF   r0x08, POSTDEC1
+002C 0E02      01033         MOVLW   0x02
+002E CFDB F000 01034         MOVFF   PLUSW2, r0x00
+0032 0E03      01035         MOVLW   0x03
+0034 CFDB F000 01036         MOVFF   PLUSW2, r0x01
+0038 0E04      01037         MOVLW   0x04
+003A CFDB F000 01038         MOVFF   PLUSW2, r0x02
+               01039 ;       .line   52; src/clock.c h = get_input(24, "HOURS:");
+003E 0E00      01040         MOVLW   UPPER(__str_0)
+0040 6EE5      01041         MOVWF   POSTDEC1
+0042 0E00      01042         MOVLW   HIGH(__str_0)
+0044 6EE5      01043         MOVWF   POSTDEC1
+0046 0E00      01044         MOVLW   LOW(__str_0)
+0048 6EE5      01045         MOVWF   POSTDEC1
+004A 0E00      01046         MOVLW   0x00
+004C 6EE5      01047         MOVWF   POSTDEC1
+004E 0E18      01048         MOVLW   0x18
+0050 6EE5      01049         MOVWF   POSTDEC1
+0052 EC00 F000 01050         CALL    _get_input
+0056 6E00      01051         MOVWF   r0x03
+0058 CFF3 F000 01052         MOVFF   PRODL, r0x04
+005C 0E05      01053         MOVLW   0x05
+005E 26E1      01054         ADDWF   FSR1L, F
+               01055 ;       .line   53; src/clock.c m = get_input(60, "MINUTES:");
+0060 0E00      01056         MOVLW   UPPER(__str_1)
+0062 6EE5      01057         MOVWF   POSTDEC1
+0064 0E00      01058         MOVLW   HIGH(__str_1)
+0066 6EE5      01059         MOVWF   POSTDEC1
+0068 0E00      01060         MOVLW   LOW(__str_1)
+006A 6EE5      01061         MOVWF   POSTDEC1
+006C 0E00      01062         MOVLW   0x00
+006E 6EE5      01063         MOVWF   POSTDEC1
+0070 0E3C      01064         MOVLW   0x3c
+0072 6EE5      01065         MOVWF   POSTDEC1
+0074 EC00 F000 01066         CALL    _get_input
+0078 6E00      01067         MOVWF   r0x05
+007A CFF3 F000 01068         MOVFF   PRODL, r0x06
+007E 0E05      01069         MOVLW   0x05
+0080 26E1      01070         ADDWF   FSR1L, F
+               01071 ;       .line   54; src/clock.c s = get_input(60, "SECONDS:");
+0082 0E00      01072         MOVLW   UPPER(__str_2)
+0084 6EE5      01073         MOVWF   POSTDEC1
+0086 0E00      01074         MOVLW   HIGH(__str_2)
+0088 6EE5      01075         MOVWF   POSTDEC1
+008A 0E00      01076         MOVLW   LOW(__str_2)
+008C 6EE5      01077         MOVWF   POSTDEC1
+008E 0E00      01078         MOVLW   0x00
+0090 6EE5      01079         MOVWF   POSTDEC1
+0092 0E3C      01080         MOVLW   0x3c
+gpasm-0.13.7 beta               objects/clock.asm11-15-2013  20:41:57         PAGE 21
 
 
 LOC  OBJECT CODE     LINE SOURCE TEXT
   VALUE
  
-00C8 EC00 F000 01081         CALL    _time_set
-00CC 0E09      01082         MOVLW   0x09
-00CE 26E1      01083         ADDWF   FSR1L, F
-00D0 CFE4 F000 01084         MOVFF   PREINC1, r0x08
-00D4 CFE4 F000 01085         MOVFF   PREINC1, r0x07
-00D8 CFE4 F000 01086         MOVFF   PREINC1, r0x06
-00DC CFE4 F000 01087         MOVFF   PREINC1, r0x05
-00E0 CFE4 F000 01088         MOVFF   PREINC1, r0x04
-00E4 CFE4 F000 01089         MOVFF   PREINC1, r0x03
-00E8 CFE4 F000 01090         MOVFF   PREINC1, r0x02
-00EC CFE4 F000 01091         MOVFF   PREINC1, r0x01
-00F0 CFE4 F000 01092         MOVFF   PREINC1, r0x00
-00F4 CFE4 FFD9 01093         MOVFF   PREINC1, FSR2L
-00F8 0012      01094         RETURN  
-               01095 
-               01096 ; ; Starting pCode block
-00FA 01097 __str_0:
-00FA 4F48 5255 01098         DB      0x48, 0x4f, 0x55, 0x52, 0x53, 0x3a, 0x00
+0094 6EE5      01081         MOVWF   POSTDEC1
+0096 EC00 F000 01082         CALL    _get_input
+009A 6E00      01083         MOVWF   r0x07
+009C CFF3 F000 01084         MOVFF   PRODL, r0x08
+00A0 0E05      01085         MOVLW   0x05
+00A2 26E1      01086         ADDWF   FSR1L, F
+               01087 ;       .line   55; src/clock.c time_set(t,h,m,s);
+00A4 5000      01088         MOVF    r0x08, W
+00A6 6EE5      01089         MOVWF   POSTDEC1
+00A8 5000      01090         MOVF    r0x07, W
+00AA 6EE5      01091         MOVWF   POSTDEC1
+00AC 5000      01092         MOVF    r0x06, W
+00AE 6EE5      01093         MOVWF   POSTDEC1
+00B0 5000      01094         MOVF    r0x05, W
+00B2 6EE5      01095         MOVWF   POSTDEC1
+00B4 5000      01096         MOVF    r0x04, W
+00B6 6EE5      01097         MOVWF   POSTDEC1
+00B8 5000      01098         MOVF    r0x03, W
+00BA 6EE5      01099         MOVWF   POSTDEC1
+00BC 5000      01100         MOVF    r0x02, W
+00BE 6EE5      01101         MOVWF   POSTDEC1
+00C0 5000      01102         MOVF    r0x01, W
+00C2 6EE5      01103         MOVWF   POSTDEC1
+00C4 5000      01104         MOVF    r0x00, W
+00C6 6EE5      01105         MOVWF   POSTDEC1
+00C8 EC00 F000 01106         CALL    _time_set
+00CC 0E09      01107         MOVLW   0x09
+00CE 26E1      01108         ADDWF   FSR1L, F
+               01109 ;       .line   57; src/clock.c T0CONbits.TMR0ON = 1;
+00D0 8E00      01110         BSF     _T0CONbits, 7
+00D2 CFE4 F000 01111         MOVFF   PREINC1, r0x08
+00D6 CFE4 F000 01112         MOVFF   PREINC1, r0x07
+00DA CFE4 F000 01113         MOVFF   PREINC1, r0x06
+00DE CFE4 F000 01114         MOVFF   PREINC1, r0x05
+00E2 CFE4 F000 01115         MOVFF   PREINC1, r0x04
+00E6 CFE4 F000 01116         MOVFF   PREINC1, r0x03
+00EA CFE4 F000 01117         MOVFF   PREINC1, r0x02
+00EE CFE4 F000 01118         MOVFF   PREINC1, r0x01
+00F2 CFE4 F000 01119         MOVFF   PREINC1, r0x00
+00F6 CFE4 FFD9 01120         MOVFF   PREINC1, FSR2L
+00FA 0012      01121         RETURN  
+               01122 
+               01123 ; ; Starting pCode block
+               01124 S_clock__toggle_led     code
+0000 01125 _toggle_led:
+               01126 ;       .line   46; src/clock.c void toggle_led(void){
+0000 CFD9 FFE5 01127         MOVFF   FSR2L, POSTDEC1
+0004 CFE1 FFD9 01128         MOVFF   FSR1L, FSR2L
+0008 C000 FFE5 01129         MOVFF   r0x00, POSTDEC1
+               01130 ;       .line   47; src/clock.c LED0_IO^=1;
+000C 6A00      01131         CLRF    r0x00
+000E B000      01132         BTFSC   _LATJbits, 0
+0010 2A00      01133         INCF    r0x00, F
+0012 0E01      01134         MOVLW   0x01
+gpasm-0.13.7 beta               objects/clock.asm11-15-2013  20:41:57         PAGE 22
+
+
+LOC  OBJECT CODE     LINE SOURCE TEXT
+  VALUE
+ 
+0014 1A00      01135         XORWF   r0x00, F
+0016 5000      01136         MOVF    r0x00, W
+0018 0B01      01137         ANDLW   0x01
+001A 6EF4      01138         MOVWF   PRODH
+001C 5000      01139         MOVF    _LATJbits, W
+001E 0BFE      01140         ANDLW   0xfe
+0020 10F4      01141         IORWF   PRODH, W
+0022 6E00      01142         MOVWF   _LATJbits
+0024 CFE4 F000 01143         MOVFF   PREINC1, r0x00
+0028 CFE4 FFD9 01144         MOVFF   PREINC1, FSR2L
+002C 0012      01145         RETURN  
+               01146 
+               01147 ; ; Starting pCode block
+               01148 S_clock__update_display code
+0000 01149 _update_display:
+               01150 ;       .line   41; src/clock.c void update_display(void){
+0000 CFD9 FFE5 01151         MOVFF   FSR2L, POSTDEC1
+0004 CFE1 FFD9 01152         MOVFF   FSR1L, FSR2L
+0008 C000 FFE5 01153         MOVFF   r0x00, POSTDEC1
+000C C000 FFE5 01154         MOVFF   r0x01, POSTDEC1
+0010 C000 FFE5 01155         MOVFF   r0x02, POSTDEC1
+               01156 ;       .line   42; src/clock.c time_print(_time, display_line);
+0014 0E00      01157         MOVLW   HIGH(_display_line)
+0016 6E00      01158         MOVWF   r0x01
+0018 0E00      01159         MOVLW   LOW(_display_line)
+001A 6E00      01160         MOVWF   r0x00
+001C 0E80      01161         MOVLW   0x80
+001E 6E00      01162         MOVWF   r0x02
+0020 5000      01163         MOVF    r0x02, W
+0022 6EE5      01164         MOVWF   POSTDEC1
+0024 5000      01165         MOVF    r0x01, W
+0026 6EE5      01166         MOVWF   POSTDEC1
+0028 5000      01167         MOVF    r0x00, W
+002A 6EE5      01168         MOVWF   POSTDEC1
+002C 0000      01169         BANKSEL (__time + 2)
+002E 5100      01170         MOVF    (__time + 2), W, B
+0030 6EE5      01171         MOVWF   POSTDEC1
+0032 0000      01172         BANKSEL (__time + 1)
+0034 5100      01173         MOVF    (__time + 1), W, B
+0036 6EE5      01174         MOVWF   POSTDEC1
+0038 0000      01175         BANKSEL __time
+003A 5100      01176         MOVF    __time, W, B
+003C 6EE5      01177         MOVWF   POSTDEC1
+003E EC00 F000 01178         CALL    _time_print
+0042 0E06      01179         MOVLW   0x06
+0044 26E1      01180         ADDWF   FSR1L, F
+               01181 ;       .line   43; src/clock.c display_string(0, display_line);
+0046 0E00      01182         MOVLW   HIGH(_display_line)
+0048 6E00      01183         MOVWF   r0x01
+004A 0E00      01184         MOVLW   LOW(_display_line)
+004C 6E00      01185         MOVWF   r0x00
+004E 0E80      01186         MOVLW   0x80
+0050 6E00      01187         MOVWF   r0x02
+0052 5000      01188         MOVF    r0x02, W
+gpasm-0.13.7 beta               objects/clock.asm11-15-2013  20:41:57         PAGE 23
+
+
+LOC  OBJECT CODE     LINE SOURCE TEXT
+  VALUE
+ 
+0054 6EE5      01189         MOVWF   POSTDEC1
+0056 5000      01190         MOVF    r0x01, W
+0058 6EE5      01191         MOVWF   POSTDEC1
+005A 5000      01192         MOVF    r0x00, W
+005C 6EE5      01193         MOVWF   POSTDEC1
+005E 0E00      01194         MOVLW   0x00
+0060 6EE5      01195         MOVWF   POSTDEC1
+0062 EC00 F000 01196         CALL    _display_string
+0066 0E04      01197         MOVLW   0x04
+0068 26E1      01198         ADDWF   FSR1L, F
+006A CFE4 F000 01199         MOVFF   PREINC1, r0x02
+006E CFE4 F000 01200         MOVFF   PREINC1, r0x01
+0072 CFE4 F000 01201         MOVFF   PREINC1, r0x00
+0076 CFE4 FFD9 01202         MOVFF   PREINC1, FSR2L
+007A 0012      01203         RETURN  
+               01204 
+               01205 ; ; Starting pCode block
+007C 01206 __str_0:
+007C 4F48 5255 01207         DB      0x48, 0x4f, 0x55, 0x52, 0x53, 0x3a, 0x00
      3A53 0000 
-               01099 ; ; Starting pCode block
-0102 01100 __str_1:
-0102 494D 554E 01101         DB      0x4d, 0x49, 0x4e, 0x55, 0x54, 0x45, 0x53, 0x3a, 0x00
+               01208 ; ; Starting pCode block
+0084 01209 __str_1:
+0084 494D 554E 01210         DB      0x4d, 0x49, 0x4e, 0x55, 0x54, 0x45, 0x53, 0x3a, 0x00
      4554 3A53 
      0000      
-               01102 ; ; Starting pCode block
-010C 01103 __str_2:
-010C 4553 4F43 01104         DB      0x53, 0x45, 0x43, 0x4f, 0x4e, 0x44, 0x53, 0x3a, 0x00
+               01211 ; ; Starting pCode block
+008E 01212 __str_2:
+008E 4553 4F43 01213         DB      0x53, 0x45, 0x43, 0x4f, 0x4e, 0x44, 0x53, 0x3a, 0x00
      444E 3A53 
      0000      
-               01105 ; ; Starting pCode block
-0116 01106 __str_3:
-0116 3025 6432 01107         DB      0x25, 0x30, 0x32, 0x64, 0x00
+               01214 ; ; Starting pCode block
+0098 01215 __str_3:
+0098 3025 6432 01216         DB      0x25, 0x30, 0x32, 0x64, 0x00
      0000      
-               01108 
-               01109 
-               01110 ; Statistics:
-               01111 ; code size:     1328 (0x0530) bytes ( 1.01%)
-               01112 ;                 664 (0x0298) words
-               01113 ; udata size:      38 (0x0026) bytes ( 0.99%)
-               01114 ; access size:     13 (0x000d) bytes
-               01115 
-               01116 
-gpasm-0.13.7 beta               objects/clock.asm11-15-2013  20:28:45         PAGE 22
+               01217 
+               01218 
+               01219 ; Statistics:
+               01220 ; code size:     1514 (0x05ea) bytes ( 1.16%)
+               01221 ;                 757 (0x02f5) words
+               01222 ; udata size:      38 (0x0026) bytes ( 0.99%)
+               01223 ; access size:     13 (0x000d) bytes
+               01224 
+               01225 
+gpasm-0.13.7 beta               objects/clock.asm11-15-2013  20:41:57         PAGE 24
 
 
 SYMBOL TABLE
@@ -1266,15 +1387,23 @@ PRODH                             00000FF4
 PRODL                             00000FF3
 STATUS                            00000FD8
 WREG                              00000FE8
-_00115_DS_                        000000A0
-_00122_DS_                        000000DA
-_00124_DS_                        00000102
-_00128_DS_                        00000136
-_00130_DS_                        00000094
-_00135_DS_                        00000090
-_00139_DS_                        000000DE
-_00143_DS_                        00000088
-_00160_DS_                        0000003E
+_00125_DS_                        000000A0
+_00132_DS_                        000000DA
+_00134_DS_                        00000102
+_00138_DS_                        00000136
+_00140_DS_                        00000094
+_00145_DS_                        00000090
+_00149_DS_                        000000DE
+_00153_DS_                        00000088
+_00171_DS_                        0000005C
+_00172_DS_                        00000096
+_00175_DS_                        00000098
+_00181_DS_                        0000003C
+_00182_DS_                        00000054
+_00183_DS_                        00000056
+_00184_DS_                        0000006A
+_00185_DS_                        0000006C
+_10190_DS_                        00000046
 _ADCON0                           00000000
 _ADCON0bits                       00000000
 _ADCON1                           00000000
@@ -1297,6 +1426,12 @@ _BAUDCTL2                         00000000
 _BAUDCTL2bits                     00000000
 _BAUDCTLbits                      00000000
 _BSR                              00000000
+gpasm-0.13.7 beta               objects/clock.asm11-15-2013  20:41:57         PAGE 25
+
+
+LOC  OBJECT CODE     LINE SOURCE TEXT
+  VALUE
+ 
 _CCP1CON                          00000000
 _CCP1CONbits                      00000000
 _CCP2CON                          00000000
@@ -1305,12 +1440,6 @@ _CCP3CON                          00000000
 _CCP3CONbits                      00000000
 _CCP4CON                          00000000
 _CCP4CONbits                      00000000
-gpasm-0.13.7 beta               objects/clock.asm11-15-2013  20:28:45         PAGE 23
-
-
-LOC  OBJECT CODE     LINE SOURCE TEXT
-  VALUE
- 
 _CCP5CON                          00000000
 _CCP5CONbits                      00000000
 _CCPR1                            00000000
@@ -1357,6 +1486,12 @@ _EBSTCSH                          00000000
 _EBSTCSL                          00000000
 _EBSTSD                           00000000
 _ECCP1AS                          00000000
+gpasm-0.13.7 beta               objects/clock.asm11-15-2013  20:41:57         PAGE 26
+
+
+LOC  OBJECT CODE     LINE SOURCE TEXT
+  VALUE
+ 
 _ECCP1ASbits                      00000000
 _ECCP1CON                         00000000
 _ECCP1CONbits                     00000000
@@ -1365,12 +1500,6 @@ _ECCP1DELbits                     00000000
 _ECCP2AS                          00000000
 _ECCP2ASbits                      00000000
 _ECCP2CON                         00000000
-gpasm-0.13.7 beta               objects/clock.asm11-15-2013  20:28:45         PAGE 24
-
-
-LOC  OBJECT CODE     LINE SOURCE TEXT
-  VALUE
- 
 _ECCP2CONbits                     00000000
 _ECCP2DEL                         00000000
 _ECCP2DELbits                     00000000
@@ -1417,6 +1546,12 @@ _EIR                              00000000
 _EIRbits                          00000000
 _EPAUS                            00000000
 _EPAUSH                           00000000
+gpasm-0.13.7 beta               objects/clock.asm11-15-2013  20:41:57         PAGE 27
+
+
+LOC  OBJECT CODE     LINE SOURCE TEXT
+  VALUE
+ 
 _EPAUSL                           00000000
 _EPKTCNT                          00000000
 _EPMCS                            00000000
@@ -1425,12 +1560,6 @@ _EPMCSL                           00000000
 _EPMM0                            00000000
 _EPMM1                            00000000
 _EPMM2                            00000000
-gpasm-0.13.7 beta               objects/clock.asm11-15-2013  20:28:45         PAGE 25
-
-
-LOC  OBJECT CODE     LINE SOURCE TEXT
-  VALUE
- 
 _EPMM3                            00000000
 _EPMM4                            00000000
 _EPMM5                            00000000
@@ -1477,6 +1606,12 @@ _FSR1H                            00000000
 _FSR1L                            00000000
 _FSR2H                            00000000
 _FSR2L                            00000000
+gpasm-0.13.7 beta               objects/clock.asm11-15-2013  20:41:57         PAGE 28
+
+
+LOC  OBJECT CODE     LINE SOURCE TEXT
+  VALUE
+ 
 _INDF0                            00000000
 _INDF1                            00000000
 _INDF2                            00000000
@@ -1485,12 +1620,6 @@ _INTCON2                          00000000
 _INTCON2bits                      00000000
 _INTCON3                          00000000
 _INTCON3bits                      00000000
-gpasm-0.13.7 beta               objects/clock.asm11-15-2013  20:28:45         PAGE 26
-
-
-LOC  OBJECT CODE     LINE SOURCE TEXT
-  VALUE
- 
 _INTCONbits                       00000000
 _IPR1                             00000000
 _IPR1bits                         00000000
@@ -1537,6 +1666,12 @@ _MACON2                           00000000
 _MACON2bits                       00000000
 _MACON3                           00000000
 _MACON3bits                       00000000
+gpasm-0.13.7 beta               objects/clock.asm11-15-2013  20:41:57         PAGE 29
+
+
+LOC  OBJECT CODE     LINE SOURCE TEXT
+  VALUE
+ 
 _MACON4                           00000000
 _MACON4bits                       00000000
 _MAIPG                            00000000
@@ -1545,12 +1680,6 @@ _MAIPGL                           00000000
 _MAMXFL                           00000000
 _MAMXFLH                          00000000
 _MAMXFLL                          00000000
-gpasm-0.13.7 beta               objects/clock.asm11-15-2013  20:28:45         PAGE 27
-
-
-LOC  OBJECT CODE     LINE SOURCE TEXT
-  VALUE
- 
 _MEMCON                           00000000
 _MEMCONbits                       00000000
 _MICMD                            00000000
@@ -1597,6 +1726,12 @@ _PORTC                            00000000
 _PORTCbits                        00000000
 _PORTD                            00000000
 _PORTDbits                        00000000
+gpasm-0.13.7 beta               objects/clock.asm11-15-2013  20:41:57         PAGE 30
+
+
+LOC  OBJECT CODE     LINE SOURCE TEXT
+  VALUE
+ 
 _PORTE                            00000000
 _PORTEbits                        00000000
 _PORTF                            00000000
@@ -1605,12 +1740,6 @@ _PORTG                            00000000
 _PORTGbits                        00000000
 _PORTH                            00000000
 _PORTHbits                        00000000
-gpasm-0.13.7 beta               objects/clock.asm11-15-2013  20:28:45         PAGE 28
-
-
-LOC  OBJECT CODE     LINE SOURCE TEXT
-  VALUE
- 
 _PORTJ                            00000000
 _PORTJbits                        00000000
 _POSTDEC0                         00000000
@@ -1657,6 +1786,12 @@ _SSP1STATbits                     00000000
 _SSP2ADD                          00000000
 _SSP2BUF                          00000000
 _SSP2CON1                         00000000
+gpasm-0.13.7 beta               objects/clock.asm11-15-2013  20:41:57         PAGE 31
+
+
+LOC  OBJECT CODE     LINE SOURCE TEXT
+  VALUE
+ 
 _SSP2CON1bits                     00000000
 _SSP2CON2                         00000000
 _SSP2CON2bits                     00000000
@@ -1665,12 +1800,6 @@ _SSP2STATbits                     00000000
 _SSPADD                           00000000
 _SSPBUF                           00000000
 _SSPCON1                          00000000
-gpasm-0.13.7 beta               objects/clock.asm11-15-2013  20:28:45         PAGE 29
-
-
-LOC  OBJECT CODE     LINE SOURCE TEXT
-  VALUE
- 
 _SSPCON1bits                      00000000
 _SSPCON2                          00000000
 _SSPCON2bits                      00000000
@@ -1717,6 +1846,12 @@ _TRISD                            00000000
 _TRISDbits                        00000000
 _TRISE                            00000000
 _TRISEbits                        00000000
+gpasm-0.13.7 beta               objects/clock.asm11-15-2013  20:41:57         PAGE 32
+
+
+LOC  OBJECT CODE     LINE SOURCE TEXT
+  VALUE
+ 
 _TRISF                            00000000
 _TRISFbits                        00000000
 _TRISG                            00000000
@@ -1725,12 +1860,6 @@ _TRISH                            00000000
 _TRISHbits                        00000000
 _TRISJ                            00000000
 _TRISJbits                        00000000
-gpasm-0.13.7 beta               objects/clock.asm11-15-2013  20:28:45         PAGE 30
-
-
-LOC  OBJECT CODE     LINE SOURCE TEXT
-  VALUE
- 
 _TXREG                            00000000
 _TXREG1                           00000000
 _TXREG2                           00000000
@@ -1747,12 +1876,12 @@ __18F97J60                        00000001
 __gptrget1                        00000000
 __gptrput1                        00000000
 __modsint                         00000000
-__str_0                           000000FA
-__str_1                           00000102
-__str_2                           0000010C
-__str_3                           00000116
+__str_0                           0000007C
+__str_1                           00000084
+__str_2                           0000008E
+__str_3                           00000098
 __time                            00000000
-_counter                          00000000
+_add_second                       00000000
 _display_line                     00000000
 _display_string                   00000000
 _get_input                        00000000
@@ -1760,6 +1889,7 @@ _init                             00000000
 _init_clock                       00000000
 _lowPriorityInterruptHandler      00000000
 _main                             00000000
+_overflow_counter                 00000000
 _sprintf                          00000000
 _stdin                            00000000
 _stdout                           00000000
@@ -1769,11 +1899,19 @@ _time_print                       00000000
 _time_set                         00000000
 _to_double_digits                 00000000
 _to_double_digits_buffer_1_1      00000000
+_toggle_led                       00000000
+_update_display                   00000000
 ivec_0x1_lowPriorityInterruptHandler  00000008
 r0x00                             00000000
 r0x01                             00000001
 r0x02                             00000002
 r0x03                             00000003
+gpasm-0.13.7 beta               objects/clock.asm11-15-2013  20:41:57         PAGE 33
+
+
+LOC  OBJECT CODE     LINE SOURCE TEXT
+  VALUE
+ 
 r0x04                             00000004
 r0x05                             00000005
 r0x06                             00000006
