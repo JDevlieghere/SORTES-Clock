@@ -2,8 +2,8 @@
 #define __SDCC__
 #define THIS_INCLUDES_THE_MAIN_FUNCTION
 
-#define CLOCK_FREQ        40000000      // 40 Mhz
-#define EXEC_FREQ         CLOCK_FREQ/4 	// 4 clock cycles to execute an instruction
+#define CLOCK_FREQ        40000000      
+#define EXEC_FREQ         CLOCK_FREQ/4 	
 
 #include <stdlib.h>
 #include <stdio.h>
@@ -79,30 +79,17 @@ char* to_double_digits(int value){
         return buffer;
 }        
 
-// void highPriorityInterruptHandler (void) __interrupt(1){
-// 	if(INTCON3bits.INT1F  = 1){
-//         LED1_IO ^= 1; //change state of red leds
-//         LED2_IO ^= 1; 
-//         if(BUTTON0_IO);  //just read the bit
-//         INTCON3bits.INT1F  = 0;   //clear INT1 flag
-//     }
-// }
-
 void lowPriorityInterruptHandler (void) __interrupt(1){
 	if (INTCONbits.TMR0IF == 1) {
-		display_string(0,to_double_digits(counter++));
         INTCONbits.TMR0IF = 0;
     }
 }
-
-
 
 void init(void){
 	// Initialize LCD
 	LCDInit();
 
 	// Enable interrupts
-	RCONbits.IPEN = 1;
 	INTCONbits.GIE = 1;
     INTCONbits.PEIE = 1;
 
@@ -122,15 +109,15 @@ void init(void){
     // Unassign prescaler
     T0CONbits.PSA = 1;
 
-    // Enable timer interrupts
+    // Enable timer and interrupts
 	INTCONbits.TMR0IE = 1;
+	T0CONbits.TMR0ON = 1;
 
 	// // Enable button interrupts
  //    INTCON3bits.INT1P  = 1;   //connect INT1 interrupt (button 2) to high priority
  //    INTCON2bits.INTEDG1= 0;   //INT1 interrupts on falling edge
  //    INTCON3bits.INT1E  = 1;   //enable INT1 interrupt (button 2)
  //    INTCON3bits.INT1F  = 0;   //clear INT1 flag
- 
 
 	// Enable backlight
 	LED3_TRIS = 0;

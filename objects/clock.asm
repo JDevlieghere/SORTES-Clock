@@ -1,7 +1,7 @@
 ;--------------------------------------------------------
 ; File Created by SDCC : free open source ANSI-C Compiler
 ; Version 2.9.4 #5595 (Nov 14 2013) (UNIX)
-; This file was generated Fri Nov 15 20:19:43 2013
+; This file was generated Fri Nov 15 20:28:45 2013
 ;--------------------------------------------------------
 ; PIC16 port for the Microchip 16-bit core micros
 ;--------------------------------------------------------
@@ -12,6 +12,7 @@
 ;--------------------------------------------------------
 ; public variables in this module
 ;--------------------------------------------------------
+	global _counter
 	global _init_clock
 	global _get_input
 	global _display_string
@@ -19,7 +20,6 @@
 	global _init
 	global __time
 	global _display_line
-	global _counter
 	global _main
 	global _lowPriorityInterruptHandler
 
@@ -593,34 +593,34 @@ _main:
 ; ; Starting pCode block
 S_clock__init	code
 _init:
-;	.line	100; src/clock.c	void init(void){
+;	.line	97; src/clock.c	void init(void){
 	MOVFF	FSR2L, POSTDEC1
 	MOVFF	FSR1L, FSR2L
-;	.line	102; src/clock.c	LCDInit();
+;	.line	99; src/clock.c	LCDInit();
 	CALL	_LCDInit
-;	.line	105; src/clock.c	RCONbits.IPEN = 1;
-	BSF	_RCONbits, 7
-;	.line	106; src/clock.c	INTCONbits.GIE = 1;
+;	.line	102; src/clock.c	INTCONbits.GIE = 1;
 	BSF	_INTCONbits, 7
-;	.line	107; src/clock.c	INTCONbits.PEIE = 1;
+;	.line	103; src/clock.c	INTCONbits.PEIE = 1;
 	BSF	_INTCONbits, 6
-;	.line	110; src/clock.c	T0CONbits.TMR0ON = 0;
+;	.line	106; src/clock.c	T0CONbits.TMR0ON = 0;
 	BCF	_T0CONbits, 7
-;	.line	113; src/clock.c	TMR0H = 0x00000000;
+;	.line	109; src/clock.c	TMR0H = 0x00000000;
 	CLRF	_TMR0H
-;	.line	114; src/clock.c	TMR0L = 0x00000000;
+;	.line	110; src/clock.c	TMR0L = 0x00000000;
 	CLRF	_TMR0L
-;	.line	117; src/clock.c	T0CONbits.T08BIT = 0;
+;	.line	113; src/clock.c	T0CONbits.T08BIT = 0;
 	BCF	_T0CONbits, 6
-;	.line	120; src/clock.c	T0CONbits.T0CS = 0;
+;	.line	116; src/clock.c	T0CONbits.T0CS = 0;
 	BCF	_T0CONbits, 5
-;	.line	123; src/clock.c	T0CONbits.PSA = 1;
+;	.line	119; src/clock.c	T0CONbits.PSA = 1;
 	BSF	_T0CONbits, 3
-;	.line	126; src/clock.c	INTCONbits.TMR0IE = 1;
+;	.line	122; src/clock.c	INTCONbits.TMR0IE = 1;
 	BSF	_INTCONbits, 5
-;	.line	136; src/clock.c	LED3_TRIS = 0;
+;	.line	123; src/clock.c	T0CONbits.TMR0ON = 1;
+	BSF	_T0CONbits, 7
+;	.line	132; src/clock.c	LED3_TRIS = 0;
 	BCF	_TRISGbits, 5
-;	.line	137; src/clock.c	LED3_IO = 1;
+;	.line	133; src/clock.c	LED3_IO = 1;
 	BSF	_PORTGbits, 5
 	MOVFF	PREINC1, FSR2L
 	RETURN	
@@ -641,8 +641,6 @@ _lowPriorityInterruptHandler:
 	MOVFF	FSR2L, POSTDEC1
 	MOVFF	FSR1L, FSR2L
 	MOVFF	r0x00, POSTDEC1
-	MOVFF	r0x01, POSTDEC1
-	MOVFF	r0x02, POSTDEC1
 ;	.line	92; src/clock.c	if (INTCONbits.TMR0IF == 1) {
 	CLRF	r0x00
 	BTFSC	_INTCONbits, 2
@@ -650,41 +648,9 @@ _lowPriorityInterruptHandler:
 	MOVF	r0x00, W
 	XORLW	0x01
 	BNZ	_00160_DS_
-;	.line	93; src/clock.c	display_string(0,to_double_digits(counter++));
-	MOVFF	_counter, r0x00
-	MOVFF	(_counter + 1), r0x01
-	BANKSEL	_counter
-	INCF	_counter, F, B
-	BNC	_10169_DS_
-	BANKSEL	(_counter + 1)
-	INCF	(_counter + 1), F, B
-_10169_DS_:
-	MOVF	r0x01, W
-	MOVWF	POSTDEC1
-	MOVF	r0x00, W
-	MOVWF	POSTDEC1
-	CALL	_to_double_digits
-	MOVWF	r0x00
-	MOVFF	PRODL, r0x01
-	MOVFF	PRODH, r0x02
-	MOVLW	0x02
-	ADDWF	FSR1L, F
-	MOVF	r0x02, W
-	MOVWF	POSTDEC1
-	MOVF	r0x01, W
-	MOVWF	POSTDEC1
-	MOVF	r0x00, W
-	MOVWF	POSTDEC1
-	MOVLW	0x00
-	MOVWF	POSTDEC1
-	CALL	_display_string
-	MOVLW	0x04
-	ADDWF	FSR1L, F
-;	.line	94; src/clock.c	INTCONbits.TMR0IF = 0;
+;	.line	93; src/clock.c	INTCONbits.TMR0IF = 0;
 	BCF	_INTCONbits, 2
 _00160_DS_:
-	MOVFF	PREINC1, r0x02
-	MOVFF	PREINC1, r0x01
 	MOVFF	PREINC1, r0x00
 	MOVFF	PREINC1, FSR2L
 	MOVFF	PREINC1, PCLATU
@@ -1142,8 +1108,8 @@ __str_3:
 
 
 ; Statistics:
-; code size:	 1412 (0x0584) bytes ( 1.08%)
-;           	  706 (0x02c2) words
+; code size:	 1328 (0x0530) bytes ( 1.01%)
+;           	  664 (0x0298) words
 ; udata size:	   38 (0x0026) bytes ( 0.99%)
 ; access size:	   13 (0x000d) bytes
 
