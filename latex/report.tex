@@ -1,0 +1,47 @@
+\documentclass[11pt]{article}
+\usepackage[english]{babel}
+ 
+\newcommand{\io}[1]{\textbf{#1}}
+
+\title{SORTES - Clock}
+\author{Dieter Castel (0256149) \\ Jonas Devlieghere (0256709)}
+\date{\today}
+ 
+\begin{document}
+\maketitle
+\newpage
+
+\tableofcontents
+\newpage
+
+\section{User Documentation}
+Two buttons allow the user to interact with the device. 
+The bottommost is \io{button 1} and is used to browse trough a items such as numbers or menu items.
+The topmost is \io{button 2} and is generally used to confirm your selection or to enter configuration mode.
+
+\subsection{Configuration Mode}
+To enter configuration mode from regular mode (i.e. the clock is displayed) press \io{button 2}. 
+A menu will display allowing you to change the current time and alarm or quit configuration mode.
+When the devices powers on, you will automatically enter configuration mode since the current time has not been set. 
+This means you will not have to press \io{button 2} to enter configuration mode. 
+
+
+\subsection{Setting the Clock}
+To configure the current time, press \io{button 2} to enable configuration mode if not yet enabled. 
+Press \io{button 1} until \io{Set time?} is displayed. 
+Confirm this choice by pressing \io{button 2}.
+You will be able to configure the clock in 3 simple steps respectively setting the hours, minutes and seconds. 
+Use \io{button 1} to increase the value of each property. 
+The input will automatically ??? when the maximum value is reached.
+For example, pressing {button 1} when the current hour value is 23 will yield a value of 0. 
+Confirm each input value by pressing {button 2}. When all values are set you will return to the configuration menu.
+
+\subsection{Setting the Alarm}
+Configuring the alarm is almost identical to configuring the current time. Press \io{button 2} to enter configuration mode, navigate to \io{Set alarm?} by pressing \io{button 1} and press \io{button 2} once more. 
+Follow the steps mentioned above to configure the alarm time as desired.
+
+\section{System Documentation}
+
+\section{System Design}
+
+\end{document}
