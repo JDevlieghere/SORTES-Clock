@@ -1,6 +1,6 @@
 gplink-0.13.7 beta
 Copyright (c) 1998-2005 gputils project
-Listing File Generated: 11-16-2013  01:09:26
+Listing File Generated: 11-16-2013  01:25:19
  
  
 Address  Value    Disassembly              Source
@@ -8,7 +8,7 @@ Address  Value    Disassembly              Source
                                            ;--------------------------------------------------------
                                            ; File Created by SDCC : free open source ANSI-C Compiler
                                            ; Version 2.9.4 #5595 (Nov 14 2013) (UNIX)
-                                           ; This file was generated Sat Nov 16 01:09:26 2013
+                                           ; This file was generated Sat Nov 16 01:25:19 2013
                                            ;--------------------------------------------------------
                                            ; PIC16 port for the Microchip 16-bit core micros
                                            ;--------------------------------------------------------
@@ -768,7 +768,7 @@ Address  Value    Disassembly              Source
 001108   010f     movlb	0xf                	BANKSEL	_overflow_counter
                                            ;	.line	137; src/clock.c	if(overflow_counter == CYCLES/2){
 00110a   5152     movf	0x52, 0, 0x1        	MOVF	_overflow_counter, W, B
-00110c   0a2f     xorlw	0x2f               	XORLW	0x2f
+00110c   0a2e     xorlw	0x2e               	XORLW	0x2e
 00110e   e103     bnz	0x1116               	BNZ	_00213_DS_
 001110   010f     movlb	0xf                	BANKSEL	(_overflow_counter + 1)
 001112   5153     movf	0x53, 0, 0x1        	MOVF	(_overflow_counter + 1), W, B
@@ -784,7 +784,7 @@ Address  Value    Disassembly              Source
 00111e   010f     movlb	0xf                	BANKSEL	_overflow_counter
                                            ;	.line	139; src/clock.c	}else if(overflow_counter == CYCLES){
 001120   5152     movf	0x52, 0, 0x1        	MOVF	_overflow_counter, W, B
-001122   0a5e     xorlw	0x5e               	XORLW	0x5e
+001122   0a5d     xorlw	0x5d               	XORLW	0x5d
 001124   e103     bnz	0x112c               	BNZ	_00215_DS_
 001126   010f     movlb	0xf                	BANKSEL	(_overflow_counter + 1)
 001128   5153     movf	0x53, 0, 0x1        	MOVF	(_overflow_counter + 1), W, B

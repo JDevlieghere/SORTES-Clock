@@ -1,7 +1,7 @@
 ;--------------------------------------------------------
 ; File Created by SDCC : free open source ANSI-C Compiler
 ; Version 2.9.4 #5595 (Nov 14 2013) (UNIX)
-; This file was generated Sat Nov 16 01:09:26 2013
+; This file was generated Sat Nov 16 01:25:19 2013
 ;--------------------------------------------------------
 ; PIC16 port for the Microchip 16-bit core micros
 ;--------------------------------------------------------
@@ -733,7 +733,7 @@ _10223_DS_:
 	BANKSEL	_overflow_counter
 ;	.line	137; src/clock.c	if(overflow_counter == CYCLES/2){
 	MOVF	_overflow_counter, W, B
-	XORLW	0x2f
+	XORLW	0x2e
 	BNZ	_00213_DS_
 	BANKSEL	(_overflow_counter + 1)
 	MOVF	(_overflow_counter + 1), W, B
@@ -748,7 +748,7 @@ _00193_DS_:
 	BANKSEL	_overflow_counter
 ;	.line	139; src/clock.c	}else if(overflow_counter == CYCLES){
 	MOVF	_overflow_counter, W, B
-	XORLW	0x5e
+	XORLW	0x5d
 	BNZ	_00215_DS_
 	BANKSEL	(_overflow_counter + 1)
 	MOVF	(_overflow_counter + 1), W, B
