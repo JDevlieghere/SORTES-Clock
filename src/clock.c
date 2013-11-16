@@ -11,17 +11,19 @@
 //Defines for configuring mode.
 #define	CM_STRING "Choose mode:" 
 
+// Quit configuration
 #define CONFIG_MODE_QUIT -1
 #define	CM_QUIT_STRING "Quit config mode." 
 
+// Alarm configuration
 #define CONFIG_MODE_ALARM 0 
 #define	CM_ALARM_STRING "Set alarm?" 
 #define	SM_ALARM_STRING "Set alarm:" 
 
+// Clock configuration
 #define CONFIG_MODE_CLOCK 1 
 #define	CM_CLOCK_STRING "Set clock?" 
 #define	SM_CLOCK_STRING "Set clock:" 
-
 
 #include <stdlib.h>
 #include <stdio.h>
@@ -41,15 +43,16 @@ void init_time(time t, char *);
 char* to_double_digits(int value);
 void init(void);
 void update_display(void);
-void toggle_led(void);
+void toggle_second_led(void);
 int read_and_clear(int *variable);
 void init_config(void);
 void display_config_mode(char *choice_string);
 
+// Clock time
 time _time;
-time _alarm;
 
-char display_line[32];
+// Alarm time
+time _alarm;
 
 // State indicators
 int alarm_going_off = 0;
@@ -64,96 +67,102 @@ int but2_pressed = 0;
 
 // Initialize
 int config_mode_on = 0;
+
 // 0 is alarm config, 1 is clock config.
 int config_mode_clock =1;
 int config_called = 0;
 
 int main(void){
-		_time = time_create();
-		_alarm = time_create();
+	init();
+	// Initialize configuration mode
+	init_config();
 
-		init();
-		init_config();
-    	// Start timer
-    	T0CONbits.TMR0ON = 1;
-		update_display();
-		while(1){
-			if(config_called){
-				config_called =0;
-				init_config();
-			}
-		}	
-        return 0;
+	update_display();
+	while(1){
+		if(config_called){
+			config_called =0;
+			init_config();
+		}
+	}	
 }
 
 void update_display(void){
+	char display_line[32];
 	time_print(_time, display_line);
 	display_string(0, display_line);
 }
 
-void toggle_led(void){
+/**
+ * Toggle the first (red) LED.
+ */
+void toggle_second_led(void){
 	LED0_IO^=1;
 }
 
-void alarm_led(void){
+/**
+ * Toggle the second and third (orange) LEDs.
+ */
+void toggle_alarm_led(void){
 	LED1_IO^=1;
 	LED2_IO^=1;
 }
+
 void init_config(void){
-		// 0 is alarm , 1 is clock.
-		int choice = CONFIG_MODE_ALARM;
-		char *choice_string = CM_ALARM_STRING;
-		config_mode_on = 1;
-		display_config_mode(choice_string);
-		while(1){
-				if(read_and_clear(&but2_pressed)){
-					//Configure the selected config mode.
-					switch(choice){
-						//for the alarm.
-						case 0:
-							LCDErase();
-							init_time(_alarm, SM_ALARM_STRING);			
-							display_config_mode(choice_string);
-							break;
-						//for the clock;
-						case 1:
-							LCDErase();
-							init_time(_time, SM_CLOCK_STRING);			
-							display_config_mode(choice_string);
-							break;
-						default:
-							LCDErase();
-							config_mode_on = 0;
-							return;
-					}
-				}
-				if(read_and_clear(&but1_pressed)){ 
-					//Cycle trough the config modes.
-					switch(choice){
-						//For the alarm.
-						case CONFIG_MODE_QUIT:
-							LCDErase();
-							choice = CONFIG_MODE_ALARM;
-							choice_string = CM_ALARM_STRING;
-							display_config_mode(choice_string);
-							break;
-						//For the clock.
-						case 0:
-							LCDErase();
-							choice = CONFIG_MODE_CLOCK;
-							choice_string = CM_CLOCK_STRING;
-							display_config_mode(choice_string);
-							break;
-						//For quiting.
-						case 1:
-							LCDErase();
-							choice =CONFIG_MODE_QUIT;
-							choice_string = CM_QUIT_STRING;
-							display_config_mode(choice_string);
-							break;
-					}
-				}
+	// 0 is alarm , 1 is clock.
+	int choice = CONFIG_MODE_ALARM;
+	static char *choice_string = CM_ALARM_STRING;
+	config_mode_on = 1;
+	display_config_mode(choice_string);
+	while(1){
+		if(read_and_clear(&but2_pressed)){
+			//Configure the selected config mode.
+			switch(choice){
+				//for the alarm.
+				case 0:
+					LCDErase();
+					init_time(_alarm, SM_ALARM_STRING);			
+					display_config_mode(choice_string);
+					break;
+				//for the clock;
+				case 1:
+					LCDErase();
+					init_time(_time, SM_CLOCK_STRING);
+					T0CONbits.TMR0ON = 1;			
+					display_config_mode(choice_string);
+					break;
+				default:
+					LCDErase();
+					config_mode_on = 0;
+					return;
+			}
 		}
+		if(read_and_clear(&but1_pressed)){ 
+			//Cycle trough the config modes.
+			switch(choice){
+				//For the alarm.
+				case CONFIG_MODE_QUIT:
+					LCDErase();
+					choice = CONFIG_MODE_ALARM;
+					choice_string = CM_ALARM_STRING;
+					display_config_mode(choice_string);
+					break;
+				//For the clock.
+				case 0:
+					LCDErase();
+					choice = CONFIG_MODE_CLOCK;
+					choice_string = CM_CLOCK_STRING;
+					display_config_mode(choice_string);
+					break;
+				//For quiting.
+				case 1:
+					LCDErase();
+					choice =CONFIG_MODE_QUIT;
+					choice_string = CM_QUIT_STRING;
+					display_config_mode(choice_string);
+					break;
+			}
+		}
+	}
 }
 
 void display_config_mode(char *choice_string){
@@ -176,6 +185,7 @@ int read_and_clear(int *variable){
 	}
 	return 0;
 }
+
 int get_input(int maxvalue, char *text, char *mode){
         BYTE length = strlen(text);
         int value = 0;
@@ -212,12 +222,13 @@ void display_string(BYTE pos, char* text){
 }
 
 char* to_double_digits(int value){
-        static char buffer[3];
-        sprintf(buffer, "%02d", value);
-        return buffer;
+    static char buffer[3];
+    sprintf(buffer, "%02d", value);
+    return buffer;
 }        
 
 void highPriorityInterruptHandler (void) __interrupt(1){
+	// Button 2 causes an interrupt
     if(INTCON3bits.INT1F == 1){
 		if(!config_mode_on){
 			config_called =1;	
@@ -228,29 +239,33 @@ void highPriorityInterruptHandler (void) __interrupt(1){
 		INTCON3bits.INT1F = 0; 
 
 	}
+
+	// Button 1 causes an interrupt
 	if(INTCON3bits.INT3F  == 1){
 		but1_pressed = 1;	
 		if(BUTTON1_IO);
 		INTCON3bits.INT3F = 0; 
 	}
+
+	// Timer 0 causes an interrupt
 	if(INTCONbits.TMR0IF == 1) {
 		overflow_counter++;
 		if(overflow_counter == CYCLES/2){
-			toggle_led();
+			toggle_second_led();
 		}else if(overflow_counter == CYCLES){
 			if(time_equals(_alarm,_time)){
 				alarm_going_off = 1;
 			}
 			if(alarm_going_off){
 				alarm_counter++;
-				alarm_led();
+				toggle_alarm_led();
 				if(alarm_counter==30){
 					alarm_going_off =0;
 					alarm_counter = 0;
 				}
 			}
 			overflow_counter = 0;
-			toggle_led();
+			toggle_second_led();
 			add_second(_time);
 			if(!config_called && !config_mode_on){
 				update_display();
@@ -260,10 +275,13 @@ void highPriorityInterruptHandler (void) __interrupt(1){
     }
 }
 
-
 void init(void){
 	// Initialize LCD
 	LCDInit();
+
+	// Initialize time	
+	_time = time_create();
+	_alarm = time_create();
 
 	// Enable buttons
 	BUTTON0_TRIS = 1;
