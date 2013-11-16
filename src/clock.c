@@ -4,7 +4,7 @@
 
 #define CLOCK_FREQ  40000000      
 #define EXEC_FREQ   CLOCK_FREQ/4 	
-#define CYCLES 		96
+#define CYCLES 		94
 
 #include <stdlib.h>
 #include <stdio.h>
@@ -98,8 +98,8 @@ int get_input(int maxvalue, char *text){
 			}
 			if(read_and_clear(&but1_pressed)){ 
 				value = (++value)%maxvalue;
-				display_string(length + 1, to_double_digits(value));
 			}
+			display_string(length + 1, to_double_digits(value));
         }
 }
 

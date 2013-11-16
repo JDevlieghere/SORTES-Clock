@@ -1,7 +1,7 @@
 ;--------------------------------------------------------
 ; File Created by SDCC : free open source ANSI-C Compiler
 ; Version 2.9.4 #5595 (Nov 14 2013) (UNIX)
-; This file was generated Sat Nov 16 00:12:16 2013
+; This file was generated Sat Nov 16 01:09:26 2013
 ;--------------------------------------------------------
 ; PIC16 port for the Microchip 16-bit core micros
 ;--------------------------------------------------------
@@ -733,7 +733,7 @@ _10223_DS_:
 	BANKSEL	_overflow_counter
 ;	.line	137; src/clock.c	if(overflow_counter == CYCLES/2){
 	MOVF	_overflow_counter, W, B
-	XORLW	0x30
+	XORLW	0x2f
 	BNZ	_00213_DS_
 	BANKSEL	(_overflow_counter + 1)
 	MOVF	(_overflow_counter + 1), W, B
@@ -748,7 +748,7 @@ _00193_DS_:
 	BANKSEL	_overflow_counter
 ;	.line	139; src/clock.c	}else if(overflow_counter == CYCLES){
 	MOVF	_overflow_counter, W, B
-	XORLW	0x60
+	XORLW	0x5e
 	BNZ	_00215_DS_
 	BANKSEL	(_overflow_counter + 1)
 	MOVF	(_overflow_counter + 1), W, B
@@ -1170,8 +1170,7 @@ _00144_DS_:
 	ADDWF	FSR1L, F
 	MOVF	r0x03, W
 	IORWF	r0x04, W
-	BTFSC	STATUS, 2
-	BRA	_00152_DS_
+	BZ	_00146_DS_
 ;	.line	100; src/clock.c	value = (++value)%maxvalue;
 	INCF	r0x06, F
 	BTFSC	STATUS, 0
@@ -1189,7 +1188,8 @@ _00144_DS_:
 	MOVFF	PRODL, r0x07
 	MOVLW	0x04
 	ADDWF	FSR1L, F
-;	.line	101; src/clock.c	display_string(length + 1, to_double_digits(value));
+_00146_DS_:
+;	.line	102; src/clock.c	display_string(length + 1, to_double_digits(value));
 	MOVF	r0x07, W
 	MOVWF	POSTDEC1
 	MOVF	r0x06, W
@@ -1524,8 +1524,8 @@ __str_3:
 
 
 ; Statistics:
-; code size:	 2074 (0x081a) bytes ( 1.58%)
-;           	 1037 (0x040d) words
+; code size:	 2072 (0x0818) bytes ( 1.58%)
+;           	 1036 (0x040c) words
 ; udata size:	   41 (0x0029) bytes ( 1.07%)
 ; access size:	   13 (0x000d) bytes
 
