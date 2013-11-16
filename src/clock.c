@@ -5,6 +5,12 @@
 #define CLOCK_FREQ  40000000      
 #define EXEC_FREQ   CLOCK_FREQ/4 	
 #define CYCLES 		93
+#define START_FIRST_LINE 0 
+#define START_SECOND_LINE 17 
+#define CONFIG_MODE_NONE -1
+#define CONFIG_MODE_ALARM 0 
+#define CONFIG_MODE_CLOCK 1 
+
 
 #include <stdlib.h>
 #include <stdio.h>
@@ -17,15 +23,16 @@
 
 /* Method declaration. */
 void display_string(BYTE pos, char* text);
-int get_input(int maxvalue, char *text);
+int get_input(int maxvalue, char *text, char *mode);
 void delay_1ms(void);
 void delay_ms(unsigned int ms);
-void init_clock(time t);
+void init_time(time t, char *);
 char* to_double_digits(int value);
 void init(void);
 void update_display(void);
 void toggle_led(void);
 int read_and_clear(int *variable);
+void init_config(void);
 
 time _time;
 time _alarm;
@@ -43,13 +50,19 @@ int overflow_counter = 0;
 int but1_pressed = 0;
 int but2_pressed = 0;
 
+// Start in config mode.
+int config_mode_on = 1;
+// 0 is alarm config, 1 is clock config.
+int config_mode_clock =1;
+
 int main(void){
 		_time = time_create();
 		_alarm = time_create();
 
 		init();
-        init_clock(_time);
-		time_set(_alarm,0,0,5);
+		init_config();
+    	// Start timer
+    	T0CONbits.TMR0ON = 1;
 		update_display();
         return 0;
 }
@@ -67,15 +80,59 @@ void alarm_led(void){
 	LED1_IO^=1;
 	LED2_IO^=1;
 }
-
-void init_clock(time t){
+void init_config(void){
+		// 0 is alarm , 1 is clock.
+		int choice = -1;
+		display_string(START_FIRST_LINE, "Choose a config mode.");
+		while(1){
+				if(read_and_clear(&but2_pressed)){
+					//Configure the selected config mode.
+					switch(choice){
+						//for the alarm.
+						case 0:
+							LCDErase();
+							init_time(_alarm, "Setting alarm");			
+							break;
+						//for the clock;
+						case 1:
+							LCDErase();
+							init_time(_time, "Setting clock");			
+							break;
+						default:
+							LCDErase();
+							return;
+					}
+				}
+				if(read_and_clear(&but1_pressed)){ 
+					//Cycle trough the config modes.
+					switch(choice){
+						//for the alarm.
+						case CONFIG_MODE_NONE:
+							LCDErase();
+							choice = CONFIG_MODE_ALARM;
+							display_string(START_FIRST_LINE, "Set alarm?");
+							break;
+						//for the clock;
+						case 0:
+							LCDErase();
+							choice = CONFIG_MODE_CLOCK;
+							display_string(START_FIRST_LINE, "Set clock?");
+							break;
+						case 1:
+							LCDErase();
+							choice =CONFIG_MODE_NONE;
+							display_string(START_FIRST_LINE, "Quit config?");
+							break;
+					}
+				}
+		}
+}
+void init_time(time t, char *mode){ 
     int h, m, s;
-    h = get_input(24, "HOURS:");
-    m = get_input(60, "MINUTES:");
-    s = get_input(60, "SECONDS:");
+    h = get_input(24, "Hours:", mode);
+    m = get_input(60, "MinuteS:", mode);
+    s = get_input(60, "SecondS:", mode);
     time_set(t,h,m,s);
-    // Start timer
-    T0CONbits.TMR0ON = 1;
 }
 
 int read_and_clear(int *variable){
@@ -85,21 +142,27 @@ int read_and_clear(int *variable){
 	}
 	return 0;
 }
-int get_input(int maxvalue, char *text){
+int get_input(int maxvalue, char *text, char *mode){
         BYTE length = strlen(text);
         int value = 0;
         display_string(0, text);
         while(1)
         {
-        	DelayMs(10);
-			if(read_and_clear(&but2_pressed)){
-				LCDErase();
-				return value;
+		
+			if(config_mode_on){
+        			DelayMs(10);
+					if(read_and_clear(&but2_pressed)){
+						LCDErase();
+						return value;
+					}
+					if(read_and_clear(&but1_pressed)){ 
+						value = (++value)%maxvalue;
+					}
+					display_string(START_FIRST_LINE , mode);
+					display_string(START_SECOND_LINE + length + 1, to_double_digits(value));
+			} else { 
+			
 			}
-			if(read_and_clear(&but1_pressed)){ 
-				value = (++value)%maxvalue;
-			}
-			display_string(length + 1, to_double_digits(value));
         }
 }
 

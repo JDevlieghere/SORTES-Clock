@@ -1,7 +1,7 @@
 ;--------------------------------------------------------
 ; File Created by SDCC : free open source ANSI-C Compiler
 ; Version 2.9.4 #5595 (Nov 14 2013) (UNIX)
-; This file was generated Sat Nov 16 01:25:19 2013
+; This file was generated Sat Nov 16 12:12:37 2013
 ;--------------------------------------------------------
 ; PIC16 port for the Microchip 16-bit core micros
 ;--------------------------------------------------------
@@ -12,9 +12,11 @@
 ;--------------------------------------------------------
 ; public variables in this module
 ;--------------------------------------------------------
+	global _config_mode_clock
 	global _update_display
 	global _toggle_led
-	global _init_clock
+	global _init_config
+	global _init_time
 	global _read_and_clear
 	global _get_input
 	global _display_string
@@ -28,6 +30,7 @@
 	global _overflow_counter
 	global _but1_pressed
 	global _but2_pressed
+	global _config_mode_on
 	global _main
 	global _alarm_led
 	global _highPriorityInterruptHandler
@@ -473,6 +476,7 @@
 ;	Equates to used internal registers
 ;--------------------------------------------------------
 STATUS	equ	0xfd8
+PCL	equ	0xff9
 PCLATH	equ	0xffa
 PCLATU	equ	0xffb
 WREG	equ	0xfe8
@@ -494,6 +498,8 @@ _alarm_counter	db	0x00, 0x00
 _overflow_counter	db	0x00, 0x00
 _but1_pressed	db	0x00, 0x00
 _but2_pressed	db	0x00, 0x00
+_config_mode_on	db	0x01, 0x00
+_config_mode_clock	db	0x01, 0x00
 
 
 ; Internal registers
@@ -511,6 +517,9 @@ r0x09	res	1
 r0x0a	res	1
 r0x0b	res	1
 r0x0c	res	1
+r0x0d	res	1
+r0x0e	res	1
+r0x0f	res	1
 
 udata_clock_0	udata
 __time	res	3
@@ -541,61 +550,27 @@ ivec_0x1_highPriorityInterruptHandler:
 ; ; Starting pCode block
 S_clock__main	code
 _main:
-;	.line	47; src/clock.c	_time = time_create();
+;	.line	59; src/clock.c	_time = time_create();
 	CALL	_time_create
 	BANKSEL	__time
 	MOVWF	__time, B
 	MOVFF	PRODL, (__time + 1)
 	MOVFF	PRODH, (__time + 2)
-;	.line	48; src/clock.c	_alarm = time_create();
+;	.line	60; src/clock.c	_alarm = time_create();
 	CALL	_time_create
 	BANKSEL	__alarm
 	MOVWF	__alarm, B
 	MOVFF	PRODL, (__alarm + 1)
 	MOVFF	PRODH, (__alarm + 2)
-;	.line	50; src/clock.c	init();
+;	.line	62; src/clock.c	init();
 	CALL	_init
-	BANKSEL	(__time + 2)
-;	.line	51; src/clock.c	init_clock(_time);
-	MOVF	(__time + 2), W, B
-	MOVWF	POSTDEC1
-	BANKSEL	(__time + 1)
-	MOVF	(__time + 1), W, B
-	MOVWF	POSTDEC1
-	BANKSEL	__time
-	MOVF	__time, W, B
-	MOVWF	POSTDEC1
-	CALL	_init_clock
-	MOVLW	0x03
-	ADDWF	FSR1L, F
-;	.line	52; src/clock.c	time_set(_alarm,0,0,5);
-	MOVLW	0x00
-	MOVWF	POSTDEC1
-	MOVLW	0x05
-	MOVWF	POSTDEC1
-	MOVLW	0x00
-	MOVWF	POSTDEC1
-	MOVLW	0x00
-	MOVWF	POSTDEC1
-	MOVLW	0x00
-	MOVWF	POSTDEC1
-	MOVLW	0x00
-	MOVWF	POSTDEC1
-	BANKSEL	(__alarm + 2)
-	MOVF	(__alarm + 2), W, B
-	MOVWF	POSTDEC1
-	BANKSEL	(__alarm + 1)
-	MOVF	(__alarm + 1), W, B
-	MOVWF	POSTDEC1
-	BANKSEL	__alarm
-	MOVF	__alarm, W, B
-	MOVWF	POSTDEC1
-	CALL	_time_set
-	MOVLW	0x09
-	ADDWF	FSR1L, F
-;	.line	53; src/clock.c	update_display();
+;	.line	63; src/clock.c	init_config();
+	CALL	_init_config
+;	.line	65; src/clock.c	T0CONbits.TMR0ON = 1;
+	BSF	_T0CONbits, 7
+;	.line	66; src/clock.c	update_display();
 	CALL	_update_display
-;	.line	54; src/clock.c	return 0;
+;	.line	67; src/clock.c	return 0;
 	CLRF	PRODL
 	CLRF	WREG
 	RETURN	
@@ -603,54 +578,54 @@ _main:
 ; ; Starting pCode block
 S_clock__init	code
 _init:
-;	.line	161; src/clock.c	void init(void){
+;	.line	224; src/clock.c	void init(void){
 	MOVFF	FSR2L, POSTDEC1
 	MOVFF	FSR1L, FSR2L
-;	.line	163; src/clock.c	LCDInit();
+;	.line	226; src/clock.c	LCDInit();
 	CALL	_LCDInit
-;	.line	166; src/clock.c	BUTTON0_TRIS = 1;
+;	.line	229; src/clock.c	BUTTON0_TRIS = 1;
 	BSF	_TRISBbits, 3
-;	.line	167; src/clock.c	BUTTON1_TRIS = 1;
+;	.line	230; src/clock.c	BUTTON1_TRIS = 1;
 	BSF	_TRISBbits, 1
-;	.line	170; src/clock.c	INTCONbits.GIE = 1;
+;	.line	233; src/clock.c	INTCONbits.GIE = 1;
 	BSF	_INTCONbits, 7
-;	.line	171; src/clock.c	INTCONbits.PEIE = 1;
+;	.line	234; src/clock.c	INTCONbits.PEIE = 1;
 	BSF	_INTCONbits, 6
-;	.line	172; src/clock.c	RCONbits.IPEN = 1; 
+;	.line	235; src/clock.c	RCONbits.IPEN = 1; 
 	BSF	_RCONbits, 7
-;	.line	175; src/clock.c	T0CONbits.TMR0ON = 0;
+;	.line	238; src/clock.c	T0CONbits.TMR0ON = 0;
 	BCF	_T0CONbits, 7
-;	.line	178; src/clock.c	TMR0H = 0x00000000;
+;	.line	241; src/clock.c	TMR0H = 0x00000000;
 	CLRF	_TMR0H
-;	.line	179; src/clock.c	TMR0L = 0x00000000;
+;	.line	242; src/clock.c	TMR0L = 0x00000000;
 	CLRF	_TMR0L
-;	.line	182; src/clock.c	T0CONbits.T08BIT = 0;
+;	.line	245; src/clock.c	T0CONbits.T08BIT = 0;
 	BCF	_T0CONbits, 6
-;	.line	185; src/clock.c	T0CONbits.T0CS = 0;
+;	.line	248; src/clock.c	T0CONbits.T0CS = 0;
 	BCF	_T0CONbits, 5
-;	.line	188; src/clock.c	T0CONbits.PSA = 1;
+;	.line	251; src/clock.c	T0CONbits.PSA = 1;
 	BSF	_T0CONbits, 3
-;	.line	191; src/clock.c	INTCONbits.TMR0IE = 1;
+;	.line	254; src/clock.c	INTCONbits.TMR0IE = 1;
 	BSF	_INTCONbits, 5
-;	.line	194; src/clock.c	INTCON3bits.INT1IE = 1;
+;	.line	257; src/clock.c	INTCON3bits.INT1IE = 1;
 	BSF	_INTCON3bits, 3
-;	.line	195; src/clock.c	INTCON3bits.INT3IE = 1;
+;	.line	258; src/clock.c	INTCON3bits.INT3IE = 1;
 	BSF	_INTCON3bits, 5
-;	.line	198; src/clock.c	LED0_TRIS = 0;
+;	.line	261; src/clock.c	LED0_TRIS = 0;
 	BCF	_TRISJbits, 0
-;	.line	199; src/clock.c	LED1_TRIS = 0;   
+;	.line	262; src/clock.c	LED1_TRIS = 0;   
 	BCF	_TRISJbits, 1
-;	.line	200; src/clock.c	LED2_TRIS = 0;
+;	.line	263; src/clock.c	LED2_TRIS = 0;
 	BCF	_TRISJbits, 2
-;	.line	201; src/clock.c	LED3_TRIS = 0;
+;	.line	264; src/clock.c	LED3_TRIS = 0;
 	BCF	_TRISGbits, 5
-;	.line	204; src/clock.c	LED0_IO = 0; 
+;	.line	267; src/clock.c	LED0_IO = 0; 
 	BCF	_LATJbits, 0
-;	.line	205; src/clock.c	LED1_IO = 0;
+;	.line	268; src/clock.c	LED1_IO = 0;
 	BCF	_LATJbits, 1
-;	.line	206; src/clock.c	LED2_IO = 0;
+;	.line	269; src/clock.c	LED2_IO = 0;
 	BCF	_LATJbits, 2
-;	.line	207; src/clock.c	LED3_IO = 1;
+;	.line	270; src/clock.c	LED3_IO = 1;
 	BSF	_PORTGbits, 5
 	MOVFF	PREINC1, FSR2L
 	RETURN	
@@ -658,7 +633,7 @@ _init:
 ; ; Starting pCode block
 S_clock__highPriorityInterruptHandler	code
 _highPriorityInterruptHandler:
-;	.line	123; src/clock.c	void highPriorityInterruptHandler (void) __interrupt(1){
+;	.line	186; src/clock.c	void highPriorityInterruptHandler (void) __interrupt(1){
 	MOVFF	WREG, POSTDEC1
 	MOVFF	STATUS, POSTDEC1
 	MOVFF	BSR, POSTDEC1
@@ -672,92 +647,92 @@ _highPriorityInterruptHandler:
 	MOVFF	FSR1L, FSR2L
 	MOVFF	r0x00, POSTDEC1
 	MOVFF	r0x01, POSTDEC1
-;	.line	124; src/clock.c	if(INTCON3bits.INT1F == 1){
+;	.line	187; src/clock.c	if(INTCON3bits.INT1F == 1){
 	CLRF	r0x00
 	BTFSC	_INTCON3bits, 0
 	INCF	r0x00, F
 	MOVF	r0x00, W
 	XORLW	0x01
-	BNZ	_00181_DS_
-;	.line	125; src/clock.c	but2_pressed = 1;	
+	BNZ	_00216_DS_
+;	.line	188; src/clock.c	but2_pressed = 1;	
 	MOVLW	0x01
 	BANKSEL	_but2_pressed
 	MOVWF	_but2_pressed, B
 	BANKSEL	(_but2_pressed + 1)
 	CLRF	(_but2_pressed + 1), B
 ; ;;!!! pic16_aopOp:1071 called for a spillLocation -- assigning WREG instead --- CHECK
-;	.line	126; src/clock.c	if(BUTTON0_IO);
+;	.line	189; src/clock.c	if(BUTTON0_IO);
 	CLRF	WREG
 	BTFSC	_PORTBbits, 3
 	INCF	WREG, F
-;	.line	127; src/clock.c	INTCON3bits.INT1F = 0; 
+;	.line	190; src/clock.c	INTCON3bits.INT1F = 0; 
 	BCF	_INTCON3bits, 0
-_00181_DS_:
-;	.line	130; src/clock.c	if(INTCON3bits.INT3F  == 1){
+_00216_DS_:
+;	.line	193; src/clock.c	if(INTCON3bits.INT3F  == 1){
 	CLRF	r0x00
 	BTFSC	_INTCON3bits, 2
 	INCF	r0x00, F
 	MOVF	r0x00, W
 	XORLW	0x01
-	BNZ	_00183_DS_
-;	.line	131; src/clock.c	but1_pressed = 1;	
+	BNZ	_00218_DS_
+;	.line	194; src/clock.c	but1_pressed = 1;	
 	MOVLW	0x01
 	BANKSEL	_but1_pressed
 	MOVWF	_but1_pressed, B
 	BANKSEL	(_but1_pressed + 1)
 	CLRF	(_but1_pressed + 1), B
 ; ;;!!! pic16_aopOp:1071 called for a spillLocation -- assigning WREG instead --- CHECK
-;	.line	132; src/clock.c	if(BUTTON1_IO);
+;	.line	195; src/clock.c	if(BUTTON1_IO);
 	CLRF	WREG
 	BTFSC	_PORTBbits, 1
 	INCF	WREG, F
-;	.line	133; src/clock.c	INTCON3bits.INT3F = 0; 
+;	.line	196; src/clock.c	INTCON3bits.INT3F = 0; 
 	BCF	_INTCON3bits, 2
-_00183_DS_:
-;	.line	135; src/clock.c	if(INTCONbits.TMR0IF == 1) {
+_00218_DS_:
+;	.line	198; src/clock.c	if(INTCONbits.TMR0IF == 1) {
 	CLRF	r0x00
 	BTFSC	_INTCONbits, 2
 	INCF	r0x00, F
 	MOVF	r0x00, W
 	XORLW	0x01
-	BZ	_00212_DS_
-	BRA	_00197_DS_
-_00212_DS_:
+	BZ	_00247_DS_
+	BRA	_00232_DS_
+_00247_DS_:
 	BANKSEL	_overflow_counter
-;	.line	136; src/clock.c	overflow_counter++;
+;	.line	199; src/clock.c	overflow_counter++;
 	INCF	_overflow_counter, F, B
-	BNC	_10223_DS_
+	BNC	_10258_DS_
 	BANKSEL	(_overflow_counter + 1)
 	INCF	(_overflow_counter + 1), F, B
-_10223_DS_:
+_10258_DS_:
 	BANKSEL	_overflow_counter
-;	.line	137; src/clock.c	if(overflow_counter == CYCLES/2){
+;	.line	200; src/clock.c	if(overflow_counter == CYCLES/2){
 	MOVF	_overflow_counter, W, B
 	XORLW	0x2e
-	BNZ	_00213_DS_
+	BNZ	_00248_DS_
 	BANKSEL	(_overflow_counter + 1)
 	MOVF	(_overflow_counter + 1), W, B
-	BZ	_00214_DS_
-_00213_DS_:
-	BRA	_00193_DS_
-_00214_DS_:
-;	.line	138; src/clock.c	toggle_led();
+	BZ	_00249_DS_
+_00248_DS_:
+	BRA	_00228_DS_
+_00249_DS_:
+;	.line	201; src/clock.c	toggle_led();
 	CALL	_toggle_led
-	BRA	_00194_DS_
-_00193_DS_:
+	BRA	_00229_DS_
+_00228_DS_:
 	BANKSEL	_overflow_counter
-;	.line	139; src/clock.c	}else if(overflow_counter == CYCLES){
+;	.line	202; src/clock.c	}else if(overflow_counter == CYCLES){
 	MOVF	_overflow_counter, W, B
 	XORLW	0x5d
-	BNZ	_00215_DS_
+	BNZ	_00250_DS_
 	BANKSEL	(_overflow_counter + 1)
 	MOVF	(_overflow_counter + 1), W, B
-	BZ	_00216_DS_
-_00215_DS_:
-	BRA	_00194_DS_
-_00216_DS_:
+	BZ	_00251_DS_
+_00250_DS_:
+	BRA	_00229_DS_
+_00251_DS_:
 	BANKSEL	(__time + 2)
-;	.line	140; src/clock.c	if(time_equals(_alarm,_time)){
+;	.line	203; src/clock.c	if(time_equals(_alarm,_time)){
 	MOVF	(__time + 2), W, B
 	MOVWF	POSTDEC1
 	BANKSEL	(__time + 1)
@@ -782,60 +757,60 @@ _00216_DS_:
 	ADDWF	FSR1L, F
 	MOVF	r0x00, W
 	IORWF	r0x01, W
-	BZ	_00185_DS_
-;	.line	141; src/clock.c	alarm_going_off = 1;
+	BZ	_00220_DS_
+;	.line	204; src/clock.c	alarm_going_off = 1;
 	MOVLW	0x01
 	BANKSEL	_alarm_going_off
 	MOVWF	_alarm_going_off, B
 	BANKSEL	(_alarm_going_off + 1)
 	CLRF	(_alarm_going_off + 1), B
-_00185_DS_:
+_00220_DS_:
 	BANKSEL	_alarm_going_off
-;	.line	143; src/clock.c	if(alarm_going_off){
+;	.line	206; src/clock.c	if(alarm_going_off){
 	MOVF	_alarm_going_off, W, B
 	BANKSEL	(_alarm_going_off + 1)
 	IORWF	(_alarm_going_off + 1), W, B
-	BZ	_00189_DS_
+	BZ	_00224_DS_
 	BANKSEL	_alarm_counter
-;	.line	144; src/clock.c	alarm_counter++;
+;	.line	207; src/clock.c	alarm_counter++;
 	INCF	_alarm_counter, F, B
-	BNC	_20224_DS_
+	BNC	_20259_DS_
 	BANKSEL	(_alarm_counter + 1)
 	INCF	(_alarm_counter + 1), F, B
-_20224_DS_:
-;	.line	145; src/clock.c	alarm_led();
+_20259_DS_:
+;	.line	208; src/clock.c	alarm_led();
 	CALL	_alarm_led
 	BANKSEL	_alarm_counter
-;	.line	146; src/clock.c	if(alarm_counter==30){
+;	.line	209; src/clock.c	if(alarm_counter==30){
 	MOVF	_alarm_counter, W, B
 	XORLW	0x1e
-	BNZ	_00217_DS_
+	BNZ	_00252_DS_
 	BANKSEL	(_alarm_counter + 1)
 	MOVF	(_alarm_counter + 1), W, B
-	BZ	_00218_DS_
-_00217_DS_:
-	BRA	_00189_DS_
-_00218_DS_:
+	BZ	_00253_DS_
+_00252_DS_:
+	BRA	_00224_DS_
+_00253_DS_:
 	BANKSEL	_alarm_going_off
-;	.line	147; src/clock.c	alarm_going_off =0;
+;	.line	210; src/clock.c	alarm_going_off =0;
 	CLRF	_alarm_going_off, B
 	BANKSEL	(_alarm_going_off + 1)
 	CLRF	(_alarm_going_off + 1), B
 	BANKSEL	_alarm_counter
-;	.line	148; src/clock.c	alarm_counter = 0;
+;	.line	211; src/clock.c	alarm_counter = 0;
 	CLRF	_alarm_counter, B
 	BANKSEL	(_alarm_counter + 1)
 	CLRF	(_alarm_counter + 1), B
-_00189_DS_:
+_00224_DS_:
 	BANKSEL	_overflow_counter
-;	.line	151; src/clock.c	overflow_counter = 0;
+;	.line	214; src/clock.c	overflow_counter = 0;
 	CLRF	_overflow_counter, B
 	BANKSEL	(_overflow_counter + 1)
 	CLRF	(_overflow_counter + 1), B
-;	.line	152; src/clock.c	toggle_led();
+;	.line	215; src/clock.c	toggle_led();
 	CALL	_toggle_led
 	BANKSEL	(__time + 2)
-;	.line	153; src/clock.c	add_second(_time);
+;	.line	216; src/clock.c	add_second(_time);
 	MOVF	(__time + 2), W, B
 	MOVWF	POSTDEC1
 	BANKSEL	(__time + 1)
@@ -847,12 +822,12 @@ _00189_DS_:
 	CALL	_add_second
 	MOVLW	0x03
 	ADDWF	FSR1L, F
-;	.line	154; src/clock.c	update_display();
+;	.line	217; src/clock.c	update_display();
 	CALL	_update_display
-_00194_DS_:
-;	.line	156; src/clock.c	INTCONbits.TMR0IF = 0;
+_00229_DS_:
+;	.line	219; src/clock.c	INTCONbits.TMR0IF = 0;
 	BCF	_INTCONbits, 2
-_00197_DS_:
+_00232_DS_:
 	MOVFF	PREINC1, r0x01
 	MOVFF	PREINC1, r0x00
 	MOVFF	PREINC1, FSR2L
@@ -870,7 +845,7 @@ _00197_DS_:
 ; ; Starting pCode block
 S_clock__to_double_digits	code
 _to_double_digits:
-;	.line	117; src/clock.c	char* to_double_digits(int value){
+;	.line	180; src/clock.c	char* to_double_digits(int value){
 	MOVFF	FSR2L, POSTDEC1
 	MOVFF	FSR1L, FSR2L
 	MOVFF	r0x00, POSTDEC1
@@ -882,7 +857,7 @@ _to_double_digits:
 	MOVFF	PLUSW2, r0x00
 	MOVLW	0x03
 	MOVFF	PLUSW2, r0x01
-;	.line	119; src/clock.c	sprintf(buffer, "%02d", value);
+;	.line	182; src/clock.c	sprintf(buffer, "%02d", value);
 	MOVLW	HIGH(_to_double_digits_buffer_1_1)
 	MOVWF	r0x03
 	MOVLW	LOW(_to_double_digits_buffer_1_1)
@@ -893,11 +868,11 @@ _to_double_digits:
 	MOVWF	POSTDEC1
 	MOVF	r0x00, W
 	MOVWF	POSTDEC1
-	MOVLW	UPPER(__str_3)
+	MOVLW	UPPER(__str_9)
 	MOVWF	POSTDEC1
-	MOVLW	HIGH(__str_3)
+	MOVLW	HIGH(__str_9)
 	MOVWF	POSTDEC1
-	MOVLW	LOW(__str_3)
+	MOVLW	LOW(__str_9)
 	MOVWF	POSTDEC1
 	MOVF	r0x04, W
 	MOVWF	POSTDEC1
@@ -908,7 +883,7 @@ _to_double_digits:
 	CALL	_sprintf
 	MOVLW	0x08
 	ADDWF	FSR1L, F
-;	.line	120; src/clock.c	return buffer;
+;	.line	183; src/clock.c	return buffer;
 	MOVLW	HIGH(_to_double_digits_buffer_1_1)
 	MOVWF	r0x01
 	MOVLW	LOW(_to_double_digits_buffer_1_1)
@@ -929,7 +904,7 @@ _to_double_digits:
 ; ; Starting pCode block
 S_clock__display_string	code
 _display_string:
-;	.line	106; src/clock.c	void display_string(BYTE pos, char* text){
+;	.line	169; src/clock.c	void display_string(BYTE pos, char* text){
 	MOVFF	FSR2L, POSTDEC1
 	MOVFF	FSR1L, FSR2L
 	MOVFF	r0x00, POSTDEC1
@@ -950,7 +925,7 @@ _display_string:
 	MOVFF	PLUSW2, r0x02
 	MOVLW	0x05
 	MOVFF	PLUSW2, r0x03
-;	.line	107; src/clock.c	BYTE        l = strlen(text);
+;	.line	170; src/clock.c	BYTE        l = strlen(text);
 	MOVF	r0x03, W
 	MOVWF	POSTDEC1
 	MOVF	r0x02, W
@@ -962,11 +937,11 @@ _display_string:
 	MOVFF	PRODL, r0x05
 	MOVLW	0x03
 	ADDWF	FSR1L, F
-;	.line	108; src/clock.c	BYTE      max = 32-pos;    
+;	.line	171; src/clock.c	BYTE      max = 32-pos;    
 	MOVF	r0x00, W
 	SUBLW	0x20
 	MOVWF	r0x05
-;	.line	109; src/clock.c	char       *d = (char*)&LCDText[pos];
+;	.line	172; src/clock.c	char       *d = (char*)&LCDText[pos];
 	CLRF	r0x06
 	MOVLW	LOW(_LCDText)
 	ADDWF	r0x00, F
@@ -978,19 +953,19 @@ _display_string:
 	MOVWF	r0x00
 	MOVLW	0x80
 	MOVWF	r0x07
-;	.line	111; src/clock.c	size_t      n = (l<max)?l:max;
+;	.line	174; src/clock.c	size_t      n = (l<max)?l:max;
 	MOVF	r0x05, W
 	SUBWF	r0x04, W
-	BNC	_00165_DS_
+	BNC	_00200_DS_
 	MOVFF	r0x05, r0x04
-_00165_DS_:
+_00200_DS_:
 	CLRF	r0x05
-;	.line	112; src/clock.c	if (n != 0)
+;	.line	175; src/clock.c	if (n != 0)
 	MOVF	r0x04, W
 	IORWF	r0x05, W
-	BZ	_00161_DS_
-_00157_DS_:
-;	.line	113; src/clock.c	while (n-- != 0)*d++ = *s++;
+	BZ	_00196_DS_
+_00192_DS_:
+;	.line	176; src/clock.c	while (n-- != 0)*d++ = *s++;
 	MOVFF	r0x04, r0x08
 	MOVFF	r0x05, r0x09
 	MOVLW	0xff
@@ -999,7 +974,7 @@ _00157_DS_:
 	DECF	r0x05, F
 	MOVF	r0x08, W
 	IORWF	r0x09, W
-	BZ	_00161_DS_
+	BZ	_00196_DS_
 	MOVFF	r0x01, FSR0L
 	MOVFF	r0x02, PRODL
 	MOVF	r0x03, W
@@ -1020,9 +995,9 @@ _00157_DS_:
 	INCF	r0x06, F
 	BTFSC	STATUS, 0
 	INCF	r0x07, F
-	BRA	_00157_DS_
-_00161_DS_:
-;	.line	114; src/clock.c	LCDUpdate();
+	BRA	_00192_DS_
+_00196_DS_:
+;	.line	177; src/clock.c	LCDUpdate();
 	CALL	_LCDUpdate
 	MOVFF	PREINC1, r0x09
 	MOVFF	PREINC1, r0x08
@@ -1040,7 +1015,7 @@ _00161_DS_:
 ; ; Starting pCode block
 S_clock__get_input	code
 _get_input:
-;	.line	88; src/clock.c	int get_input(int maxvalue, char *text){
+;	.line	145; src/clock.c	int get_input(int maxvalue, char *text, char *mode){
 	MOVFF	FSR2L, POSTDEC1
 	MOVFF	FSR1L, FSR2L
 	MOVFF	r0x00, POSTDEC1
@@ -1056,6 +1031,9 @@ _get_input:
 	MOVFF	r0x0a, POSTDEC1
 	MOVFF	r0x0b, POSTDEC1
 	MOVFF	r0x0c, POSTDEC1
+	MOVFF	r0x0d, POSTDEC1
+	MOVFF	r0x0e, POSTDEC1
+	MOVFF	r0x0f, POSTDEC1
 	MOVLW	0x02
 	MOVFF	PLUSW2, r0x00
 	MOVLW	0x03
@@ -1066,7 +1044,13 @@ _get_input:
 	MOVFF	PLUSW2, r0x03
 	MOVLW	0x06
 	MOVFF	PLUSW2, r0x04
-;	.line	89; src/clock.c	BYTE length = strlen(text);
+	MOVLW	0x07
+	MOVFF	PLUSW2, r0x05
+	MOVLW	0x08
+	MOVFF	PLUSW2, r0x06
+	MOVLW	0x09
+	MOVFF	PLUSW2, r0x07
+;	.line	146; src/clock.c	BYTE length = strlen(text);
 	MOVF	r0x04, W
 	MOVWF	POSTDEC1
 	MOVF	r0x03, W
@@ -1074,14 +1058,14 @@ _get_input:
 	MOVF	r0x02, W
 	MOVWF	POSTDEC1
 	CALL	_strlen
-	MOVWF	r0x05
-	MOVFF	PRODL, r0x06
+	MOVWF	r0x08
+	MOVFF	PRODL, r0x09
 	MOVLW	0x03
 	ADDWF	FSR1L, F
-;	.line	90; src/clock.c	int value = 0;
-	CLRF	r0x06
-	CLRF	r0x07
-;	.line	91; src/clock.c	display_string(0, text);
+;	.line	147; src/clock.c	int value = 0;
+	CLRF	r0x09
+	CLRF	r0x0a
+;	.line	148; src/clock.c	display_string(0, text);
 	MOVF	r0x04, W
 	MOVWF	POSTDEC1
 	MOVF	r0x03, W
@@ -1093,43 +1077,50 @@ _get_input:
 	CALL	_display_string
 	MOVLW	0x04
 	ADDWF	FSR1L, F
-;	.line	92; src/clock.c	while(1)
-	INCF	r0x05, W
+;	.line	149; src/clock.c	while(1)
+	MOVLW	0x12
+	ADDWF	r0x08, W
 	MOVWF	r0x02
-_00152_DS_:
-;	.line	94; src/clock.c	DelayMs(10);
+_00185_DS_:
+	BANKSEL	_config_mode_on
+;	.line	152; src/clock.c	if(config_mode_on){
+	MOVF	_config_mode_on, W, B
+	BANKSEL	(_config_mode_on + 1)
+	IORWF	(_config_mode_on + 1), W, B
+	BZ	_00185_DS_
+;	.line	153; src/clock.c	DelayMs(10);
 	MOVLW	0x68
 	MOVWF	r0x03
 	MOVLW	0x42
 	MOVWF	r0x04
-	CLRF	r0x05
 	CLRF	r0x08
-_00137_DS_:
-	MOVFF	r0x03, r0x09
-	MOVFF	r0x04, r0x0a
-	MOVFF	r0x05, r0x0b
-	MOVFF	r0x08, r0x0c
+	CLRF	r0x0b
+_00172_DS_:
+	MOVFF	r0x03, r0x0c
+	MOVFF	r0x04, r0x0d
+	MOVFF	r0x08, r0x0e
+	MOVFF	r0x0b, r0x0f
 	MOVLW	0xff
 	ADDWF	r0x03, F
 	MOVLW	0xff
 	ADDWFC	r0x04, F
 	MOVLW	0xff
-	ADDWFC	r0x05, F
-	MOVLW	0xff
 	ADDWFC	r0x08, F
-	MOVF	r0x09, W
-	IORWF	r0x0a, W
-	IORWF	r0x0b, W
-	IORWF	r0x0c, W
-	BNZ	_00137_DS_
-;	.line	95; src/clock.c	if(read_and_clear(&but2_pressed)){
+	MOVLW	0xff
+	ADDWFC	r0x0b, F
+	MOVF	r0x0c, W
+	IORWF	r0x0d, W
+	IORWF	r0x0e, W
+	IORWF	r0x0f, W
+	BNZ	_00172_DS_
+;	.line	154; src/clock.c	if(read_and_clear(&but2_pressed)){
 	MOVLW	HIGH(_but2_pressed)
 	MOVWF	r0x04
 	MOVLW	LOW(_but2_pressed)
 	MOVWF	r0x03
 	MOVLW	0x80
-	MOVWF	r0x05
-	MOVF	r0x05, W
+	MOVWF	r0x08
+	MOVF	r0x08, W
 	MOVWF	POSTDEC1
 	MOVF	r0x04, W
 	MOVWF	POSTDEC1
@@ -1142,22 +1133,22 @@ _00137_DS_:
 	ADDWF	FSR1L, F
 	MOVF	r0x03, W
 	IORWF	r0x04, W
-	BZ	_00144_DS_
-;	.line	96; src/clock.c	LCDErase();
+	BZ	_00179_DS_
+;	.line	155; src/clock.c	LCDErase();
 	CALL	_LCDErase
-;	.line	97; src/clock.c	return value;
-	MOVFF	r0x07, PRODL
-	MOVF	r0x06, W
-	BRA	_00150_DS_
-_00144_DS_:
-;	.line	99; src/clock.c	if(read_and_clear(&but1_pressed)){ 
+;	.line	156; src/clock.c	return value;
+	MOVFF	r0x0a, PRODL
+	MOVF	r0x09, W
+	BRA	_00187_DS_
+_00179_DS_:
+;	.line	158; src/clock.c	if(read_and_clear(&but1_pressed)){ 
 	MOVLW	HIGH(_but1_pressed)
 	MOVWF	r0x04
 	MOVLW	LOW(_but1_pressed)
 	MOVWF	r0x03
 	MOVLW	0x80
-	MOVWF	r0x05
-	MOVF	r0x05, W
+	MOVWF	r0x08
+	MOVF	r0x08, W
 	MOVWF	POSTDEC1
 	MOVF	r0x04, W
 	MOVWF	POSTDEC1
@@ -1170,37 +1161,49 @@ _00144_DS_:
 	ADDWF	FSR1L, F
 	MOVF	r0x03, W
 	IORWF	r0x04, W
-	BZ	_00146_DS_
-;	.line	100; src/clock.c	value = (++value)%maxvalue;
-	INCF	r0x06, F
+	BZ	_00181_DS_
+;	.line	159; src/clock.c	value = (++value)%maxvalue;
+	INCF	r0x09, F
 	BTFSC	STATUS, 0
-	INCF	r0x07, F
+	INCF	r0x0a, F
 	MOVF	r0x01, W
 	MOVWF	POSTDEC1
 	MOVF	r0x00, W
 	MOVWF	POSTDEC1
-	MOVF	r0x07, W
+	MOVF	r0x0a, W
 	MOVWF	POSTDEC1
-	MOVF	r0x06, W
+	MOVF	r0x09, W
 	MOVWF	POSTDEC1
 	CALL	__modsint
-	MOVWF	r0x06
-	MOVFF	PRODL, r0x07
+	MOVWF	r0x09
+	MOVFF	PRODL, r0x0a
 	MOVLW	0x04
 	ADDWF	FSR1L, F
-_00146_DS_:
-;	.line	102; src/clock.c	display_string(length + 1, to_double_digits(value));
+_00181_DS_:
+;	.line	161; src/clock.c	display_string(START_FIRST_LINE , mode);
 	MOVF	r0x07, W
 	MOVWF	POSTDEC1
 	MOVF	r0x06, W
+	MOVWF	POSTDEC1
+	MOVF	r0x05, W
+	MOVWF	POSTDEC1
+	MOVLW	0x00
+	MOVWF	POSTDEC1
+	CALL	_display_string
+	MOVLW	0x04
+	ADDWF	FSR1L, F
+;	.line	162; src/clock.c	display_string(START_SECOND_LINE + length + 1, to_double_digits(value));
+	MOVF	r0x0a, W
+	MOVWF	POSTDEC1
+	MOVF	r0x09, W
 	MOVWF	POSTDEC1
 	CALL	_to_double_digits
 	MOVWF	r0x03
 	MOVFF	PRODL, r0x04
-	MOVFF	PRODH, r0x05
+	MOVFF	PRODH, r0x08
 	MOVLW	0x02
 	ADDWF	FSR1L, F
-	MOVF	r0x05, W
+	MOVF	r0x08, W
 	MOVWF	POSTDEC1
 	MOVF	r0x04, W
 	MOVWF	POSTDEC1
@@ -1211,8 +1214,11 @@ _00146_DS_:
 	CALL	_display_string
 	MOVLW	0x04
 	ADDWF	FSR1L, F
-	BRA	_00152_DS_
-_00150_DS_:
+	BRA	_00185_DS_
+_00187_DS_:
+	MOVFF	PREINC1, r0x0f
+	MOVFF	PREINC1, r0x0e
+	MOVFF	PREINC1, r0x0d
 	MOVFF	PREINC1, r0x0c
 	MOVFF	PREINC1, r0x0b
 	MOVFF	PREINC1, r0x0a
@@ -1232,7 +1238,7 @@ _00150_DS_:
 ; ; Starting pCode block
 S_clock__read_and_clear	code
 _read_and_clear:
-;	.line	81; src/clock.c	int read_and_clear(int *variable){
+;	.line	138; src/clock.c	int read_and_clear(int *variable){
 	MOVFF	FSR2L, POSTDEC1
 	MOVFF	FSR1L, FSR2L
 	MOVFF	r0x00, POSTDEC1
@@ -1246,7 +1252,7 @@ _read_and_clear:
 	MOVFF	PLUSW2, r0x01
 	MOVLW	0x04
 	MOVFF	PLUSW2, r0x02
-;	.line	82; src/clock.c	if(*variable){
+;	.line	139; src/clock.c	if(*variable){
 	MOVFF	r0x00, FSR0L
 	MOVFF	r0x01, PRODL
 	MOVF	r0x02, W
@@ -1255,8 +1261,8 @@ _read_and_clear:
 	MOVFF	PRODL, r0x04
 	MOVF	r0x03, W
 	IORWF	r0x04, W
-	BZ	_00131_DS_
-;	.line	83; src/clock.c	*variable = 0;
+	BZ	_00166_DS_
+;	.line	140; src/clock.c	*variable = 0;
 	MOVLW	0x00
 	MOVWF	POSTDEC1
 	MOVLW	0x00
@@ -1265,15 +1271,15 @@ _read_and_clear:
 	MOVFF	r0x01, PRODL
 	MOVF	r0x02, W
 	CALL	__gptrput2
-;	.line	84; src/clock.c	return 1;
+;	.line	141; src/clock.c	return 1;
 	CLRF	PRODL
 	MOVLW	0x01
-	BRA	_00132_DS_
-_00131_DS_:
-;	.line	86; src/clock.c	return 0;
+	BRA	_00167_DS_
+_00166_DS_:
+;	.line	143; src/clock.c	return 0;
 	CLRF	PRODL
 	CLRF	WREG
-_00132_DS_:
+_00167_DS_:
 	MOVFF	PREINC1, r0x04
 	MOVFF	PREINC1, r0x03
 	MOVFF	PREINC1, r0x02
@@ -1283,9 +1289,9 @@ _00132_DS_:
 	RETURN	
 
 ; ; Starting pCode block
-S_clock__init_clock	code
-_init_clock:
-;	.line	71; src/clock.c	void init_clock(time t){
+S_clock__init_time	code
+_init_time:
+;	.line	130; src/clock.c	void init_time(time t, char *mode){ 
 	MOVFF	FSR2L, POSTDEC1
 	MOVFF	FSR1L, FSR2L
 	MOVFF	r0x00, POSTDEC1
@@ -1297,72 +1303,97 @@ _init_clock:
 	MOVFF	r0x06, POSTDEC1
 	MOVFF	r0x07, POSTDEC1
 	MOVFF	r0x08, POSTDEC1
+	MOVFF	r0x09, POSTDEC1
 	MOVLW	0x02
 	MOVFF	PLUSW2, r0x00
 	MOVLW	0x03
 	MOVFF	PLUSW2, r0x01
 	MOVLW	0x04
 	MOVFF	PLUSW2, r0x02
-;	.line	73; src/clock.c	h = get_input(24, "HOURS:");
-	MOVLW	UPPER(__str_0)
+	MOVLW	0x05
+	MOVFF	PLUSW2, r0x03
+	MOVLW	0x06
+	MOVFF	PLUSW2, r0x04
+	MOVLW	0x07
+	MOVFF	PLUSW2, r0x05
+;	.line	132; src/clock.c	h = get_input(24, "Hours:", mode);
+	MOVF	r0x05, W
 	MOVWF	POSTDEC1
-	MOVLW	HIGH(__str_0)
+	MOVF	r0x04, W
 	MOVWF	POSTDEC1
-	MOVLW	LOW(__str_0)
+	MOVF	r0x03, W
+	MOVWF	POSTDEC1
+	MOVLW	UPPER(__str_6)
+	MOVWF	POSTDEC1
+	MOVLW	HIGH(__str_6)
+	MOVWF	POSTDEC1
+	MOVLW	LOW(__str_6)
 	MOVWF	POSTDEC1
 	MOVLW	0x00
 	MOVWF	POSTDEC1
 	MOVLW	0x18
 	MOVWF	POSTDEC1
 	CALL	_get_input
-	MOVWF	r0x03
-	MOVFF	PRODL, r0x04
-	MOVLW	0x05
+	MOVWF	r0x06
+	MOVFF	PRODL, r0x07
+	MOVLW	0x08
 	ADDWF	FSR1L, F
-;	.line	74; src/clock.c	m = get_input(60, "MINUTES:");
-	MOVLW	UPPER(__str_1)
-	MOVWF	POSTDEC1
-	MOVLW	HIGH(__str_1)
-	MOVWF	POSTDEC1
-	MOVLW	LOW(__str_1)
-	MOVWF	POSTDEC1
-	MOVLW	0x00
-	MOVWF	POSTDEC1
-	MOVLW	0x3c
-	MOVWF	POSTDEC1
-	CALL	_get_input
-	MOVWF	r0x05
-	MOVFF	PRODL, r0x06
-	MOVLW	0x05
-	ADDWF	FSR1L, F
-;	.line	75; src/clock.c	s = get_input(60, "SECONDS:");
-	MOVLW	UPPER(__str_2)
-	MOVWF	POSTDEC1
-	MOVLW	HIGH(__str_2)
-	MOVWF	POSTDEC1
-	MOVLW	LOW(__str_2)
-	MOVWF	POSTDEC1
-	MOVLW	0x00
-	MOVWF	POSTDEC1
-	MOVLW	0x3c
-	MOVWF	POSTDEC1
-	CALL	_get_input
-	MOVWF	r0x07
-	MOVFF	PRODL, r0x08
-	MOVLW	0x05
-	ADDWF	FSR1L, F
-;	.line	76; src/clock.c	time_set(t,h,m,s);
-	MOVF	r0x08, W
-	MOVWF	POSTDEC1
-	MOVF	r0x07, W
-	MOVWF	POSTDEC1
-	MOVF	r0x06, W
-	MOVWF	POSTDEC1
+;	.line	133; src/clock.c	m = get_input(60, "MinuteS:", mode);
 	MOVF	r0x05, W
 	MOVWF	POSTDEC1
 	MOVF	r0x04, W
 	MOVWF	POSTDEC1
 	MOVF	r0x03, W
+	MOVWF	POSTDEC1
+	MOVLW	UPPER(__str_7)
+	MOVWF	POSTDEC1
+	MOVLW	HIGH(__str_7)
+	MOVWF	POSTDEC1
+	MOVLW	LOW(__str_7)
+	MOVWF	POSTDEC1
+	MOVLW	0x00
+	MOVWF	POSTDEC1
+	MOVLW	0x3c
+	MOVWF	POSTDEC1
+	CALL	_get_input
+	MOVWF	r0x08
+	MOVFF	PRODL, r0x09
+	MOVLW	0x08
+	ADDWF	FSR1L, F
+;	.line	134; src/clock.c	s = get_input(60, "SecondS:", mode);
+	MOVF	r0x05, W
+	MOVWF	POSTDEC1
+	MOVF	r0x04, W
+	MOVWF	POSTDEC1
+	MOVF	r0x03, W
+	MOVWF	POSTDEC1
+	MOVLW	UPPER(__str_8)
+	MOVWF	POSTDEC1
+	MOVLW	HIGH(__str_8)
+	MOVWF	POSTDEC1
+	MOVLW	LOW(__str_8)
+	MOVWF	POSTDEC1
+	MOVLW	0x00
+	MOVWF	POSTDEC1
+	MOVLW	0x3c
+	MOVWF	POSTDEC1
+	CALL	_get_input
+	MOVWF	r0x03
+	MOVFF	PRODL, r0x04
+	MOVLW	0x08
+	ADDWF	FSR1L, F
+;	.line	135; src/clock.c	time_set(t,h,m,s);
+	MOVF	r0x04, W
+	MOVWF	POSTDEC1
+	MOVF	r0x03, W
+	MOVWF	POSTDEC1
+	MOVF	r0x09, W
+	MOVWF	POSTDEC1
+	MOVF	r0x08, W
+	MOVWF	POSTDEC1
+	MOVF	r0x07, W
+	MOVWF	POSTDEC1
+	MOVF	r0x06, W
 	MOVWF	POSTDEC1
 	MOVF	r0x02, W
 	MOVWF	POSTDEC1
@@ -1373,8 +1404,7 @@ _init_clock:
 	CALL	_time_set
 	MOVLW	0x09
 	ADDWF	FSR1L, F
-;	.line	78; src/clock.c	T0CONbits.TMR0ON = 1;
-	BSF	_T0CONbits, 7
+	MOVFF	PREINC1, r0x09
 	MOVFF	PREINC1, r0x08
 	MOVFF	PREINC1, r0x07
 	MOVFF	PREINC1, r0x06
@@ -1388,13 +1418,271 @@ _init_clock:
 	RETURN	
 
 ; ; Starting pCode block
-S_clock__alarm_led	code
-_alarm_led:
-;	.line	66; src/clock.c	void alarm_led(void){
+S_clock__init_config	code
+_init_config:
+;	.line	83; src/clock.c	void init_config(void){
 	MOVFF	FSR2L, POSTDEC1
 	MOVFF	FSR1L, FSR2L
 	MOVFF	r0x00, POSTDEC1
-;	.line	67; src/clock.c	LED1_IO^=1;
+	MOVFF	r0x01, POSTDEC1
+	MOVFF	r0x02, POSTDEC1
+	MOVFF	r0x03, POSTDEC1
+	MOVFF	r0x04, POSTDEC1
+;	.line	85; src/clock.c	int choice = -1;
+	MOVLW	0xff
+	MOVWF	r0x00
+	MOVWF	r0x01
+;	.line	86; src/clock.c	display_string(START_FIRST_LINE, "Choose a config mode.");
+	MOVLW	UPPER(__str_0)
+	MOVWF	POSTDEC1
+	MOVLW	HIGH(__str_0)
+	MOVWF	POSTDEC1
+	MOVLW	LOW(__str_0)
+	MOVWF	POSTDEC1
+	MOVLW	0x00
+	MOVWF	POSTDEC1
+	CALL	_display_string
+	MOVLW	0x04
+	ADDWF	FSR1L, F
+_00138_DS_:
+;	.line	88; src/clock.c	if(read_and_clear(&but2_pressed)){
+	MOVLW	HIGH(_but2_pressed)
+	MOVWF	r0x03
+	MOVLW	LOW(_but2_pressed)
+	MOVWF	r0x02
+	MOVLW	0x80
+	MOVWF	r0x04
+	MOVF	r0x04, W
+	MOVWF	POSTDEC1
+	MOVF	r0x03, W
+	MOVWF	POSTDEC1
+	MOVF	r0x02, W
+	MOVWF	POSTDEC1
+	CALL	_read_and_clear
+	MOVWF	r0x02
+	MOVFF	PRODL, r0x03
+	MOVLW	0x03
+	ADDWF	FSR1L, F
+	MOVF	r0x02, W
+	IORWF	r0x03, W
+	BTFSC	STATUS, 2
+	BRA	_00130_DS_
+;	.line	90; src/clock.c	switch(choice){
+	MOVF	r0x00, W
+	BNZ	_00150_DS_
+	MOVF	r0x01, W
+	BZ	_00125_DS_
+_00150_DS_:
+	MOVF	r0x00, W
+	XORLW	0x01
+	BNZ	_00152_DS_
+	MOVF	r0x01, W
+	BZ	_00126_DS_
+_00152_DS_:
+	BRA	_00127_DS_
+_00125_DS_:
+;	.line	93; src/clock.c	LCDErase();
+	CALL	_LCDErase
+;	.line	94; src/clock.c	init_time(_alarm, "Setting alarm");			
+	MOVLW	UPPER(__str_1)
+	MOVWF	POSTDEC1
+	MOVLW	HIGH(__str_1)
+	MOVWF	POSTDEC1
+	MOVLW	LOW(__str_1)
+	MOVWF	POSTDEC1
+	BANKSEL	(__alarm + 2)
+	MOVF	(__alarm + 2), W, B
+	MOVWF	POSTDEC1
+	BANKSEL	(__alarm + 1)
+	MOVF	(__alarm + 1), W, B
+	MOVWF	POSTDEC1
+	BANKSEL	__alarm
+	MOVF	__alarm, W, B
+	MOVWF	POSTDEC1
+	CALL	_init_time
+	MOVLW	0x06
+	ADDWF	FSR1L, F
+;	.line	95; src/clock.c	break;
+	BRA	_00130_DS_
+_00126_DS_:
+;	.line	98; src/clock.c	LCDErase();
+	CALL	_LCDErase
+;	.line	99; src/clock.c	init_time(_time, "Setting clock");			
+	MOVLW	UPPER(__str_2)
+	MOVWF	POSTDEC1
+	MOVLW	HIGH(__str_2)
+	MOVWF	POSTDEC1
+	MOVLW	LOW(__str_2)
+	MOVWF	POSTDEC1
+	BANKSEL	(__time + 2)
+	MOVF	(__time + 2), W, B
+	MOVWF	POSTDEC1
+	BANKSEL	(__time + 1)
+	MOVF	(__time + 1), W, B
+	MOVWF	POSTDEC1
+	BANKSEL	__time
+	MOVF	__time, W, B
+	MOVWF	POSTDEC1
+	CALL	_init_time
+	MOVLW	0x06
+	ADDWF	FSR1L, F
+;	.line	100; src/clock.c	break;
+	BRA	_00130_DS_
+_00127_DS_:
+;	.line	102; src/clock.c	LCDErase();
+	CALL	_LCDErase
+;	.line	103; src/clock.c	return;
+	BRA	_00140_DS_
+_00130_DS_:
+;	.line	106; src/clock.c	if(read_and_clear(&but1_pressed)){ 
+	MOVLW	HIGH(_but1_pressed)
+	MOVWF	r0x03
+	MOVLW	LOW(_but1_pressed)
+	MOVWF	r0x02
+	MOVLW	0x80
+	MOVWF	r0x04
+	MOVF	r0x04, W
+	MOVWF	POSTDEC1
+	MOVF	r0x03, W
+	MOVWF	POSTDEC1
+	MOVF	r0x02, W
+	MOVWF	POSTDEC1
+	CALL	_read_and_clear
+	MOVWF	r0x02
+	MOVFF	PRODL, r0x03
+	MOVLW	0x03
+	ADDWF	FSR1L, F
+	MOVF	r0x02, W
+	IORWF	r0x03, W
+	BTFSC	STATUS, 2
+	BRA	_00138_DS_
+;	.line	108; src/clock.c	switch(choice){
+	MOVF	r0x01, W
+	ADDLW	0x80
+	ADDLW	0x81
+	BNZ	_00153_DS_
+	MOVLW	0xff
+	SUBWF	r0x00, W
+_00153_DS_:
+	BTFSS	STATUS, 0
+	BRA	_00138_DS_
+	MOVF	r0x01, W
+	ADDLW	0x80
+	ADDLW	0x80
+	BNZ	_00154_DS_
+	MOVLW	0x02
+	SUBWF	r0x00, W
+_00154_DS_:
+	BTFSC	STATUS, 0
+	BRA	_00138_DS_
+	INCF	r0x00, W
+	MOVWF	r0x02
+	MOVFF	r0x05, POSTDEC1
+	MOVFF	r0x06, POSTDEC1
+	CLRF	r0x06
+	RLCF	r0x02, W
+	RLCF	r0x06, F
+	RLCF	WREG, W
+	RLCF	r0x06, F
+	ANDLW	0xfc
+	MOVWF	r0x05
+	MOVLW	UPPER(_00155_DS_)
+	MOVWF	PCLATU
+	MOVLW	HIGH(_00155_DS_)
+	MOVWF	PCLATH
+	MOVLW	LOW(_00155_DS_)
+	ADDWF	r0x05, F
+	MOVF	r0x06, W
+	ADDWFC	PCLATH, F
+	BTFSC	STATUS, 0
+	INCF	PCLATU, F
+	MOVF	r0x05, W
+	MOVFF	PREINC1, r0x06
+	MOVFF	PREINC1, r0x05
+	MOVWF	PCL
+_00155_DS_:
+	GOTO	_00131_DS_
+	GOTO	_00132_DS_
+	GOTO	_00133_DS_
+_00131_DS_:
+;	.line	111; src/clock.c	LCDErase();
+	CALL	_LCDErase
+;	.line	112; src/clock.c	choice = CONFIG_MODE_ALARM;
+	CLRF	r0x00
+	CLRF	r0x01
+;	.line	113; src/clock.c	display_string(START_FIRST_LINE, "Set alarm?");
+	MOVLW	UPPER(__str_3)
+	MOVWF	POSTDEC1
+	MOVLW	HIGH(__str_3)
+	MOVWF	POSTDEC1
+	MOVLW	LOW(__str_3)
+	MOVWF	POSTDEC1
+	MOVLW	0x00
+	MOVWF	POSTDEC1
+	CALL	_display_string
+	MOVLW	0x04
+	ADDWF	FSR1L, F
+;	.line	114; src/clock.c	break;
+	BRA	_00138_DS_
+_00132_DS_:
+;	.line	117; src/clock.c	LCDErase();
+	CALL	_LCDErase
+;	.line	118; src/clock.c	choice = CONFIG_MODE_CLOCK;
+	MOVLW	0x01
+	MOVWF	r0x00
+	CLRF	r0x01
+;	.line	119; src/clock.c	display_string(START_FIRST_LINE, "Set clock?");
+	MOVLW	UPPER(__str_4)
+	MOVWF	POSTDEC1
+	MOVLW	HIGH(__str_4)
+	MOVWF	POSTDEC1
+	MOVLW	LOW(__str_4)
+	MOVWF	POSTDEC1
+	MOVLW	0x00
+	MOVWF	POSTDEC1
+	CALL	_display_string
+	MOVLW	0x04
+	ADDWF	FSR1L, F
+;	.line	120; src/clock.c	break;
+	BRA	_00138_DS_
+_00133_DS_:
+;	.line	122; src/clock.c	LCDErase();
+	CALL	_LCDErase
+;	.line	123; src/clock.c	choice =CONFIG_MODE_NONE;
+	MOVLW	0xff
+	MOVWF	r0x00
+	MOVWF	r0x01
+;	.line	124; src/clock.c	display_string(START_FIRST_LINE, "Quit config mode?");
+	MOVLW	UPPER(__str_5)
+	MOVWF	POSTDEC1
+	MOVLW	HIGH(__str_5)
+	MOVWF	POSTDEC1
+	MOVLW	LOW(__str_5)
+	MOVWF	POSTDEC1
+	MOVLW	0x00
+	MOVWF	POSTDEC1
+	CALL	_display_string
+	MOVLW	0x04
+	ADDWF	FSR1L, F
+;	.line	126; src/clock.c	}
+	BRA	_00138_DS_
+_00140_DS_:
+	MOVFF	PREINC1, r0x04
+	MOVFF	PREINC1, r0x03
+	MOVFF	PREINC1, r0x02
+	MOVFF	PREINC1, r0x01
+	MOVFF	PREINC1, r0x00
+	MOVFF	PREINC1, FSR2L
+	RETURN	
+
+; ; Starting pCode block
+S_clock__alarm_led	code
+_alarm_led:
+;	.line	79; src/clock.c	void alarm_led(void){
+	MOVFF	FSR2L, POSTDEC1
+	MOVFF	FSR1L, FSR2L
+	MOVFF	r0x00, POSTDEC1
+;	.line	80; src/clock.c	LED1_IO^=1;
 	CLRF	r0x00
 	BTFSC	_LATJbits, 1
 	INCF	r0x00, F
@@ -1408,7 +1696,7 @@ _alarm_led:
 	ANDLW	0xfd
 	IORWF	PRODH, W
 	MOVWF	_LATJbits
-;	.line	68; src/clock.c	LED2_IO^=1;
+;	.line	81; src/clock.c	LED2_IO^=1;
 	CLRF	r0x00
 	BTFSC	_LATJbits, 2
 	INCF	r0x00, F
@@ -1430,11 +1718,11 @@ _alarm_led:
 ; ; Starting pCode block
 S_clock__toggle_led	code
 _toggle_led:
-;	.line	62; src/clock.c	void toggle_led(void){
+;	.line	75; src/clock.c	void toggle_led(void){
 	MOVFF	FSR2L, POSTDEC1
 	MOVFF	FSR1L, FSR2L
 	MOVFF	r0x00, POSTDEC1
-;	.line	63; src/clock.c	LED0_IO^=1;
+;	.line	76; src/clock.c	LED0_IO^=1;
 	CLRF	r0x00
 	BTFSC	_LATJbits, 0
 	INCF	r0x00, F
@@ -1454,13 +1742,13 @@ _toggle_led:
 ; ; Starting pCode block
 S_clock__update_display	code
 _update_display:
-;	.line	57; src/clock.c	void update_display(void){
+;	.line	70; src/clock.c	void update_display(void){
 	MOVFF	FSR2L, POSTDEC1
 	MOVFF	FSR1L, FSR2L
 	MOVFF	r0x00, POSTDEC1
 	MOVFF	r0x01, POSTDEC1
 	MOVFF	r0x02, POSTDEC1
-;	.line	58; src/clock.c	time_print(_time, display_line);
+;	.line	71; src/clock.c	time_print(_time, display_line);
 	MOVLW	HIGH(_display_line)
 	MOVWF	r0x01
 	MOVLW	LOW(_display_line)
@@ -1485,7 +1773,7 @@ _update_display:
 	CALL	_time_print
 	MOVLW	0x06
 	ADDWF	FSR1L, F
-;	.line	59; src/clock.c	display_string(0, display_line);
+;	.line	72; src/clock.c	display_string(0, display_line);
 	MOVLW	HIGH(_display_line)
 	MOVWF	r0x01
 	MOVLW	LOW(_display_line)
@@ -1511,23 +1799,45 @@ _update_display:
 
 ; ; Starting pCode block
 __str_0:
-	DB	0x48, 0x4f, 0x55, 0x52, 0x53, 0x3a, 0x00
+	DB	0x43, 0x68, 0x6f, 0x6f, 0x73, 0x65, 0x20, 0x61, 0x20, 0x63, 0x6f, 0x6e
+	DB	0x66, 0x69, 0x67, 0x20, 0x6d, 0x6f, 0x64, 0x65, 0x2e, 0x00
 ; ; Starting pCode block
 __str_1:
-	DB	0x4d, 0x49, 0x4e, 0x55, 0x54, 0x45, 0x53, 0x3a, 0x00
+	DB	0x53, 0x65, 0x74, 0x74, 0x69, 0x6e, 0x67, 0x20, 0x61, 0x6c, 0x61, 0x72
+	DB	0x6d, 0x00
 ; ; Starting pCode block
 __str_2:
-	DB	0x53, 0x45, 0x43, 0x4f, 0x4e, 0x44, 0x53, 0x3a, 0x00
+	DB	0x53, 0x65, 0x74, 0x74, 0x69, 0x6e, 0x67, 0x20, 0x63, 0x6c, 0x6f, 0x63
+	DB	0x6b, 0x00
 ; ; Starting pCode block
 __str_3:
+	DB	0x53, 0x65, 0x74, 0x20, 0x61, 0x6c, 0x61, 0x72, 0x6d, 0x3f, 0x00
+; ; Starting pCode block
+__str_4:
+	DB	0x53, 0x65, 0x74, 0x20, 0x63, 0x6c, 0x6f, 0x63, 0x6b, 0x3f, 0x00
+; ; Starting pCode block
+__str_5:
+	DB	0x51, 0x75, 0x69, 0x74, 0x20, 0x63, 0x6f, 0x6e, 0x66, 0x69, 0x67, 0x20
+	DB	0x6d, 0x6f, 0x64, 0x65, 0x3f, 0x00
+; ; Starting pCode block
+__str_6:
+	DB	0x48, 0x6f, 0x75, 0x72, 0x73, 0x3a, 0x00
+; ; Starting pCode block
+__str_7:
+	DB	0x4d, 0x69, 0x6e, 0x75, 0x74, 0x65, 0x53, 0x3a, 0x00
+; ; Starting pCode block
+__str_8:
+	DB	0x53, 0x65, 0x63, 0x6f, 0x6e, 0x64, 0x53, 0x3a, 0x00
+; ; Starting pCode block
+__str_9:
 	DB	0x25, 0x30, 0x32, 0x64, 0x00
 
 
 ; Statistics:
-; code size:	 2072 (0x0818) bytes ( 1.58%)
-;           	 1036 (0x040c) words
+; code size:	 2658 (0x0a62) bytes ( 2.03%)
+;           	 1329 (0x0531) words
 ; udata size:	   41 (0x0029) bytes ( 1.07%)
-; access size:	   13 (0x000d) bytes
+; access size:	   16 (0x0010) bytes
 
 
 	end
