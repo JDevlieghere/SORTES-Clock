@@ -6,10 +6,21 @@
 #define EXEC_FREQ   CLOCK_FREQ/4 	
 #define CYCLES 		93
 #define START_FIRST_LINE 0 
-#define START_SECOND_LINE 17 
-#define CONFIG_MODE_NONE -1
+#define START_SECOND_LINE 16 
+
+//Defines for configuring mode.
+#define	CM_STRING "Choose mode:" 
+
+#define CONFIG_MODE_QUIT -1
+#define	CM_QUIT_STRING "Quit config mode." 
+
 #define CONFIG_MODE_ALARM 0 
+#define	CM_ALARM_STRING "Set alarm?" 
+#define	SM_ALARM_STRING "Set alarm:" 
+
 #define CONFIG_MODE_CLOCK 1 
+#define	CM_CLOCK_STRING "Set clock?" 
+#define	SM_CLOCK_STRING "Set clock:" 
 
 
 #include <stdlib.h>
@@ -33,6 +44,7 @@ void update_display(void);
 void toggle_led(void);
 int read_and_clear(int *variable);
 void init_config(void);
+void display_config_mode(char *choice_string);
 
 time _time;
 time _alarm;
@@ -82,8 +94,9 @@ void alarm_led(void){
 }
 void init_config(void){
 		// 0 is alarm , 1 is clock.
-		int choice = -1;
-		display_string(START_FIRST_LINE, "Choose a config mode.");
+		int choice = CONFIG_MODE_ALARM;
+		char *choice_string = CM_ALARM_STRING;
+		display_config_mode(choice_string);
 		while(1){
 				if(read_and_clear(&but2_pressed)){
 					//Configure the selected config mode.
@@ -91,12 +104,14 @@ void init_config(void){
 						//for the alarm.
 						case 0:
 							LCDErase();
-							init_time(_alarm, "Setting alarm");			
+							init_time(_alarm, SM_ALARM_STRING);			
+							display_config_mode(choice_string);
 							break;
 						//for the clock;
 						case 1:
 							LCDErase();
-							init_time(_time, "Setting clock");			
+							init_time(_time, SM_CLOCK_STRING);			
+							display_config_mode(choice_string);
 							break;
 						default:
 							LCDErase();
@@ -106,32 +121,42 @@ void init_config(void){
 				if(read_and_clear(&but1_pressed)){ 
 					//Cycle trough the config modes.
 					switch(choice){
-						//for the alarm.
-						case CONFIG_MODE_NONE:
+						//For the alarm.
+						case CONFIG_MODE_QUIT:
 							LCDErase();
 							choice = CONFIG_MODE_ALARM;
-							display_string(START_FIRST_LINE, "Set alarm?");
+							choice_string = CM_ALARM_STRING;
+							display_config_mode(choice_string);
 							break;
-						//for the clock;
+						//For the clock.
 						case 0:
 							LCDErase();
 							choice = CONFIG_MODE_CLOCK;
-							display_string(START_FIRST_LINE, "Set clock?");
+							choice_string = CM_CLOCK_STRING;
+							display_config_mode(choice_string);
 							break;
+						//For quiting.
 						case 1:
 							LCDErase();
-							choice =CONFIG_MODE_NONE;
-							display_string(START_FIRST_LINE, "Quit config?");
+							choice =CONFIG_MODE_QUIT;
+							choice_string = CM_QUIT_STRING;
+							display_config_mode(choice_string);
 							break;
 					}
 				}
 		}
 }
+
+void display_config_mode(char *choice_string){
+		display_string(START_FIRST_LINE, CM_STRING);
+		display_string(START_SECOND_LINE, choice_string);
+}
+
 void init_time(time t, char *mode){ 
     int h, m, s;
     h = get_input(24, "Hours:", mode);
-    m = get_input(60, "MinuteS:", mode);
-    s = get_input(60, "SecondS:", mode);
+    m = get_input(60, "Minutes:", mode);
+    s = get_input(60, "Seconds:", mode);
     time_set(t,h,m,s);
 }
 
@@ -145,7 +170,8 @@ int read_and_clear(int *variable){
 int get_input(int maxvalue, char *text, char *mode){
         BYTE length = strlen(text);
         int value = 0;
-        display_string(0, text);
+		display_string(START_FIRST_LINE , mode);
+        display_string(START_SECOND_LINE, text);
         while(1)
         {
 		
@@ -158,7 +184,6 @@ int get_input(int maxvalue, char *text, char *mode){
 					if(read_and_clear(&but1_pressed)){ 
 						value = (++value)%maxvalue;
 					}
-					display_string(START_FIRST_LINE , mode);
 					display_string(START_SECOND_LINE + length + 1, to_double_digits(value));
 			} else { 
 			
