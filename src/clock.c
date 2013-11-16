@@ -44,7 +44,7 @@
 
 // METHOD DECLARATION 
 
-//			 DOES THIS NEE TO BE HERE??? 
+//			 DOES THIS NEED TO BE HERE??? 
 void delay_1ms(void);
 void delay_ms(unsigned int ms);
 
@@ -106,6 +106,9 @@ int main(void){
 	}	
 }
 
+/**
+ * Inintializes all kinds of settings.
+ */
 void init(void){
 	// Initialize LCD
 	LCDInit();
