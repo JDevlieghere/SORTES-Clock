@@ -87,9 +87,11 @@ int but2_pressed;
 // Flags for marking mode. 
 int config_called;
 int config_mode_on;
+int time_update_needed;
 
 /**
- * Initializes the program and loop for checking for configuration input. 
+ * Initializes the program and main loop for checking 
+ * 	for configuration input and updating the LCD. 
  */
 int main(void){
 	// Initialize variables.
@@ -99,6 +101,12 @@ int main(void){
 	// Do first display update.
 	update_display();
 	while(1){
+		if(time_update_needed){
+			if(!config_called && !config_mode_on){
+				update_display();
+			}
+			time_update_needed = 0;
+		}
 		if(config_called){
 			config_called =0;
 			init_config();
@@ -176,6 +184,7 @@ void init(void){
 	// FLAGS FOR MARKING MODE. 
 	config_called = 0;
 	config_mode_on = 0;
+	time_update_needed =0;
 }
 
 /**
@@ -382,9 +391,7 @@ void highPriorityInterruptHandler (void) __interrupt(1){
 			overflow_counter = 0;
 			toggle_second_led();
 			add_second(_time);
-			if(!config_called && !config_mode_on){
-				update_display();
-			}
+			time_update_needed = 1;
 		}
 		INTCONbits.TMR0IF = 0;
 	}
