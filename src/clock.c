@@ -39,7 +39,7 @@
 #include "../Include/LCDBlocking.h"
 #include "../Include/TCPIP_Stack/Delay.h"
 
-#include "newtime.h"
+#include "time.h"
 
 
 // METHOD DECLARATION 

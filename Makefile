@@ -7,7 +7,7 @@ LDFLAGS= -mpic16 -p18f97j60 -L /usr/local/lib/pic16 -llibio18f97j60.lib \
 AR = ar
 RM = rm
 
-OBJECTS= objects/LCDBlocking.o objects/newtime.o
+OBJECTS= objects/LCDBlocking.o objects/time.o
 
 SDCC_HEADERS=/usr/local/share/sdcc/include/string.h \
 	 /usr/local/share/sdcc/include/stdlib.h \
@@ -47,10 +47,10 @@ objects/Tick.o : lib/Tick.c  $(SDCC_HEADERS)  \
 	$(CC) -c -mpic16 -p18f97j60  -IInclude -I/usr/local/share/sdcc/include/ -I/usr/local/share/sdcc/include/pic16 -o "objects/Tick.o" \
 							-L/usr/local/lib/pic16  lib/Tick.c
 
-objects/newtime.o : src/newtime.c $(SDCC_HEADERS)  \
+objects/time.o : src/time.c $(SDCC_HEADERS)  \
 	 $(SDCC_PIC16_HEADERS) $(APP_HEADERS) $(TCPIP_HEADERS)
-	$(CC) -c -mpic16 -p18f97j60 -IInclude -I/usr/local/share/sdcc/include/ -I/usr/local/share/sdcc/include/pic16 -o "objects/newtime.o" \
-							-L/usr/local/lib/pic16  src/newtime.c		
+	$(CC) -c -mpic16 -p18f97j60 -IInclude -I/usr/local/share/sdcc/include/ -I/usr/local/share/sdcc/include/pic16 -o "objects/time.o" \
+							-L/usr/local/lib/pic16  src/time.c		
 
 test : objects/test.o $(OBJECTS)
 	$(LD) $(LDFLAGS) objects/test.o $(OBJECTS)
