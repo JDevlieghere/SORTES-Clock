@@ -34,8 +34,8 @@ void init_time(time t, char *);
 void toggle_second_led(void);
 void toggle_alarm_led(void);
 
-
 // VARIABLE DECLARATION
+
 // Clock time
 time _time;
 
@@ -79,79 +79,6 @@ int main(void){
 			init_config();
 		}
 	}	
-}
-
-/**
- * Inintializes all kinds of settings.
- */
-void init(void){
-	// Initialize LCD
-	LCDInit();
-
-	// Initialize time	
-	_time = time_create();
-	_alarm = time_create();
-
-	// Enable buttons
-	BUTTON0_TRIS = 1;
-	BUTTON1_TRIS = 1;
-
-	// Enable interrupts
-	INTCONbits.GIE = 1;
-	INTCONbits.PEIE = 1;
-	RCONbits.IPEN = 1; 
-
-	// Disable timer
-	T0CONbits.TMR0ON = 0;
-
-	// Empty timer: high before low (!)
-	TMR0H = 0x00000000;
-	TMR0L = 0x00000000;
-
-	// Enable 16-bit operation 
-	T0CONbits.T08BIT = 0;
-
-	// Use clock as clock source 
-	T0CONbits.T0CS = 0;
-
-	// Unassign prescaler
-	T0CONbits.PSA = 1;
-
-	// Enable timer and interrupts
-	INTCONbits.TMR0IE = 1;
-
-	// Enable button interrupts
-	INTCON3bits.INT1IE = 1;
-	INTCON3bits.INT3IE = 1;
-
-	// Enable leds
-	LED0_TRIS = 0;
-	LED1_TRIS = 0;   
-	LED2_TRIS = 0;
-	LED3_TRIS = 0;
-
-	// Disable all LED but backlight
-	LED0_IO = 0; 
-	LED1_IO = 0;
-	LED2_IO = 0;
-	LED3_IO = 1;
-	
-	// INITIALIZE OUR OWN VARIABLES.
-	// State indicators
-	alarm_going_off = 0;
-
-	// Counters
-	alarm_counter = 0;
-	overflow_counter = 0;
-
-	// Dummy button registers
-	but1_pressed = 0;
-	but2_pressed = 0;
-
-	// FLAGS FOR MARKING MODE. 
-	config_called = 0;
-	config_mode_on = 0;
-	time_update_needed =0;
 }
 
 /**
@@ -291,4 +218,77 @@ void highPriorityInterruptHandler (void) __interrupt(1){
 		}
 		INTCONbits.TMR0IF = 0;
 	}
+}
+
+/**
+ * Inintializes all kinds of settings.
+ */
+void init(void){
+	// Initialize LCD
+	LCDInit();
+
+	// Initialize time	
+	_time = time_create();
+	_alarm = time_create();
+
+	// Enable buttons
+	BUTTON0_TRIS = 1;
+	BUTTON1_TRIS = 1;
+
+	// Enable interrupts
+	INTCONbits.GIE = 1;
+	INTCONbits.PEIE = 1;
+	RCONbits.IPEN = 1; 
+
+	// Disable timer
+	T0CONbits.TMR0ON = 0;
+
+	// Empty timer: high before low (!)
+	TMR0H = 0x00000000;
+	TMR0L = 0x00000000;
+
+	// Enable 16-bit operation 
+	T0CONbits.T08BIT = 0;
+
+	// Use clock as clock source 
+	T0CONbits.T0CS = 0;
+
+	// Unassign prescaler
+	T0CONbits.PSA = 1;
+
+	// Enable timer and interrupts
+	INTCONbits.TMR0IE = 1;
+
+	// Enable button interrupts
+	INTCON3bits.INT1IE = 1;
+	INTCON3bits.INT3IE = 1;
+
+	// Enable leds
+	LED0_TRIS = 0;
+	LED1_TRIS = 0;   
+	LED2_TRIS = 0;
+	LED3_TRIS = 0;
+
+	// Disable all LED but backlight
+	LED0_IO = 0; 
+	LED1_IO = 0;
+	LED2_IO = 0;
+	LED3_IO = 1;
+	
+	// INITIALIZE OUR OWN VARIABLES.
+	// State indicators
+	alarm_going_off = 0;
+
+	// Counters
+	alarm_counter = 0;
+	overflow_counter = 0;
+
+	// Dummy button registers
+	but1_pressed = 0;
+	but2_pressed = 0;
+
+	// FLAGS FOR MARKING MODE. 
+	config_called = 0;
+	config_mode_on = 0;
+	time_update_needed =0;
 }
