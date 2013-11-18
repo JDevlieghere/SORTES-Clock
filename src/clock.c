@@ -8,7 +8,6 @@
 #define EXEC_FREQ   CLOCK_FREQ/4 	
 #define CYCLES 		93
 
-
 #define CONFIG_MODE_QUIT -1
 #define CONFIG_MODE_ALARM 0 
 #define CONFIG_MODE_CLOCK 1 
@@ -19,7 +18,6 @@
 
 #include "../Include/HardwareProfile.h"
 #include "../Include/LCDBlocking.h"
-#include "../Include/TCPIP_Stack/Delay.h"
 
 #include "strings.h"
 #include "time.h"
