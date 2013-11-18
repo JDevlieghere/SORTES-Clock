@@ -20,12 +20,7 @@ The first project assignment was the following:
  5. The yellow led must blink (1/2 second on, 1/2 second off).  
 
 ### Deployment
-
-We provided a makefile to compile the source code. Run the following command:
-```
-$ make clock
-```
-To deploy the clock.hex file to the PIC a shell script is available. The script will start tftp and wait for input from the user. 
+To build and deploy the clock to the PIC a shell script is available. The script will make the `clock.hex` file and start tftp which will wait for input from the user. 
 ```
 $ ./deploy.sh
 ```
