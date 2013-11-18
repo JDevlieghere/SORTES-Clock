@@ -43,5 +43,5 @@ message: using default linker script "/usr/local/share/gputils/lkr/18f97j60.lkr"
 $ ./deploy.sh 
 starting tftp to 192.168.97.6
 put clock.hex
-tftp> tftp> Sent 35956 bytes in 2.1 seconds```
+tftp> tftp> Sent 35956 bytes in 2.1 seconds
 ```
