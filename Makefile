@@ -73,4 +73,5 @@ objects/testint.o : src/testint.c $(SDCC_HEADERS) $(SDCC_PIC16_HEADERS) \
 
 clean : 
 	$(RM) -rf objects/* 
+	$(RM) *.hex *.lst *.asm *.cod
 	clear
