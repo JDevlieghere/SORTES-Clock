@@ -1,14 +1,20 @@
 \documentclass[11pt]{article}
 \usepackage[english]{babel}
 \usepackage{listings}
- 
+\usepackage{xcolor} 
+\usepackage{courier}
+\usepackage{hyperref}
+
 \lstset{
 language=sh
 ,breaklines=true
 ,frame=single
 ,tabsize=2
 ,basicstyle=\ttfamily
-, showstringspaces=false}
+,showstringspaces=false
+,numbers=left
+,numberstyle=\tiny\color{gray}}
+
 
 \newcommand{\io}[1]{\textbf{#1}}
 
@@ -76,14 +82,32 @@ tftp> tftp> Sent 35956 bytes in 2.1 seconds
 
 \section{System Design}
 
+\subsection{Specification}
+
+\subsection{Structural Choices}
+\subsubsection{Timer}
+To effectively measure time we are using a hardware timer provided by the PIC. This timer will interrupt when its buffer overflows. We prefer this method over working with software delays because of it's increase in accuracy. Software timers are more easily influenced by (possible unknown) software implementations (i.e. arithmetics).
+\\\\
+The timer can be operated in either 8 or 16 bit mode. This marks the length of its buffer and thus the delay between a software interrupt arises. Operating in 16 bit mode opposed to 8 bit may increase accuracy between interrupts but on the other hand might introduce a too rough granularity. A software counter is used to count the amount of interrupts between the elapse of one second. Empirical testing has shown us that this last effect is indeed a problem. Therefore, we have increased the amounts of interrupts and have chosen to operate the timer in 8 bit mode.
+
+\subsubsection{Buttons}
+
+
+\subsubsection{Time Structure}
+Storing the current time can be done in a number of ways. We could've kept a counter of nano- or milliseconds since the beginning of time, the start of the device or since midnight. We chose for a different approach in order to save space. A structure with 3 fields (hours, minutes and seconds) is used to store the current time. This had the additional advantage of introducing a certain level of abstraction. Furthermore, this structure also represents the time of the alarm.  
+
+\subsection{Technical Peculiarities}
+If you want to make use of button \textbf{1} you need to set register ``INTCON3bits.INT\textbf{3}F''. For button \textbf{2} instead you need to use the register ``INTCON3bits.INT}\textbf{1}F''. This is also poorly documented.
+
+For using structures malloc() is needed (which is included in the C library for the PIC16) but what is not included is actually creating the stack. That's why you have to manually assign space for the stack. How this is done can be seen on line 7 of listing \ref{time.c} on page \pageref{time.c}.
 
 \appendix
 
 \section{Source Code}
 \lstinputlisting[language=C, caption={strings header file}, label=strings.h]{../src/strings.h}
-\lstinputlisting[language=C, caption={clock body file}, label=clock.h]{../src/clock.c}
-\lstinputlisting[language=C, caption={clockio header file}, label=clock.h]{../src/clockio.h}
-\lstinputlisting[language=C, caption={clockio body file}, label=clock.h]{../src/clockio.c}
+\lstinputlisting[language=C, caption={clock body file}, label=clock.c]{../src/clock.c}
+\lstinputlisting[language=C, caption={clockio header file}, label=clockio.h]{../src/clockio.h}
+\lstinputlisting[language=C, caption={clockio body file}, label=clockio.c]{../src/clockio.c}
 \lstinputlisting[language=C, caption={time header file}, label=time.h]{../src/time.h}
-\lstinputlisting[language=C, caption={time body file}, label=time.h]{../src/time.c}
+\lstinputlisting[language=C, caption={time body file}, label=time.c]{../src/time.c}
 \end{document}
