@@ -10,6 +10,9 @@
 
 // DEFINES FOR CONFIGURING MODE.
 
+#define HOURS	"Hours:"
+#define MINUTES	"Minutes:"
+#define SECONDS	"Seconds:"
 #define	CM_STRING "Choose mode:" 
 
 // Quit configuration
@@ -233,9 +236,9 @@ void init_config(void){
  */
 void init_time(time t, char *mode){ 
 	int h, m, s;
-	h = get_input(24, "Hours:",   mode, &but1_pressed, &but2_pressed);
-	m = get_input(60, "Minutes:", mode, &but1_pressed, &but2_pressed);
-	s = get_input(60, "Seconds:", mode, &but1_pressed, &but2_pressed);
+	h = get_input(24, HOURS,   mode, &but1_pressed, &but2_pressed);
+	m = get_input(60, MINUTES, mode, &but1_pressed, &but2_pressed);
+	s = get_input(60, SECONDS, mode, &but1_pressed, &but2_pressed);
 	time_set(t,h,m,s);
 }
 
