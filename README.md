@@ -1,9 +1,12 @@
-SORTES
-======
+# SORTES
+
 **Software for Real-Time and Embedded Systems**  
 _(Master in Computer Science at the KULEUVEN)_
 
 The projects are executed on a [PIC18F97J60 Microcontroller](http://www.microchip.com/wwwproducts/Devices.aspx?dDocName=en026439) in combination with the [SDCC Compiler](http://sdcc.sourceforge.net/doc/sdccman.pdf).
+
+### Installation 
+To install the necessary binder and compiler, run the install script (install.sh). Make sure you have the package *build essentials* installed. 
 
 ###Project One: Alarm clock.
 The first project assignment was the following:
