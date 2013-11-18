@@ -8,23 +8,9 @@
 #define EXEC_FREQ   CLOCK_FREQ/4 	
 #define CYCLES 		93
 
-// DEFINES FOR CONFIGURING MODE.
-
-#define	CM_STRING "Choose mode:" 
-
-// Quit configuration
 #define CONFIG_MODE_QUIT -1
-#define	CM_QUIT_STRING "Quit config mode." 
-
-// Alarm configuration
 #define CONFIG_MODE_ALARM 0 
-#define	CM_ALARM_STRING "Set alarm?" 
-#define	SM_ALARM_STRING "Set alarm:" 
-
-// Clock configuration
 #define CONFIG_MODE_CLOCK 1 
-#define	CM_CLOCK_STRING "Set clock?" 
-#define	SM_CLOCK_STRING "Set clock:" 
 
 // INCLUDES
 #include <stdlib.h>
@@ -32,8 +18,8 @@
 
 #include "../Include/HardwareProfile.h"
 #include "../Include/LCDBlocking.h"
-#include "../Include/TCPIP_Stack/Delay.h"
 
+#include "strings.h"
 #include "time.h"
 #include "clockio.h"
 
@@ -233,9 +219,9 @@ void init_config(void){
  */
 void init_time(time t, char *mode){ 
 	int h, m, s;
-	h = get_input(24, "Hours:",   mode, &but1_pressed, &but2_pressed);
-	m = get_input(60, "Minutes:", mode, &but1_pressed, &but2_pressed);
-	s = get_input(60, "Seconds:", mode, &but1_pressed, &but2_pressed);
+	h = get_input(24, HOURS,   mode, &but1_pressed, &but2_pressed);
+	m = get_input(60, MINUTES, mode, &but1_pressed, &but2_pressed);
+	s = get_input(60, SECONDS, mode, &but1_pressed, &but2_pressed);
 	time_set(t,h,m,s);
 }
 
