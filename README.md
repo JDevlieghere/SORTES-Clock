@@ -22,12 +22,19 @@ The first project assignment was the following:
 ### Deployment
 
 We provided a makefile to compile the source code. Run the following command:
+
      $ make clock
+     
 To deploy the clock.hex file to the PIC a shell script is available. The script will start tftp and wait for input from the user. 
+
      $ ./deploy.sh
+
 Enter the following command but do not press return just yet. Reset the PIC and wait for the corresponding LED on the router to light up, then press return.
-     put clock.hex```
+
+     put clock.hex     
+
 When all of this succeeds, you'll see something like this. The amount of time and bytes may differ.
+
     $ make clock 
     #################### BUILD INIT ####################
     sdcc -mpic16 -p18f97j60 -L /usr/local/lib/pic16 -llibio18f97j60.lib -llibdev18f97j60.lib -llibc18f.lib -L include objects/clock.o objects/LCDBlocking.o objects/newtime.o
