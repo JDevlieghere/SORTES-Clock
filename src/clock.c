@@ -3,16 +3,11 @@
 #define __SDCC__
 #define THIS_INCLUDES_THE_MAIN_FUNCTION
 
-// Clock related defines.
-#define CLOCK_FREQ  40000000      
-#define EXEC_FREQ   CLOCK_FREQ/4 	
-#define CYCLES 		93
+#define OVERFLOW_CYCLES 	93
+#define CONFIG_MODE_QUIT 	-1
+#define CONFIG_MODE_ALARM 	0 
+#define CONFIG_MODE_CLOCK 	1 
 
-#define CONFIG_MODE_QUIT -1
-#define CONFIG_MODE_ALARM 0 
-#define CONFIG_MODE_CLOCK 1 
-
-// INCLUDES
 #include <stdlib.h>
 #include <stdio.h>
 
@@ -23,18 +18,12 @@
 #include "time.h"
 #include "clockio.h"
 
-// METHOD DECLARATION 
-
-// no declaration for highPriorityInterruptHandler?
-
 void init(void);
 void init_config(void);
 void init_time(time t, char *);
 
 void toggle_second_led(void);
 void toggle_alarm_led(void);
-
-// VARIABLE DECLARATION
 
 // Clock time
 time _time;
@@ -167,8 +156,6 @@ void toggle_alarm_led(void){
 	LED2_IO^=1;
 }
 
-
-
 /**
  * Handles the high priority interupts. 
  * 	Currently both buttons and ticks have high priority.
@@ -195,9 +182,9 @@ void highPriorityInterruptHandler (void) __interrupt(1){
 	// Timer 0 causes an interrupt
 	if(INTCONbits.TMR0IF == 1) {
 		overflow_counter++;
-		if(overflow_counter == CYCLES/2){
+		if(overflow_counter == OVERFLOW_CYCLES/2){
 			toggle_second_led();
-		}else if(overflow_counter == CYCLES){
+		}else if(overflow_counter == OVERFLOW_CYCLES){
 			if(time_equals(_alarm,_time)){
 				alarm_going_off = 1;
 			}
