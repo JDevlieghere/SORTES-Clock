@@ -20,7 +20,7 @@ The first project assignment was the following:
  5. The yellow led must blink (1/2 second on, 1/2 second off).  
 
 ### Deployment
-To build and deploy the clock to the PIC a shell script is available. The script will make the `clock.hex` file and start tftp which will wait for input from the user. 
+To build and deploy the clock to the PIC a shell script is available. To run this script the package *tftp* is required so make sure you have it installed before trying to deploy. The script will make the `clock.hex` file and start tftp which will wait for input from the user. 
 ```
 $ ./deploy.sh
 ```
