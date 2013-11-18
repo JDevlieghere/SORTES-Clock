@@ -22,9 +22,9 @@ The first project assignment was the following:
 ### Deployment
 
 We provided a makefile to compile the source code. Run the following command:
-
+```
      $ make clock
-     
+```
 To deploy the clock.hex file to the PIC a shell script is available. The script will start tftp and wait for input from the user. 
 
      $ ./deploy.sh
