@@ -234,7 +234,7 @@ void init(void){
 	TMR0H = 0x00000000;
 	TMR0L = 0x00000000;
 
-	// Enable 16-bit operation 
+	// Enable 8-bit operation 
 	T0CONbits.T08BIT = 1;
 
 	// Use clock as clock source 
