@@ -4,7 +4,7 @@
 #include <stdlib.h>
 #include <malloc.h>
 
-unsigned char _MALLOC_SPEC heap[56];
+unsigned char _MALLOC_SPEC heap[128];
 
 struct time_struct {
 	int hours;

@@ -3,7 +3,7 @@
 #define __SDCC__
 #define THIS_INCLUDES_THE_MAIN_FUNCTION
 
-#define OVERFLOW_CYCLES 	93
+#define OVERFLOW_CYCLES 	24407	
 #define CONFIG_MODE_QUIT 	-1
 #define CONFIG_MODE_ALARM 	0 
 #define CONFIG_MODE_CLOCK 	1 
@@ -235,7 +235,7 @@ void init(void){
 	TMR0L = 0x00000000;
 
 	// Enable 16-bit operation 
-	T0CONbits.T08BIT = 0;
+	T0CONbits.T08BIT = 1;
 
 	// Use clock as clock source 
 	T0CONbits.T0CS = 0;
