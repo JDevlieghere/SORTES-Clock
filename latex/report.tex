@@ -104,7 +104,7 @@ At first instance, when we were still using the 16 bit timer, we found that the 
 This meant our counting system was to course-grained.
 This is when we switched to operating the timer in 8 bit mode, allowing more interrupts to occur.  
 \\\\
-Using a binary search to obtain the optimal value, we found that \textbf{24407} interrupts correspond to one second.
+Using a binary search to obtain the optimal value, we found that \textbf{24408} interrupts correspond to one second.
 In table \ref{tab:bs} you can see how we acquired the optimal value. 
 The first upper and lower values were found by using the counter in 16-bit mode.
 Using that mode we found that one second falls between $95$ and $96$ overflows of the counter.
