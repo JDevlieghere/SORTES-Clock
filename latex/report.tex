@@ -99,12 +99,35 @@ Buttons are too implemented using interrupts. When a button is pressed a dummy r
 Storing the current time can be done in a number of ways. We could've kept a counter of nano- or milliseconds since the beginning of time, the start of the device or since midnight. We chose for a different approach in order to save space. A structure with 3 fields (hours, minutes and seconds) is used to store the current time. This had the additional advantage of introducing a certain level of abstraction. Furthermore, this structure also represents the time of the alarm.  
 
 \subsection{Calibration}
-In order to calibrate our clock we needed to find out how many interrupts occur over the course of one second. At first instance, when we were still using the 16 bit timer, we found that the correct value was between 96 en 97 interrupts per second. This meant our counting system was to course-grained. This is when we switched to operating the timer in 8 bit mode, allowing more interrupts to occur.  
+In order to calibrate our clock we needed to find out how many interrupts occur over the course of one second.
+At first instance, when we were still using the 16 bit timer, we found that the correct value was between 95 en 96 interrupts per second.
+This meant our counting system was to course-grained.
+This is when we switched to operating the timer in 8 bit mode, allowing more interrupts to occur.  
 \\\\
-Using a binary search to obtain the optimal value, we found that \textbf{!!!X!!!} interrupts correspond to one second.
+Using a binary search to obtain the optimal value, we found that \textbf{24407} interrupts correspond to one second.
+In table \ref{tab:bs} you can see how we acquired the optimal value. 
+The first upper and lower values were found by using the counter in 16-bit mode.
+Using that mode we found that one second falls between $95$ and $96$ overflows of the counter.
+Since the counter in 8-bit mode overflows $256$ times faster we find the initial values: $24320$ ($256*95$) and$24576$ ($256*96$).
+
+\begin{table}
+	\centering
+	\begin{tabular}{|r || c | c | c | c |}
+		\hline
+		Test value & Lower Value & Middle & Upper Value & Result \\ \hline
+		/ & 24320 &  24448 & 24576 & / \\ \hline
+		24448 & 24320 & 24384 & 24448 & fast \\ \hline
+		24384 & 24384 & 24416 & 24448 & slow \\ \hline
+		24416 & 24384 & 24400 & 24416 & fast \\ \hline
+		24400 & 24400 & 24408 & 24416 & GOOD \\ \hline
+	\end{tabular}
+	\caption{The approximation of the amount of counter overflows in one second by binary search.}
+	\label{tab:bs}
+\end{table}
 
 \subsection{Technical Peculiarities}
-If you want to make use of button \textbf{1} you need to set register ``INTCON3bits.INT\textbf{3}F''. For button \textbf{2} instead you need to use the register ``INTCON3bits.INT}\textbf{1}F''. This is also poorly documented.
+If you want to make use of button \textbf{1} you need to make use of register ``INTCON3bits.INT\textbf{3}F''.
+For button \textbf{2} instead, you need to use the register ``INTCON3bits.INT\textbf{1}F''. This is also poorly documented.
 \\\\
 For using structures malloc() is needed (which is included in the C library for the PIC16) but what is not included is actually creating the stack. That's why you have to manually assign space for the stack. How this is done can be seen on line 7 of listing \ref{time.c} on page \pageref{time.c}.
 \\\\
