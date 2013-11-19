@@ -83,8 +83,8 @@ tftp> tftp> Sent 35956 bytes in 2.1 seconds
 
 \section{System Design}
 
-\subsection{Specification}
-???
+\subsection{Specifications}
+The program provides an configurable clock with alarm function. At startup the user can set the clock and optionally the alarm using two button on the device. Once the time is set an orange led blinks each half a second. When the current time equals the alarm time an alarm goes of. This means two red LEDs start blinking one second on, one second of during the next 30 seconds. During operation both the alarm and time can be adjusted. Setting an alarm does not influence the current time.
 
 \subsection{Structural Choices}
 \subsubsection{Timer}
@@ -98,7 +98,7 @@ Buttons are too implemented using interrupts. When a button is pressed a dummy r
 \subsubsection{Time Structure}
 Storing the current time can be done in a number of ways. We could've kept a counter of nano- or milliseconds since the beginning of time, the start of the device or since midnight. We chose for a different approach in order to save space. A structure with 3 fields (hours, minutes and seconds) is used to store the current time. This had the additional advantage of introducing a certain level of abstraction. Furthermore, this structure also represents the time of the alarm.  
 
-\subsection*{Calibration}
+\subsection{Calibration}
 In order to calibrate our clock we needed to find out how many interrupts occur over the course of one second. At first instance, when we were still using the 16 bit timer, we found that the correct value was between 96 en 97 interrupts per second. This meant our counting system was to course-grained. This is when we switched to operating the timer in 8 bit mode, allowing more interrupts to occur.  
 \\\\
 Using a binary search to obtain the optimal value, we found that \textbf{!!!X!!!} interrupts correspond to one second.
